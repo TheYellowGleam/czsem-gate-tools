@@ -26,13 +26,13 @@
 	</licenses>
 
 	<scm>
-		<url>https://github.com/dedekj/czsem-gate-tools.git</url>
-		<connection>scm:git:https://github.com/dedekj/czsem-gate-tools.git</connection>
+		<url>https://github.com/datlowe/czsem-gate-tools.git</url>
+		<connection>scm:git:https://github.com/datlowe/czsem-gate-tools.git</connection>
 	  <tag>HEAD</tag>
   </scm>
  	
 	<issueManagement>
-		<url>http://github.com/dedekj/czsem-gate-tools/issues</url>
+		<url>http://github.com/datlowe/czsem-gate-tools/issues</url>
 	</issueManagement>
 	
 	<distributionManagement>
