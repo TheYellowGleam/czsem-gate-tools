@@ -16,3 +16,4 @@ PERL_LOCAL_LIB_ROOT=${TREEX_INST}/perl5:${PERL_LOCAL_LIB_ROOT} \
 PERL_MB_OPT="--install_base ${TREEX_INST}/perl5" \
 PERL_MM_OPT="INSTALL_BASE=${TREEX_INST}/perl5" 
 
+RUN mkdir /app; cd /app; curl -L https://github.com/datlowe/czsem-gate-tools/releases/download/czsem-3.0-alpha2/treex-online-linux64-installed.tar.gz | tar zxv 
