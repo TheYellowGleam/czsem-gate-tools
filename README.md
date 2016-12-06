@@ -19,7 +19,7 @@ e.g. czsem-gate-plugin:
 <dependency>
     <groupId>net.sf.czsem</groupId>
     <artifactId>czsem-gate-plugin</artifactId>
-    <version>3.0-alpha1</version>
+    <version>3.0-alpha2</version>
 </dependency>
 ```
 
