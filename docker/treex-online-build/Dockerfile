@@ -43,3 +43,8 @@ RUN echo "Bohužel jsem tento tutorial nedokončil." |  treex -Lcs Read::Sentenc
 RUN curl -L https://github.com/dedekj/czsem-gate-tools/archive/master.tar.gz | tar zxvf - czsem-gate-tools-master/modules/treex-gate-plugin/treex_online/ \
 && mv czsem-gate-tools-master/modules /app/czsem \
 && rm -r czsem-gate-tools-master 
+
+
+RUN cpanm Error Thread::Queue
+
+RUN rm -rf $TREEX_GIT/.git ; cd app ; tar -czvf /treex-online-linux64-installed.tar.gz * 
