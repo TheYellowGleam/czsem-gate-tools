@@ -1,7 +1,5 @@
 #docker build -t="datlowe/centos7_2_jdk8" centos7_2_jdk8
 
-#for later centos versions and "Development Tools" see here: http://stackoverflow.com/a/7276416/1857897
-
 FROM centos:7.2.1511
 MAINTAINER Jan Dedek <http://github.com/dedekj>
 
@@ -14,3 +12,4 @@ RUN curl -LO http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-lin
 && yum clean all
 
 RUN yum -y update; yum clean all
+
