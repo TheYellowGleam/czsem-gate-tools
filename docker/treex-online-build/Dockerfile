@@ -7,10 +7,11 @@ RUN yum groupinstall -y @development \
 && yum install -y perl-devel perl-CPAN libxml2-devel zlib1g-devel \
 && yum clean all
 
+ENV TREEX_INST=/app/treex
+
 RUN curl -L http://cpanmin.us | perl - -l $TREEX_INST/perl5 App::cpanminus local::lib
  
 ENV \
-TREEX_INST=/app/treex \
 PATH=${TREEX_INST}/perl5/bin:${PATH} \
 PERL5LIB=${TREEX_INST}/perl5/lib/perl5:${PERL5LIB} \
 PERL_LOCAL_LIB_ROOT=${TREEX_INST}/perl5:${PERL_LOCAL_LIB_ROOT} \
