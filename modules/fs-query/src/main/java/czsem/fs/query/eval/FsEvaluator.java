@@ -85,9 +85,9 @@ public class FsEvaluator {
 
 	public CloneableIterator<QueryMatch> getFinalResultsFor(int dataNodeId) {
 		List<CloneableIterator<QueryMatch>> list = new ArrayList<>();
-		CloneableIterator<QueryMatch> res; 
+		CloneableIterator<QueryMatch> res = null; 
 		
-		if (! OptionalEval.MINIMAL.equals(getOptionalEval())) {
+		if (optionalNodes.isEmpty() || ! OptionalEval.MINIMAL.equals(getOptionalEval())) {
 
 			res = getFilteredResultsFor(rootNode, dataNodeId);
 			
@@ -104,6 +104,8 @@ public class FsEvaluator {
 				}
 			}
 		}
+		
+		if (optionalNodes.isEmpty()) return res;
 		
 		
 		for (QueryNode queryNode : OptionalNodesRemoval.iterateModifiedQueries(rootNode, optionalNodes, getOptionalEval())) {
