@@ -73,7 +73,7 @@ public class OptionalNodesRemoval implements Iterator<QueryNode> {
 		return dupNode;
 	}
 
-	protected QueryNode removeNode(QueryNode rootNode, QueryNode toRemove) {
+	public static QueryNode removeNode(QueryNode rootNode, QueryNode toRemove) {
 		QueryNode parent = toRemove.getPrent();
 		List<QueryNode> children = toRemove.getChildren();
 		

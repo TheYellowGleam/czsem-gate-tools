@@ -1,7 +1,10 @@
 package czsem.fs.query.eval;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -15,6 +18,7 @@ import czsem.fs.query.QueryNode;
 import czsem.fs.query.restrictions.DirectAttrRestriction;
 import czsem.fs.query.utils.CloneableIterator;
 import czsem.fs.query.utils.CloneableIteratorList;
+import czsem.fs.query.utils.QueryNodeDuplicator;
 import czsem.fs.query.utils.SingletonIterator;
 
 public class FsEvaluator {
@@ -142,9 +146,33 @@ public class FsEvaluator {
 	}
 
 	protected CloneableIterator<QueryMatch> getFilteredResultsFor(QueryNode queryNode, int dataNodeId) {
+		//System.err.println(queryNode.toStringDeep());
+		
+		if (queryNode == rootNode) {
+			QueryNodeDuplicator dup  = new QueryNodeDuplicator(Collections.emptySet());
+			queryNode = dup.duplicate(queryNode);
+		}
+		
+		Map<QueryNode,QueryNode> forbiddenSubtreeMap = new HashMap<>();
+		findForbidden(queryNode, forbiddenSubtreeMap);
+		
+		for (QueryNode forbiddenNode : forbiddenSubtreeMap.values()) {
+			queryNode = OptionalNodesRemoval.removeNode(queryNode, forbiddenNode);
+		}
+		
 		return FinalResultsIteratorFilter.filter(
 				getDirectResultsFor(queryNode, dataNodeId), 
-				data, getPatternIndex());
+				data, getPatternIndex(), forbiddenSubtreeMap);
+	}
+
+	protected void findForbidden(QueryNode queryNode, Map<QueryNode, QueryNode> ret) {
+		if (queryNode.isForbiddenSubtree()) {
+			ret.put(queryNode.getPrent(), queryNode);
+		}
+		
+		for (QueryNode ch : queryNode.getChildren()) {
+			findForbidden(ch, ret);
+		}
 	}
 
 	protected CloneableIterator<QueryMatch> getDirectResultsFor(QueryNode queryNode, int dataNodeId) {

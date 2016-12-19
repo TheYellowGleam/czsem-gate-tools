@@ -3,8 +3,12 @@
  ******************************************************************************/
 package czsem.fs.query.eval;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import czsem.fs.query.FSQuery.NodeMatch;
@@ -19,12 +23,17 @@ public class FinalResultsIteratorFilter implements CloneableIterator<QueryMatch>
 	protected final CloneableIterator<QueryMatch> parent;
 	protected final QueryData data;
 	protected final int patternIndex;
+	protected final Map<QueryNode, QueryNode> forbiddenSubtreeMap;
+	protected final FsEvaluator forbiddenSubtreeEvaluator;
 
 
-	public FinalResultsIteratorFilter(CloneableIterator<QueryMatch> parent, QueryData data, int patternIndex) {
+	public FinalResultsIteratorFilter(CloneableIterator<QueryMatch> parent, QueryData data, int patternIndex, Map<QueryNode, QueryNode> forbiddenSubtreeMap) {
 		this.parent = parent;
 		this.data = data;
 		this.patternIndex = patternIndex;
+		this.forbiddenSubtreeMap = forbiddenSubtreeMap;
+		
+		forbiddenSubtreeEvaluator = new FsEvaluator(null, null, data); 
 	}
 	
 	protected QueryMatch cachedValue = null; 
@@ -37,12 +46,12 @@ public class FinalResultsIteratorFilter implements CloneableIterator<QueryMatch>
 			
 			cachedValue = parent.next();
 
-			if (! checkForbiddenNodes(cachedValue)) {
+			if (! evalReferencingRestrictions(cachedValue)) {
 				cachedValue = null;
 				continue;
 			}
 
-			if (! evalReferencingRestrictions(cachedValue)) {
+			if (! checkForbiddenNodes(cachedValue)) {
 				cachedValue = null;
 			}
 		}
@@ -74,7 +83,29 @@ public class FinalResultsIteratorFilter implements CloneableIterator<QueryMatch>
 	protected boolean checkForbiddenNodes(QueryMatch queryMatch) {
 		for (NodeMatch nodeMatch : queryMatch.getMatchingNodes()) {
 			QueryNode qn = nodeMatch.getQueryNode();
-			if (qn.isForbiddenSubtree()) return false; 
+			
+			QueryNode forbiddenSubtree = forbiddenSubtreeMap.get(qn);
+			
+			if (forbiddenSubtree == null) continue;
+			
+			Set<Integer> dataChildren = data.getIndex().getChildren(nodeMatch.getNodeId());
+			if (dataChildren == null) continue;
+			
+			for (int dataChild : dataChildren) {
+
+				Iterator<QueryMatch> res = forbiddenSubtreeEvaluator.getDirectResultsFor(forbiddenSubtree, dataChild);
+				if (res == null || ! res.hasNext()) continue;
+				
+				while (res.hasNext()) {
+					QueryMatch next = res.next();
+					
+					List<NodeMatch> matchingNodes = new ArrayList<>(next.getMatchingNodes());
+					matchingNodes.addAll(queryMatch.getMatchingNodes());
+					
+					if (evalReferencingRestrictions(new QueryMatch(matchingNodes)))
+						return false;
+				}
+			}
 		}
 		return true;
 	}
@@ -104,16 +135,21 @@ public class FinalResultsIteratorFilter implements CloneableIterator<QueryMatch>
 		return true;
 	}
 
-	public static CloneableIterator<QueryMatch> filter(CloneableIterator<QueryMatch> resultsFor, QueryData data, int patternIndex) {
+	public static CloneableIterator<QueryMatch> filter(
+			CloneableIterator<QueryMatch> resultsFor, 
+			QueryData data, 
+			int patternIndex, 
+			Map<QueryNode, QueryNode> forbiddenSubtreeMap) 
+	{
 		if (resultsFor == null) return null;
 		
-		return new FinalResultsIteratorFilter(resultsFor, data, patternIndex);
+		return new FinalResultsIteratorFilter(resultsFor, data, patternIndex, forbiddenSubtreeMap);
 	}
 
 	@Override
 	public FinalResultsIteratorFilter cloneInitial() {
 		return new FinalResultsIteratorFilter(
-				parent.cloneInitial(), data, patternIndex);	
+				parent.cloneInitial(), data, patternIndex, forbiddenSubtreeMap);	
 	} 
 		
 }
