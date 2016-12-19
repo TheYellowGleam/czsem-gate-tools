@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import czsem.fs.query.FSQuery.NodeMatch;
 import czsem.fs.query.FSQuery.QueryData;
 import czsem.fs.query.FSQuery.QueryMatch;
+import czsem.fs.query.QueryNode;
 import czsem.fs.query.restrictions.ReferencingRestriction;
 import czsem.fs.query.utils.CloneableIterator;
 
@@ -35,6 +36,11 @@ public class FinalResultsIteratorFilter implements CloneableIterator<QueryMatch>
 			if (! parent.hasNext()) return false;
 			
 			cachedValue = parent.next();
+
+			if (! checkForbiddenNodes(cachedValue)) {
+				cachedValue = null;
+				continue;
+			}
 
 			if (! evalReferencingRestrictions(cachedValue)) {
 				cachedValue = null;
@@ -63,6 +69,14 @@ public class FinalResultsIteratorFilter implements CloneableIterator<QueryMatch>
 					n -> n.getQueryNode().getName(), 
 					NodeMatch::getNodeId)) 
 		;
+	}
+
+	protected boolean checkForbiddenNodes(QueryMatch queryMatch) {
+		for (NodeMatch nodeMatch : queryMatch.getMatchingNodes()) {
+			QueryNode qn = nodeMatch.getQueryNode();
+			if (qn.isForbiddenSubtree()) return false; 
+		}
+		return true;
 	}
 	
 	protected boolean evalReferencingRestrictions(QueryMatch queryMatch) {

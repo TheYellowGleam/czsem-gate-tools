@@ -224,6 +224,18 @@ public class FSQueryParserTest {
 	}
 	
 	@Test
+	public static void testForbiddenSubtree() throws SyntaxError {
+		evalQuery("[]([]([id=4,_forbidden_subtree=true]))", new int [] {	
+				0, 2,
+				0, 7,
+				2, 5,
+				1, 3,
+				1, 4,
+				3, 6,
+		});
+	}
+
+	@Test
 	public static void testOptionalSubtree() throws SyntaxError {
 		
 		//unreachable child x 

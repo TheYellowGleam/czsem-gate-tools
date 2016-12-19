@@ -72,17 +72,9 @@ public class FSQueryBuilderImpl implements FSQueryBuilder {
 				}
 				break;
 				
-			case MetaAttribute.FORBIDDEN:
-				if (MetaAttribute.TRUE.equals(arg2)) {
-					curentNode.setForbidden(true);
-					getOptionalNodes().add(curentNode);
-				}
-				break;
-				
 			case MetaAttribute.FORBIDDEN_SUBTREE:
 				if (MetaAttribute.TRUE.equals(arg2)) {
 					curentNode.setForbiddenSubtree(true);
-					getOptionalNodes().add(curentNode);
 				}
 				break;
 				
@@ -109,5 +101,4 @@ public class FSQueryBuilderImpl implements FSQueryBuilder {
 	public void setOptionalNodes(List<QueryNode> optionalNodes) {
 		this.optionalNodes = optionalNodes;
 	}
-
 }
