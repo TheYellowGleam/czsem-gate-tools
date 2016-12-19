@@ -24,6 +24,8 @@ public class QueryNode  {
 		protected String name;
 		protected boolean optional = false;
 		protected boolean optionalSubtree = false;
+		protected boolean forbidden = false;
+		protected boolean forbiddenSubtree = false;
 		protected int subtreeDepth = -1;
 	}
 	
@@ -145,8 +147,23 @@ public class QueryNode  {
 	public void setOptionalSubtree(boolean optionalSubtree) {
 		this.data.optionalSubtree = optionalSubtree;
 	}
+	public boolean isOptionalOrForbiddenSubtree() {
+		return isOptionalSubtree() || isForbiddenSubtree();
+	}
 	public boolean isOptionalSubtree() {
 		return data.optionalSubtree;
+	}
+	public boolean isForbidden() {
+		return data.forbidden;
+	}
+	public void setForbidden(boolean forbidden) {
+		data.forbidden = forbidden;
+	}
+	public boolean isForbiddenSubtree() {
+		return data.forbiddenSubtree;
+	}
+	public void setForbiddenSubtree(boolean forbiddenSubtree) {
+		data.forbiddenSubtree = forbiddenSubtree;
 	}
 
 	public int getSubtreeDepth() {

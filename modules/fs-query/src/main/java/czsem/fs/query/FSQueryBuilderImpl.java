@@ -53,29 +53,47 @@ public class FSQueryBuilderImpl implements FSQueryBuilder {
 	public void addRestriction(String comparartor, String arg1,	String arg2) {
 		logger.debug(String.format("addRestriction %s %s %s", arg1, comparartor, arg2));
 		
-		if (MetaAttribute.NODE_NAME.equals(arg1))
-			curentNode.setName(arg2);
-		else if (MetaAttribute.OPTIONAL.equals(arg1)){ 
-			if (MetaAttribute.TRUE.equals(arg2)) {
-				curentNode.setOptional(true);
-				getOptionalNodes().add(curentNode);
-			}
+		switch (arg1) {
+			case MetaAttribute.NODE_NAME:
+				curentNode.setName(arg2);
+				break;
+				
+			case MetaAttribute.OPTIONAL:
+				if (MetaAttribute.TRUE.equals(arg2)) {
+					curentNode.setOptional(true);
+					getOptionalNodes().add(curentNode);
+				}
+				break;
+				
+			case MetaAttribute.OPTIONAL_SUBTREE:
+				if (MetaAttribute.TRUE.equals(arg2)) {
+					curentNode.setOptionalSubtree(true);
+					getOptionalNodes().add(curentNode);
+				}
+				break;
+				
+			case MetaAttribute.FORBIDDEN:
+				if (MetaAttribute.TRUE.equals(arg2)) {
+					curentNode.setForbidden(true);
+					getOptionalNodes().add(curentNode);
+				}
+				break;
+				
+			case MetaAttribute.FORBIDDEN_SUBTREE:
+				if (MetaAttribute.TRUE.equals(arg2)) {
+					curentNode.setForbiddenSubtree(true);
+					getOptionalNodes().add(curentNode);
+				}
+				break;
+				
+			case IterateSubtreeEvaluator.META_ATTR_SUBTREE_DEPTH:
+				int depth = Integer.parseInt(arg2);
+				curentNode.setSubtreeDepth(depth);
+				break;
+				
+			default:
+				curentNode.addRestriction(comparartor, arg1, arg2);					
 		}
-		else if (MetaAttribute.OPTIONAL_SUBTREE.equals(arg1)){ 
-			if (MetaAttribute.TRUE.equals(arg2)) {
-				curentNode.setOptionalSubtree(true);
-				getOptionalNodes().add(curentNode);
-			}
-		}
-		else if (IterateSubtreeEvaluator.META_ATTR_SUBTREE_DEPTH.equals(arg1))
-		{
-			int depth = Integer.parseInt(arg2);
-			curentNode.setSubtreeDepth(depth);
-		}
-		else
-		{
-			curentNode.addRestriction(comparartor, arg1, arg2);					
-		}		
 	}
 
 	public QueryNode getRootNode() {

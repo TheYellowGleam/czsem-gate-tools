@@ -142,7 +142,7 @@ public class FsEvaluator {
 	}
 
 	public CloneableIterator<QueryMatch> getFilteredResultsFor(QueryNode queryNode, int dataNodeId) {
-		return ReferencingRestrictionsResultsIteratorFilter.filter(
+		return FinalResultsIteratorFilter.filter(
 				getDirectResultsFor(queryNode, dataNodeId), 
 				data, getPatternIndex());
 	}

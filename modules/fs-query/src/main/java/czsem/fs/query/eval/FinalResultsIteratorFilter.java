@@ -13,14 +13,14 @@ import czsem.fs.query.FSQuery.QueryMatch;
 import czsem.fs.query.restrictions.ReferencingRestriction;
 import czsem.fs.query.utils.CloneableIterator;
 
-public class ReferencingRestrictionsResultsIteratorFilter implements CloneableIterator<QueryMatch>{
+public class FinalResultsIteratorFilter implements CloneableIterator<QueryMatch>{
 	
 	protected final CloneableIterator<QueryMatch> parent;
 	protected final QueryData data;
 	protected final int patternIndex;
 
 
-	public ReferencingRestrictionsResultsIteratorFilter(CloneableIterator<QueryMatch> parent, QueryData data, int patternIndex) {
+	public FinalResultsIteratorFilter(CloneableIterator<QueryMatch> parent, QueryData data, int patternIndex) {
 		this.parent = parent;
 		this.data = data;
 		this.patternIndex = patternIndex;
@@ -93,12 +93,12 @@ public class ReferencingRestrictionsResultsIteratorFilter implements CloneableIt
 	public static CloneableIterator<QueryMatch> filter(CloneableIterator<QueryMatch> resultsFor, QueryData data, int patternIndex) {
 		if (resultsFor == null) return null;
 		
-		return new ReferencingRestrictionsResultsIteratorFilter(resultsFor, data, patternIndex);
+		return new FinalResultsIteratorFilter(resultsFor, data, patternIndex);
 	}
 
 	@Override
-	public ReferencingRestrictionsResultsIteratorFilter cloneInitial() {
-		return new ReferencingRestrictionsResultsIteratorFilter(
+	public FinalResultsIteratorFilter cloneInitial() {
+		return new FinalResultsIteratorFilter(
 				parent.cloneInitial(), data, patternIndex);	
 	} 
 		
