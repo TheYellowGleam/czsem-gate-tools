@@ -12,12 +12,12 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import czsem.gate.utils.GateAwareTreeIndexWithAnnIdMap;
+import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.GateAnnotTableModel;
 
 public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Integer> {
 	
-	protected GateAwareTreeIndexWithAnnIdMap index = new GateAwareTreeIndexWithAnnIdMap();
+	protected GateAwareTreeIndexExtended index = new GateAwareTreeIndexExtended(null);
 	protected Document doc;
 	protected Integer selectedNode;
 	protected Integer rootNode = null;
@@ -60,14 +60,14 @@ public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Inte
 	}
 
 	public void setTreeAS(Document doc, AnnotationSet annotations) {
-		GateAwareTreeIndexWithAnnIdMap i = new GateAwareTreeIndexWithAnnIdMap();
+		GateAwareTreeIndexExtended i = new GateAwareTreeIndexExtended(doc);
 		i.setNodesAS(annotations);
 		i.addDependecies(annotations.get(null, Collections.singleton("args")));
 		
 		setIndex(doc, i);
 	}
 
-	public void setIndex(Document doc, GateAwareTreeIndexWithAnnIdMap index) {
+	public void setIndex(Document doc, GateAwareTreeIndexExtended index) {
 		this.doc = doc;
 		this.index = index;
 		rootNode = selectedNode = index.findRootOrNull();

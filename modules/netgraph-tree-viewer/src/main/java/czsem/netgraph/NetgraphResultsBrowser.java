@@ -23,7 +23,7 @@ import czsem.fs.query.FSQuery.QueryData;
 import czsem.fs.query.FSQuery.QueryMatch;
 import czsem.fs.query.FSQueryParser.SyntaxError;
 import czsem.gate.utils.GateAwareTreeIndex;
-import czsem.gate.utils.GateAwareTreeIndexWithAnnIdMap;
+import czsem.gate.utils.GateAwareTreeIndexExtended;
 
 public class NetgraphResultsBrowser extends Container {
 	private static final long serialVersionUID = 4067711902912032236L;
@@ -179,7 +179,7 @@ public class NetgraphResultsBrowser extends Container {
 	}
 
 
-	public void setIndex(Document doc, GateAwareTreeIndexWithAnnIdMap index) {
+	public void setIndex(Document doc, GateAwareTreeIndexExtended index) {
 		treeVisualize.setIndex(doc, index);
 		
 	}

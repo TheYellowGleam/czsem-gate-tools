@@ -29,16 +29,20 @@ public class TreeIndex {
 		return childIndex.get(parent);
 	}
 	
-	protected void addDependency(Integer[] dep)
+	protected void addDependency(Integer[] dep, String dependencyType)
 	{
-		addDependency(dep[0], dep[1]);
+		addDependency(dep[0], dep[1], dependencyType);
 	}
 	
 	protected void addNode(Integer id) { 
 		nodes.add(id);
 	}
 
-	public void addDependency(Integer parent, Integer child)
+	public void addDependency(Integer parent, Integer child) {
+		addDependency(parent, child, null);
+	}
+	
+	public void addDependency(Integer parent, Integer child, String dependencyType)
 	{
 		addNode(parent);
 		addNode(child);

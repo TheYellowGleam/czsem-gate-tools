@@ -21,7 +21,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
 import czsem.fs.query.FSQuery.MatchingNode;
-import czsem.gate.utils.GateAwareTreeIndexWithAnnIdMap;
+import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.treesource.TreeIndexTreeSource;
 
 public class NetgraphTreeVisualize extends Container {
@@ -247,7 +247,7 @@ public class NetgraphTreeVisualize extends Container {
 	}
 
 
-	public void setIndex(Document doc, GateAwareTreeIndexWithAnnIdMap index) {
+	public void setIndex(Document doc, GateAwareTreeIndexExtended index) {
 		treeSource.setIndex(doc, index);
 	}
 

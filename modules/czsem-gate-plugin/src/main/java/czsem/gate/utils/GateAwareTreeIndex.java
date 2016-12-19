@@ -18,14 +18,14 @@ public class GateAwareTreeIndex extends TreeIndex
 	protected void addDependency(Annotation a)
 	{
 		Integer[] dep = GateUtils.decodeEdge(a);
-		addDependency(dep[0], dep[1]);
+		addDependency(dep[0], dep[1], a.getType());
 	}; 
 	
 	protected void addTokenDpendency(Annotation a, String feature_name)
 	{
 		Integer child = (Integer) a.getFeatures().get(feature_name);
 		if (child == null) return;
-		addDependency(a.getId(), child);		
+		addDependency(a.getId(), child, a.getType()+'.'+feature_name);		
 	}; 
 
 	public void addDependecies(AnnotationSet dependenciesAS)
@@ -76,8 +76,8 @@ public class GateAwareTreeIndex extends TreeIndex
 			addTokenDependecies(annotations.get(tocDep.tokenTypeName), tocDep.depFeatureName);
 	}
 
-	public void addDependency(Annotation parentAnn, Annotation childAnn) {
-		addDependency(parentAnn.getId(), childAnn.getId());
+	public void addDependency(Annotation parentAnn, Annotation childAnn, String dependencyType) {
+		addDependency(parentAnn.getId(), childAnn.getId(), dependencyType);
 	}
 
 

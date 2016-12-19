@@ -1,22 +1,17 @@
-/*******************************************************************************
- * Copyright (c) 2016 Datlowe and/or its affiliates. All rights reserved.
- ******************************************************************************/
 package czsem.fs;
 
-import gate.Annotation;
 import gate.creole.ontology.OClass;
 import gate.creole.ontology.OConstants;
 import gate.creole.ontology.Ontology;
-
-import java.util.Map;
+import czsem.gate.utils.GateAwareTreeIndexExtended;
 
 public class GateAnnotationsNodeAttributesWithOnto extends
-		GateAnnotationsNodeAttributesWithAnnIdMap {
+		GateAnnotationsNodeAttributesExtended {
 
 	protected Ontology ontology;
 
-	public GateAnnotationsNodeAttributesWithOnto(Map<Integer, Annotation> annIdMap) {
-		super(annIdMap);
+	public GateAnnotationsNodeAttributesWithOnto(GateAwareTreeIndexExtended index) {
+		super(index);
 	}
 
 	public Ontology getOntology() {

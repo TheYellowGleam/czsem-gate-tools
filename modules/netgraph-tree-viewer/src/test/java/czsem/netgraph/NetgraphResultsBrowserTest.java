@@ -15,7 +15,7 @@ import czsem.fs.GateAnnotationsNodeAttributes;
 import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryData;
 import czsem.fs.query.FSQuery.QueryMatch;
-import czsem.gate.utils.GateAwareTreeIndexWithAnnIdMap;
+import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.gate.utils.GateUtils;
 import czsem.gate.utils.PRSetup;
 import czsem.gate.utils.PRSetup.SinglePRSetup;
@@ -39,7 +39,7 @@ public class NetgraphResultsBrowserTest {
 		PRSetup.execGatePipeline(prs, "NetgraphResultsBrowser", doc);
 		
 		
-		GateAwareTreeIndexWithAnnIdMap index = new GateAwareTreeIndexWithAnnIdMap();
+		GateAwareTreeIndexExtended index = new GateAwareTreeIndexExtended(doc);
 		AnnotationSet as = doc.getAnnotations();
 		index.setNodesAS(as);
 		index.addDependecies(as.get(null, Collections.singleton("args")));			
