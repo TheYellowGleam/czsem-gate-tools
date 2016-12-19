@@ -36,8 +36,6 @@ public class FSQueryBuilderImpl implements FSQueryBuilder {
 	public void beginChildren() {
 		logger.debug("beginChildren");
 		
-		//curentNode.setEvaluator(ChildrenEvaluator.childrenEvaluatorInstance);
-		
 		nodeStack.push(curentParent);
 		curentParent = curentNode;		
 	}

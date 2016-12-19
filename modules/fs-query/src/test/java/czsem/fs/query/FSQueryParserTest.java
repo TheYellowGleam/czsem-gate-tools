@@ -225,16 +225,7 @@ public class FSQueryParserTest {
 	
 	@Test
 	public static void testForbiddenSubtree() throws SyntaxError {
-		evalQuery("[_name=a]([_name=X,_forbidden_subtree=true]([_name=r,id=6]))", new int [] {	
-				0, 
-				2, 
-				3, 
-				4, 
-				5, 
-				6, 
-				7, 
-		});
-
+		//single node
 		evalQuery("[_name=r]([_name=m]([_name=X,id=4,_forbidden_subtree=true]))", new int [] {	
 				0, 2,
 				0, 7,
@@ -244,6 +235,16 @@ public class FSQueryParserTest {
 				3, 6,
 		});
 
+		//more nodes
+		evalQuery("[_name=a]([_name=X,_forbidden_subtree=true]([_name=r,id=6]))", new int [] {	
+				0, 
+				2, 
+				3, 
+				4, 
+				5, 
+				6, 
+				7, 
+		});
 		evalQuery("[]([]([_forbidden_subtree=true]([id=6])))", new int [] {	
 				0, 2,
 				0, 7,
@@ -253,10 +254,32 @@ public class FSQueryParserTest {
 				3, 6,
 		});
 
+		//optional before forbidden subtree
+		evalQuery("[]([_optional=true,id=x]([_forbidden_subtree=true]([id=6])))", new int [] {	
+				0, 
+				2, 
+				3, 
+				4, 
+				5, 
+				6, 
+				7, 
+		});
+
+		//referencing restriction inside forbidden subtree
 		evalQuery("[]([]([_name=a]),[_forbidden_subtree=true]([id>{a.id}]))", new int [] {	
 				0, 2, 5,
 				1, 3, 6,
 		});
+		
+		//optional nodes inside forbidden subtree
+		evalQuery("[]([_name=a,_forbidden_subtree=true,_optional=true]([_name=b,_optional=true]([id=6])))", new int [] {	
+				2,
+				4,
+				5,
+				6,
+				7,
+		});
+		
 	}
 
 	@Test

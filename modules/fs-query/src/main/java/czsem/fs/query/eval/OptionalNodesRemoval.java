@@ -19,21 +19,25 @@ public class OptionalNodesRemoval implements Iterator<QueryNode> {
 	protected final List<QueryNode> optionalNodes;
 	protected Combinator combinator;
 	protected boolean loaded = false;
+	private boolean forbiddenSubtreeAllowed = false;
 	
-	public OptionalNodesRemoval(QueryNode rootNode, List<QueryNode> optionalNodes, Combinator combinator) {
+	public OptionalNodesRemoval(QueryNode rootNode, List<QueryNode> optionalNodes, Combinator combinator, boolean forbiddenSubtreeAllowed) {
 		this.rootNode = rootNode;
 		this.optionalNodes = optionalNodes;
 		this.combinator = combinator;
+		this.forbiddenSubtreeAllowed = forbiddenSubtreeAllowed;
 		//this.combinator = new Combinator(optionalNodes.size());
 	}
 
-	public static Iterable<QueryNode> iterateModifiedQueries(QueryNode rootNode, List<QueryNode> optionalNodes, OptionalEval optionalEval) {
+	public static Iterable<QueryNode> iterateModifiedQueries(
+			QueryNode rootNode, List<QueryNode> optionalNodes, OptionalEval optionalEval, boolean forbiddenSubtreeAllowed) {
+		
 		Combinator combinator = 
 				OptionalEval.MINIMAL.equals(optionalEval) ?
 						new ReverseCombinator(optionalNodes.size()) :
 						new Combinator(optionalNodes.size());
 		
-		return () -> new OptionalNodesRemoval(rootNode, optionalNodes, combinator);
+		return () -> new OptionalNodesRemoval(rootNode, optionalNodes, combinator, forbiddenSubtreeAllowed);
 	}
 	
 	@Override
@@ -66,20 +70,22 @@ public class OptionalNodesRemoval implements Iterator<QueryNode> {
 		
 		
 		for (QueryNode toRemoveNode : dup.getToRemoveDup()) {
-			dupNode = removeNode(dupNode, toRemoveNode);
+			dupNode = removeNode(dupNode, toRemoveNode, forbiddenSubtreeAllowed);
 			//System.err.println("REM("+toRemoveNode+"):  " + dupNode.toStringDeep());
 		}
 
 		return dupNode;
 	}
 
-	public static QueryNode removeNode(QueryNode rootNode, QueryNode toRemove) {
+	public static QueryNode removeNode(QueryNode rootNode, QueryNode toRemove, boolean forbiddenSubtreeAllowed) {
 		QueryNode parent = toRemove.getPrent();
 		List<QueryNode> children = toRemove.getChildren();
 		
 		if (parent == null) {
-			if (toRemove.isOptionalOrForbiddenSubtree())
-				throw new IllegalArgumentException("Root node cannot be marked as _[optional|forbidden]_subtree.");
+			if (toRemove.isOptionalSubtree()) 
+				throw new IllegalArgumentException("Root node cannot be marked as _optional_subtree.");
+			else if (toRemove.isForbiddenSubtree() && !forbiddenSubtreeAllowed)
+				throw new IllegalArgumentException("Root node cannot be marked as _forbidden_subtree.");
 			else if (children.size() != 1)
 				throw new IllegalArgumentException("Optional or forbidden root node has to have exactly one child, but found: " + toRemove.getChildren());
 			else {

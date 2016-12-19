@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import czsem.fs.query.FSQuery.NodeMatch;
+import czsem.fs.query.FSQuery.OptionalEval;
 import czsem.fs.query.FSQuery.QueryData;
 import czsem.fs.query.FSQuery.QueryMatch;
 import czsem.fs.query.QueryNode;
@@ -85,29 +86,50 @@ public class FinalResultsIteratorFilter implements CloneableIterator<QueryMatch>
 			QueryNode qn = nodeMatch.getQueryNode();
 			
 			QueryNode forbiddenSubtree = forbiddenSubtreeMap.get(qn);
-			
 			if (forbiddenSubtree == null) continue;
 			
 			Set<Integer> dataChildren = data.getIndex().getChildren(nodeMatch.getNodeId());
 			if (dataChildren == null) continue;
 			
+			List<QueryNode> optionalNodes = new ArrayList<>();
+			FsEvaluator.findOptional(forbiddenSubtree, optionalNodes); 
+			
 			for (int dataChild : dataChildren) {
+				
+				//System.err.println(forbiddenSubtree.toStringDeep());
 
 				Iterator<QueryMatch> res = forbiddenSubtreeEvaluator.getDirectResultsFor(forbiddenSubtree, dataChild);
-				if (res == null || ! res.hasNext()) continue;
+				if (forbiddenSubtreeMatches(queryMatch, res)) return false;
 				
-				while (res.hasNext()) {
-					QueryMatch next = res.next();
-					
-					List<NodeMatch> matchingNodes = new ArrayList<>(next.getMatchingNodes());
-					matchingNodes.addAll(queryMatch.getMatchingNodes());
-					
-					if (evalReferencingRestrictions(new QueryMatch(matchingNodes)))
-						return false;
+				if (optionalNodes.isEmpty()) continue;
+				
+				Iterable<QueryNode> iter = 
+						OptionalNodesRemoval.iterateModifiedQueries(
+								forbiddenSubtree, optionalNodes, OptionalEval.MAXIMAL, true);
+				
+				for (QueryNode queryNode : iter) {
+					res = forbiddenSubtreeEvaluator.getDirectResultsFor(queryNode, dataChild);
+					if (forbiddenSubtreeMatches(queryMatch, res)) return false;
 				}
 			}
 		}
 		return true;
+	}
+	
+	protected boolean forbiddenSubtreeMatches(QueryMatch queryMatch, Iterator<QueryMatch> res) {
+		if (res == null || ! res.hasNext()) return false;
+		
+		while (res.hasNext()) {
+			QueryMatch next = res.next();
+			
+			List<NodeMatch> matchingNodes = new ArrayList<>(next.getMatchingNodes());
+			matchingNodes.addAll(queryMatch.getMatchingNodes());
+			
+			if (evalReferencingRestrictions(new QueryMatch(matchingNodes)))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	protected boolean evalReferencingRestrictions(QueryMatch queryMatch) {

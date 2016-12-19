@@ -33,6 +33,19 @@ public class FsEvaluator {
 		this.rootNode = rootNode;
 		this.optionalNodes = optionalNodes;
 		this.data = data;
+		removeOptionalFromForbidden();
+	}
+
+	protected void removeOptionalFromForbidden() {
+		Map<QueryNode, QueryNode> f = new HashMap<>();
+		findForbidden(rootNode, f);
+		
+		for (QueryNode forbiddenNode : f.values()) {
+			List<QueryNode> o = new ArrayList<>();
+			findOptional(forbiddenNode, o);
+			
+			optionalNodes.removeAll(o);
+		}
 	}
 
 	public static Iterable<QueryMatch> evaluatePatternPriorityList(
@@ -112,7 +125,7 @@ public class FsEvaluator {
 		if (optionalNodes.isEmpty()) return res;
 		
 		
-		for (QueryNode queryNode : OptionalNodesRemoval.iterateModifiedQueries(rootNode, optionalNodes, getOptionalEval())) {
+		for (QueryNode queryNode : OptionalNodesRemoval.iterateModifiedQueries(rootNode, optionalNodes, getOptionalEval(), false)) {
 			
 			//tODO debug only
 			//System.err.println(queryNode.toStringDeep());
@@ -157,7 +170,7 @@ public class FsEvaluator {
 		findForbidden(queryNode, forbiddenSubtreeMap);
 		
 		for (QueryNode forbiddenNode : forbiddenSubtreeMap.values()) {
-			queryNode = OptionalNodesRemoval.removeNode(queryNode, forbiddenNode);
+			queryNode = OptionalNodesRemoval.removeNode(queryNode, forbiddenNode, false);
 		}
 		
 		return FinalResultsIteratorFilter.filter(
@@ -165,13 +178,25 @@ public class FsEvaluator {
 				data, getPatternIndex(), forbiddenSubtreeMap);
 	}
 
-	protected void findForbidden(QueryNode queryNode, Map<QueryNode, QueryNode> ret) {
+	public static void findForbidden(QueryNode queryNode, Map<QueryNode, QueryNode> ret) {
+		if (queryNode == null) return;
+		
 		if (queryNode.isForbiddenSubtree()) {
 			ret.put(queryNode.getPrent(), queryNode);
 		}
 		
 		for (QueryNode ch : queryNode.getChildren()) {
 			findForbidden(ch, ret);
+		}
+	}
+
+	public static void findOptional(QueryNode queryNode, List<QueryNode> ret) {
+		if (queryNode.isOptionalOrOptionalSubtree()) {
+			ret.add(queryNode);
+		}
+		
+		for (QueryNode ch : queryNode.getChildren()) {
+			findOptional(ch, ret);
 		}
 	}
 

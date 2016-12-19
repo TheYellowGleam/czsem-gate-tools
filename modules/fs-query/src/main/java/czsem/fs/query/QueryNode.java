@@ -146,6 +146,9 @@ public class QueryNode  {
 	public void setOptionalSubtree(boolean optionalSubtree) {
 		this.data.optionalSubtree = optionalSubtree;
 	}
+	public boolean isOptionalOrOptionalSubtree() {
+		return isOptionalSubtree() || isOptional();
+	}
 	public boolean isOptionalOrForbiddenSubtree() {
 		return isOptionalSubtree() || isForbiddenSubtree();
 	}
