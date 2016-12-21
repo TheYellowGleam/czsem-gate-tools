@@ -225,6 +225,18 @@ public class FSQueryParserTest {
 	
 	@Test
 	public static void testForbiddenSubtree() throws SyntaxError {
+		evalQuery("[]([_name=X,id@=4;5;6;7,_forbidden_subtree=true])", new int [] {	
+				4,
+				5,
+				6,
+				7
+		});
+
+		evalQuery("[]([],[_name=X,id@=4;6;7,_forbidden_subtree=true])", new int [] {	
+				2, 5,
+		});
+
+		
 		//single node
 		evalQuery("[_name=r]([_name=m]([_name=X,id=4,_forbidden_subtree=true]))", new int [] {	
 				0, 2,
