@@ -240,5 +240,13 @@ public class SequenceAnnotator
 	public char charAt(int index) {
 		return string_content.charAt(index);
 	}
+	public void forceStartOffset(long offset) {
+		last_start_index = 0;
+		last_length = 0;
+		correction = 0;
+
+		backup_last_index = 0;
+		backup_last_length = 0;
+	}
 
 }

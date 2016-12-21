@@ -242,4 +242,13 @@ public class Annotator implements AnnotatorInterface {
 		this.as = as; 		
 	}
 
+	public void forceStartOffset(long offset) {
+		nextSpaceTokenStart = offset;
+		seq_anot.forceStartOffset(offset);
+	}
+
+	public void annotateTokens(List<? extends SeqAnnotable> tokens) throws InvalidOffsetException {
+		safeAnnotateIterableSeq(tokens);
+	}
+
 }

@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,22 +22,13 @@ import org.slf4j.LoggerFactory;
 public class ProcessExec {
 	static Logger logger = LoggerFactory.getLogger(ProcessExec.class);
 
-	public static void copyStream(InputStream input, OutputStream output) throws IOException
-	{
-	    byte[] buffer = new byte[1024];
-	    int bytesRead;
-	    while ((bytesRead = input.read(buffer)) != -1)
-	    {
-	        output.write(buffer, 0, bytesRead);
-	    }
-	}
 	
 	public static Thread createSimpleCopyThread(final InputStream from, final OutputStream to) {
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					copyStream(from, to);
+					IOUtils.copy(from, to);
 				} catch (IOException e) {
 					logger.warn("Exception in SimpleCopyThread. Terminating...\nStreams: from: "+from+" to: "+to, e); 
 				}
