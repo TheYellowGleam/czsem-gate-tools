@@ -8,6 +8,8 @@ import gate.Document;
 public class SequenceAnnotator
 {
 	private static final Logger logger = LoggerFactory.getLogger(SequenceAnnotator.class);
+	
+	public static final int LARGE_SPACE = 5; 
 
 	private String string_content;
 	private int last_start_index;
@@ -96,7 +98,7 @@ public class SequenceAnnotator
 		if (new_index == -1) 
 			throw new CannotAnnotateCharacterSequence(token, string_content, last_start_index);
 		
-		if (new_index - last_start_index > 5)
+		if (new_index - last_start_index > LARGE_SPACE)
 		{
 			logger.debug(
 					String.format(
@@ -241,11 +243,11 @@ public class SequenceAnnotator
 		return string_content.charAt(index);
 	}
 	public void forceStartOffset(long offset) {
-		last_start_index = 0;
+		last_start_index = (int) offset;
 		last_length = 0;
 		correction = 0;
 
-		backup_last_index = 0;
+		backup_last_index = (int) offset;
 		backup_last_length = 0;
 	}
 

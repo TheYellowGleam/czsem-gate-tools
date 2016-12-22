@@ -176,10 +176,7 @@ public class Annotator implements AnnotatorInterface {
 				
 				nextSpaceTokenStart = seq_anot.lastEnd();
 			}
-
-
 		}
-		
 	}
 
 	protected void annotateIterableSeq(List<SeqAnnotable> sa) throws InvalidOffsetException {
@@ -243,7 +240,9 @@ public class Annotator implements AnnotatorInterface {
 	}
 
 	public void forceStartOffset(long offset) {
-		nextSpaceTokenStart = offset;
+		if (offset - nextSpaceTokenStart > SequenceAnnotator.LARGE_SPACE)
+			nextSpaceTokenStart = offset;
+		
 		seq_anot.forceStartOffset(offset);
 	}
 
