@@ -5,18 +5,26 @@ package czsem.netgraph.batik;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.swing.JSVGScrollPane;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGLocatable;
+import org.w3c.dom.svg.SVGRect;
 
 import czsem.netgraph.NetgraphView.Sizing;
 import czsem.netgraph.TreeComputation;
@@ -24,7 +32,18 @@ import czsem.netgraph.treesource.TreeSource;
 
 public class BatikView<E> {
 	private final TreeSource<E> treeSource;
-	private final JSVGCanvas svgCanvas = new JSVGCanvas();
+	
+	protected double currentScale = 1.0;
+	protected Dimension origSize;
+	
+	private JScrollPane pane;
+	private final JSVGCanvas svgCanvas = new JSVGCanvas() {
+		private static final long serialVersionUID = -4362953581038733653L;
+		
+		@Override
+		public void setMySize(Dimension d) {};
+		
+	};
 	
 	public BatikView(TreeSource<E> treeSource) {
 		this.treeSource = treeSource;
@@ -58,27 +77,17 @@ public class BatikView<E> {
 		Element svgRoot = doc.getDocumentElement();
 
 		Element groupRoot = doc.createElementNS(svgNS, "g");
-		groupRoot.setAttributeNS(null, "transform", "translate(30,20)");
-		
-
-		Element frame = doc.createElementNS(svgNS, "rect");
-		frame.setAttributeNS(null, "x", "0");
-		frame.setAttributeNS(null, "y", "0");
-		frame.setAttributeNS(null, "width", "400");
-		frame.setAttributeNS(null, "height", "300");
-		frame.setAttributeNS(null, "fill", "gray");
-		svgRoot.appendChild(frame);
 
 		svgRoot.appendChild(groupRoot);
 		
 		
-		svgRoot.setAttributeNS(null, "viewBox", "0 0 400 300");
-		svgRoot.setAttributeNS(null, "preserveAspectRatio", "xMinYMin");
+		//svgRoot.setAttributeNS(null, "viewBox", "0 0 400 300");
+		//svgRoot.setAttributeNS(null, "preserveAspectRatio", "xMinYMin");
 		//groupRoot.setAttributeNS(null, "preserveAspectRatio", "none");
 		
 		// Set the width and height attributes on the root 'svg' element.
-		svgRoot.setAttributeNS(null, "width", "400");
-		svgRoot.setAttributeNS(null, "height", "300");
+		//svgRoot.setAttributeNS(null, "width", "400");
+		//svgRoot.setAttributeNS(null, "height", "300");
 		
 		//edges
 		for (int i = 0; i < edges.length; i+=2) {
@@ -154,7 +163,6 @@ public class BatikView<E> {
 		// Attach 
 		svgRoot.appendChild(textStroke);
 		
-		new GVTBuilder().build(new BridgeContext(new UserAgentAdapter()), doc);
 		
 		SVGLocatable loc = (SVGLocatable) text;
 		SVGRect bbox = loc.getBBox();
@@ -174,16 +182,37 @@ public class BatikView<E> {
 		// Attach the rectangle to the root 'svg' element.
 		svgRoot.appendChild(rectangle);		
 		*/
+
+		new GVTBuilder().build(new BridgeContext(new UserAgentAdapter()), doc);
+
+		SVGLocatable loc = (SVGLocatable) svgRoot;
+		SVGRect box = loc.getBBox();
+		
+		origSize = new Dimension((int)(box.getWidth()+4), (int)(box.getHeight()+4));
+		
+		Element frame = doc.createElementNS(svgNS, "rect");
+		frame.setAttributeNS(null, "x", "0");
+		frame.setAttributeNS(null, "y", "0");
+		frame.setAttributeNS(null, "width", ""+origSize.getWidth());
+		frame.setAttributeNS(null, "height", ""+origSize.getHeight());
+		frame.setAttributeNS(null, "fill", "lightgray");
+		//frame.setAttributeNS(null, "stroke-width", "10");
+		//frame.setAttributeNS(null, "stroke", "gray");
+		svgRoot.insertBefore(frame, groupRoot);
+		
+		groupRoot.setAttributeNS(null, "transform", "translate("+(2-box.getX())+","+(2-box.getY())+")");
 		
 		svgCanvas.setSVGDocument((SVGDocument) doc);
 	}
 
 	public Component getComponent() {
 		svgCanvas.setRecenterOnResize(false);
-		svgCanvas.setMinimumSize(new Dimension(800, 600));
-		svgCanvas.setMaximumSize(new Dimension(800, 600));
-		svgCanvas.setPreferredSize(new Dimension(800, 600));
-		svgCanvas.setEnableImageZoomInteractor(true);
+		//svgCanvas.setMinimumSize(new Dimension(800, 600));
+		svgCanvas.setPreferredSize(origSize);
+		//svgCanvas.setEnableImageZoomInteractor(true);
+		//svgCanvas.setRequestFocusEnabled(true);
+		svgCanvas.setDoubleBufferedRendering(true);
+		
 		//svgCanvas.setRecenterOnResize(true);
 		
 	    //svgCanvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);		
@@ -194,10 +223,31 @@ public class BatikView<E> {
 		JPanel panel = new JPanel(true);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		panel.add(svgCanvas);
+		//panel.add(new JButton("Můůůůj douhýý textttttt"));
 		svgCanvas.setAlignmentX(Component.LEFT_ALIGNMENT);
 		svgCanvas.setAlignmentY(Component.TOP_ALIGNMENT);
 		
-		JScrollPane pane = new JScrollPane(panel);
+		svgCanvas.addMouseWheelListener(new MouseWheelListener() {
+			
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0)
+					return;
+				//TODO scroll the pane
+				
+				e.consume();
+				currentScale -= e.getPreciseWheelRotation()*0.2;
+				svgCanvas.setRenderingTransform(AffineTransform.getScaleInstance(currentScale, currentScale));
+				
+				svgCanvas.setPreferredSize(new Dimension(
+						(int) (origSize.getWidth()*currentScale), 
+						(int) (origSize.getHeight()*currentScale)));
+				
+				pane.getViewport().getView().revalidate();
+			}
+		});
+		
+		pane = new JScrollPane(panel); 
 		pane.setWheelScrollingEnabled(true);
 		return pane;
 	}
