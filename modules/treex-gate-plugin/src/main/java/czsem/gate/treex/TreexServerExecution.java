@@ -218,8 +218,13 @@ public class TreexServerExecution {
 		
 		
 		ProcessBuilder pb = new ProcessBuilder(cmdarray);
-		File treexDir = new File(cfg.getTreexDir());
-		pb.directory(treexDir);
+		String treexDirStr = cfg.getTreexDir();
+		File treexDir = null;
+		if (treexDirStr != null && !treexDirStr.trim().isEmpty()) {
+			treexDir = new File(treexDirStr);
+			pb.directory(treexDir);
+		}
+		
 		EnvMapHelper eh = new EnvMapHelper(pb.environment());
 		eh.append("PERL5LIB", path_sep + cfg.getTreexOnlineDir()); 
 		eh.append("PERL5LIB", path_sep + cfg.getTreexDir() + "/lib"); 
@@ -230,17 +235,19 @@ public class TreexServerExecution {
 		//The architecture specific directories are being searched by perl automatically
 		
 		//String tmt = cfg.getTmtRoot();
-		String tmt;
+		String tmt = null;
 		if (new File(System.getProperty("user.home")+"/.treex").exists())
 			tmt = System.getProperty("user.home")+"/.treex";
-		else
+		else if (treexDir != null)
 			tmt = treexDir.getParent();				
 
-		eh.setIfEmpty("TMT_ROOT", tmt);
+		if (tmt != null)
+			eh.setIfEmpty("TMT_ROOT", tmt);
+		
 		eh.setIfEmpty("JAVA_HOME", System.getProperty("java.home"));
 		
 		String treexConfigDir = cfg.getTreexConfigDir();
-		if (treexConfigDir != null && ! treexConfigDir.isEmpty()) {
+		if (treexConfigDir != null && ! treexConfigDir.trim().isEmpty()) {
 			eh.setIfEmpty("TREEX_CONFIG", treexConfigDir);
 		}		
 		
