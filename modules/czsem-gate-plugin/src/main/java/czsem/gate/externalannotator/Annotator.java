@@ -49,6 +49,31 @@ public class Annotator implements AnnotatorInterface {
 		public void setGateAnnId(Integer gate_annotation_id) {}
 	}
 	
+	public static class DependencyImpl extends AnnotableDependency {
+		protected final Integer parentGateAnnId;
+		protected final Integer childGateAnnId;
+
+		public DependencyImpl(Integer parentGateAnnId, Integer childGateAnnId) {
+			this.parentGateAnnId = parentGateAnnId;
+			this.childGateAnnId = childGateAnnId;
+		}
+
+		@Override
+		public String getAnnotationType() {
+			return "Dependency";
+		}
+
+		@Override
+		public Integer getParentGateId() {
+			return parentGateAnnId;
+		}
+
+		@Override
+		public Integer getChildGateId() {
+			return childGateAnnId;
+		}
+	}
+
 	public static interface SeqAnnotable extends Annotable {
 		public String getString();
 	}
@@ -119,7 +144,7 @@ public class Annotator implements AnnotatorInterface {
 		return Character.OTHER_PUNCTUATION == Character.getType(ch);
 	}
 	
-	protected void addSplitAnnotation() throws InvalidOffsetException {
+	public void addSplitAnnotation() throws InvalidOffsetException {
 		int end = seq_anot.lastEndInt();
 		
 		if (end > 0) end--;
@@ -235,6 +260,10 @@ public class Annotator implements AnnotatorInterface {
 		
 	}
 
+	public AnnotationSet getAS() {
+		return as;
+	}
+
 	public void setAS(AnnotationSet as) {
 		this.as = as; 		
 	}
@@ -249,5 +278,4 @@ public class Annotator implements AnnotatorInterface {
 	public void annotateTokens(List<? extends SeqAnnotable> tokens) throws InvalidOffsetException {
 		safeAnnotateIterableSeq(tokens);
 	}
-
 }
