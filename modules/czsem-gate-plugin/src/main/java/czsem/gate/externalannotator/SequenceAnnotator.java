@@ -250,5 +250,8 @@ public class SequenceAnnotator
 		backup_last_index = (int) offset;
 		backup_last_length = 0;
 	}
+	public String substring(int strat, int end) {
+		return string_content.substring(strat, end);
+	}
 
 }
