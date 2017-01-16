@@ -300,6 +300,10 @@ public class TreexLocalAnalyserTest {
 		Document doc5 = Factory.newDocument(str5);
 		corpus.add(doc5);
 		
+		String str6 = "Dne 31.12.2000 kolem 17.17 hodin zprostředkovaně oznámila Městská policie Prahy 7 na zdejší součást Policie ČR, že dne 31.12.2000 kolem 17:17 hodin přebíral strážník Jan Dědek ( nar. 31. 12. 1957, bytem: Vrchlabí 77, PSČ 777 77) vozidlo Škoda rz: 7TU7777 v barvách Městské policie (majitel: Hl. m. Praha, se sídlem Pátá ul. č. 7, Praha 7) přičemž zjistil, že toto vozidlo je poškozeno na předním nárazníku. Uvedené vozidlo předával strážník Jan Dědek (nar. 4.1.1983, bytem Nová 7777, Vrchlabí - Trutnov), který se není vědom, že by během užívání služebního vozidla MP došlo k nějaké kolizní situaci, při které by došlo k poškození uvedeného vozidla Škoda. Dosud nezjištěný strážník MP Prahy 7 řídil vozidlo Škoda, přičemž poškodil jeho přední nárazník a skutečnost nenahlásil.";		
+		Document doc6 = Factory.newDocument(str6);
+		corpus.add(doc6);
+		
 		analysis.setCorpus(corpus);
 		analysis.execute();
 		

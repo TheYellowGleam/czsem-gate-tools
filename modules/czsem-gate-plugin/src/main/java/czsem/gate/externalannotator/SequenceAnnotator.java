@@ -134,6 +134,9 @@ public class SequenceAnnotator
 					
 					if (loc_ch != toc_ch)
 					{
+						if (Character.toUpperCase(loc_ch) == Character.toUpperCase(toc_ch))
+							continue;
+						
 						//loc_ch < 32 encoded as space, caused by czsem.gate.treex.xmlwriter.FilteringCharSetXMLWriter
 						if (toc_ch == ' ' && loc_ch < 32) {
 							continue;							
