@@ -40,6 +40,7 @@ public class NetgraphFrame {
 			{
 				new StaticLabel("MMMMMMMMManželka"),
 				new StaticLabel("ACT"),
+				new StaticLabel("irregular"),
 			}, //1
 			{
 				new StaticLabel("klineta"),

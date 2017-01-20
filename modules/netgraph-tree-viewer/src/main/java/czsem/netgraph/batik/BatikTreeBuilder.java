@@ -12,7 +12,6 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGRect;
@@ -26,17 +25,20 @@ public class BatikTreeBuilder<E> {
 	
 	public static final class Sizing {
 
-		public static final int BORDER = 8;
-		public static final int NODE_V_SPACE = 60;
-		public static final int NODE_H_SPACE = 40;
 		public static final int NODE_DIAM = 15; 
 
-		public static final int LINE_HEIGHT = 20; 
+		public static final int BORDER = 8;
+		public static final int NODE_V_SPACE = NODE_DIAM*2;
+		public static final int NODE_H_SPACE = NODE_DIAM*2;
+
+		public static final int LINE_HEIGHT = 18; 
 		public static final int FIRST_LINE_Y = (int)(NODE_DIAM*1.7);
 		
 		public static final String FONT_SIZE = "16";
 		public static final String FONT_STROKE = "3";
 		public static final float TEXT_OFFSET_MIDDLE = 1.5f;
+
+		public static final String EDGE_STROKE = "5";
 	}
 	
 	public static final class Color {
@@ -45,6 +47,7 @@ public class BatikTreeBuilder<E> {
 		public static final String NODE_STROKE = "black";
 		public static final String NODE_FILL = "red";
 		public static final String FRAME_FILL = "lightgray";
+		public static final String EDGE_STROKE = "blue";
 		
 	}
 	
@@ -58,8 +61,9 @@ public class BatikTreeBuilder<E> {
 	
 	private SVGDocument doc;
 	protected Dimension origSize;
-	private E[] nodes;
+	private E[] srcNodes;
 	private SVGDocument tmpDoc;
+	private Element[] svgNodes;
 
 	public BatikTreeBuilder(TreeSource<E> treeSource) {
 		this.treeSource = treeSource;
@@ -70,19 +74,11 @@ public class BatikTreeBuilder<E> {
 		cmp.compute();
 		
 		int[] edges = cmp.collectEdges();
-		nodes = cmp.collectNodes();
+		srcNodes = cmp.collectNodes();
 		nodeOrder = cmp.contNodeOrder();
 		
-		//compute coordinates
-		x = new int[nodes.length];
-		y = new int[nodes.length];
+		svgNodes = new Element[srcNodes.length];
 
-		for (int j = 0; j < nodes.length; j++) {
-			x[j] = nodeOrder[j] * Sizing.NODE_H_SPACE;
-			y[j] = cmp.getDepth(j) * Sizing.NODE_V_SPACE;
-		}
-		
-		
 		//init batik
 		
 		DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
@@ -94,17 +90,53 @@ public class BatikTreeBuilder<E> {
 		Element svgRoot = doc.getDocumentElement();
 
 		Element groupRoot = doc.createElementNS(svgNS, "g");
-
 		svgRoot.appendChild(groupRoot);
-		
-		
+
+		Element edgesGroup = doc.createElementNS(svgNS, "g");
+		groupRoot.appendChild(edgesGroup);
 		
 		
 		//nodes
-		for (int j = 0; j < nodes.length; j++) {
-			groupRoot.appendChild(createNode(j));
+		for (int j = 0; j < srcNodes.length; j++) {
+			Element n = createSvgNode(j);
+			svgNodes[j] = n;
+			groupRoot.appendChild(n);
+		}
+
+		//draw SvgNodes nodes
+		buildSvgImage(doc);
+		
+		
+		
+		//compute coordinates
+		x = new int[srcNodes.length];
+		y = new int[srcNodes.length];
+
+		for (int j = 0; j < srcNodes.length; j++) {
+			x[j] = nodeOrder[j] * Sizing.NODE_H_SPACE;
+			y[j] = cmp.getDepth(j) * Sizing.NODE_V_SPACE;
+			svgNodes[j].setAttributeNS(null, "transform", "translate("+x[j]+","+y[j]+")");
 		}
 		
+		//draw edges
+		for (int i = 0; i < edges.length; i+=2) {
+			int a = edges[i];
+			int b = edges[i+1];
+			//g.drawLine(x[a]+x_shift, y[a], x[b]+x_shift, y[b]);
+			
+			// Create line.
+			Element line = buildElem("line")
+				.attr("x1", x[a])
+				.attr("y1", y[a])
+				.attr("x2", x[b])
+				.attr("y2", y[b])
+				.attr("stroke", 	  Color.EDGE_STROKE)
+				.attr("stroke-width", Sizing.EDGE_STROKE)
+				.get();
+
+			// Attach
+			edgesGroup.appendChild(line);
+		}
 		
 		
 		//compute the final size
@@ -113,14 +145,13 @@ public class BatikTreeBuilder<E> {
 		
 		origSize = new Dimension((int)(box.getWidth()+Sizing.BORDER*2), (int)(box.getHeight()+Sizing.BORDER*2));
 		
-		Element frame = doc.createElementNS(svgNS, "rect");
-		frame.setAttributeNS(null, "x", "0");
-		frame.setAttributeNS(null, "y", "0");
-		frame.setAttributeNS(null, "width", ""+origSize.getWidth());
-		frame.setAttributeNS(null, "height", ""+origSize.getHeight());
-		frame.setAttributeNS(null, "fill", Color.FRAME_FILL);
-		//frame.setAttributeNS(null, "stroke-width", "10");
-		//frame.setAttributeNS(null, "stroke", "gray");
+		Element frame = buildElem("rect")
+				.attr("x", "0")
+				.attr("y", "0")
+				.attr("width", origSize.getWidth())
+				.attr("height", origSize.getHeight())
+				.attr("fill", Color.FRAME_FILL)
+				.get();
 		svgRoot.insertBefore(frame, groupRoot);
 		
 		float trX = Sizing.BORDER-box.getX();
@@ -141,37 +172,35 @@ public class BatikTreeBuilder<E> {
 		return box;
 	}
 	
-	protected Node createNode(int j) {
-		Element nodeGroup = doc.createElementNS(svgNS, "g");
+	protected Element createSvgNode(int j) {
+		Element nodeGroup = buildElem("g").get();
+		Element strokeGroup = buildElem("g").get();
+		nodeGroup.appendChild(strokeGroup);
 		
-		x[j] = nodeOrder[j] * Sizing.NODE_H_SPACE;
-		y[j] = cmp.getDepth(j) * Sizing.NODE_V_SPACE;
-		
-		//TODO the final transform should be computed from the final sizes - including texts 
-		nodeGroup.setAttributeNS(null, "transform", "translate("+x[j]+","+y[j]+")");
-
 		// Create circle.
-		Element circile = doc.createElementNS(svgNS, "circle");
-		circile.setAttributeNS(null, "cx", "0");
-		circile.setAttributeNS(null, "cy", "0");
-		circile.setAttributeNS(null, "r", ""+Sizing.NODE_DIAM/2);
-		circile.setAttributeNS(null, "stroke", Color.NODE_STROKE);
-		circile.setAttributeNS(null, "fill", Color.NODE_FILL);
+		Element circile = buildElem("circle")
+				.attr("cx", 	0)
+				.attr("cy", 	0)
+				.attr("r", 		Sizing.NODE_DIAM/2)
+				.attr("stroke", Color.NODE_STROKE)
+				.attr("fill", 	Color.NODE_FILL)
+				.get(); 
+				
 		nodeGroup.appendChild(circile);
 		
 		
 		//labels
-		List<NodeLabel> labels = treeSource.getLabels(nodes[j]);
+		List<NodeLabel> labels = treeSource.getLabels(srcNodes[j]);
 		int line = 0;
 		for (NodeLabel nodeLabel : labels) {
-			appendLabel(nodeGroup, line, nodeLabel);
+			appendLabel(nodeGroup, strokeGroup, line, nodeLabel);
 			line++;
 		}
 		
 		return nodeGroup;
 	}
 
-	protected void appendLabel(Element nodeGroup, int line, NodeLabel nodeLabel) {
+	protected void appendLabel(Element nodeGroup, Element strokeGroup, int line, NodeLabel nodeLabel) {
 		int txtY = Sizing.FIRST_LINE_Y + line * Sizing.LINE_HEIGHT;
 		
 		float middleOffset = Sizing.TEXT_OFFSET_MIDDLE;
@@ -181,16 +210,15 @@ public class BatikTreeBuilder<E> {
 			middleOffset += getTextSize(middleText)/2;
 		}
 		
-		
-		createNiceText(nodeLabel.getMiddle(),    nodeGroup, "middle", 0,           txtY);
-		createNiceText(nodeLabel.getLeftPart(),  nodeGroup, "end",    -middleOffset, txtY);
-		createNiceText(nodeLabel.getRightPart(), nodeGroup, "start",  middleOffset,  txtY);
+		createNiceText(nodeGroup, strokeGroup, nodeLabel.getMiddle(),	"middle",0,            txtY);
+		createNiceText(nodeGroup, strokeGroup, nodeLabel.getLeftPart(), "end",  -middleOffset, txtY);
+		createNiceText(nodeGroup, strokeGroup, nodeLabel.getRightPart(),"start", middleOffset, txtY);
 	}
 	
 	protected float getTextSize(String middleText) {
 		SVGSVGElement root = tmpDoc.getRootElement();
 		
-		Element textElem = createTextElem(tmpDoc, middleText, "middle", "0", "0");
+		Element textElem = createTextElem(tmpDoc, middleText, "middle", "0", "0").get();
 		root.appendChild(textElem);
 		
 		buildSvgImage(tmpDoc);
@@ -200,7 +228,7 @@ public class BatikTreeBuilder<E> {
 		return box.getWidth();
 	}
 
-	protected void createNiceText(String textContent, Element nodeGroup, String anchor, float x, int y) {
+	protected void createNiceText(Element nodeGroup, Element strokeGroup, String textContent, String anchor, float x, int y) {
 		if (textContent == null || textContent.trim().isEmpty()) return;
 		
 		String xStr = Float.toString(x);
@@ -208,32 +236,32 @@ public class BatikTreeBuilder<E> {
 		
 		// Create text stroke
 		//https://www.w3.org/People/Dean/svg/texteffects/index.html
-		Element textStroke = createTextElem(doc, textContent, anchor, xStr, yStr);
-		textStroke.setAttributeNS(null, "fill", Color.TEXT_STROKE);
-		textStroke.setAttributeNS(null, "stroke", Color.TEXT_STROKE);
-		textStroke.setAttributeNS(null, "stroke-width", Sizing.FONT_STROKE);
+		ElemBuilder textStroke = createTextElem(doc, textContent, anchor, xStr, yStr);
+		textStroke.attr("fill", Color.TEXT_STROKE);
+		textStroke.attr("stroke", Color.TEXT_STROKE);
+		textStroke.attr("stroke-width", Sizing.FONT_STROKE);
 
 		// Attach 
-		nodeGroup.appendChild(textStroke);
+		strokeGroup.appendChild(textStroke.get());
 
 		// Create text.
-		Element text = createTextElem(doc, textContent, anchor, xStr, yStr);
-		text.setAttributeNS(null, "fill", Color.TEXT);
+		ElemBuilder text = createTextElem(doc, textContent, anchor, xStr, yStr);
+		text.attr("fill", Color.TEXT);
 
 		// Attach 
-		nodeGroup.appendChild(text);
+		nodeGroup.appendChild(text.get());
 	}
 	
-	public static Element createTextElem(SVGDocument doc, String textContent, String anchor, String xStr, String yStr) {
-		Element text = doc.createElementNS(svgNS, "text");
-		text.setTextContent(textContent);
-		text.setAttributeNS(null, "font-weight", "bold");
-		text.setAttributeNS(null, "alignment-baseline", "text-after-edge");
-		text.setAttributeNS(null, "text-anchor", anchor);
-		text.setAttributeNS(null, "font-size", Sizing.FONT_SIZE );
+	public static ElemBuilder createTextElem(SVGDocument doc, String textContent, String anchor, String xStr, String yStr) {
+		ElemBuilder text = new ElemBuilder(doc.createElementNS(svgNS, "text"));
+		text.textContent(textContent);
+		text.attr("font-weight", "bold");
+		text.attr("alignment-baseline", "text-after-edge");
+		text.attr("text-anchor", anchor);
+		text.attr("font-size", Sizing.FONT_SIZE );
 		
-		text.setAttributeNS(null, "x", xStr);
-		text.setAttributeNS(null, "y", yStr);
+		text.attr("x", xStr);
+		text.attr("y", yStr);
 		
 		return text;
 	}
@@ -245,6 +273,32 @@ public class BatikTreeBuilder<E> {
 	public Dimension getSize() {
 		return origSize;
 	}
+	
+	public ElemBuilder buildElem(String elemName) {
+		return new ElemBuilder(doc.createElementNS(svgNS, elemName));
+	}
+	
+	public static class ElemBuilder {
+		Element el;
 
+		public ElemBuilder(Element el) {
+			this.el = el;
+		}
 
+		public ElemBuilder textContent(String textContent) {
+			el.setTextContent(textContent);
+			return this;
+		}
+
+		public ElemBuilder attr(String attrName, Object attrValue) {
+			el.setAttributeNS(null, attrName, attrValue.toString());
+			return this;
+		}
+
+		public Element get() {
+			return el;
+		}
+		
+	}
+	
 }
