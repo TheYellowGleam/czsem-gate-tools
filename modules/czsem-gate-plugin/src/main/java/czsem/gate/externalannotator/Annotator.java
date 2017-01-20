@@ -125,8 +125,8 @@ public class Annotator implements AnnotatorInterface {
 
     	if (safeAnnotateSeq(s)) {
     		//search inside the last sentence only
-    		seq_anot.restoreToLastStartAndBackupCurrent();
     		addSplitAnnotation();
+    		seq_anot.restoreToLastStartAndBackupCurrent();
     	} else {
     		seq_anot.restorePreviousAndBackupCurrent();
     	}
@@ -147,9 +147,16 @@ public class Annotator implements AnnotatorInterface {
 	public void addSplitAnnotation() throws InvalidOffsetException {
 		int end = seq_anot.lastEndInt();
 		
-		if (end > 0) end--;
-		int start = end;
+		/*
+		System.err.print(">");
+		System.err.print(seq_anot.substring(0, end));
+		System.err.println("<");
+		/**/
 		
+		//if (end > 0) end--;
+		//this was wrong
+		int start = end;
+
 		if (start > 0 && isEndPunctuationChar(seq_anot.charAt(start-1)))
 			start--;
 		

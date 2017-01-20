@@ -7,6 +7,7 @@ import gate.FeatureMap;
 import gate.ProcessingResource;
 import gate.creole.ExecutionException;
 import gate.creole.ResourceInstantiationException;
+import gate.creole.SerialAnalyserController;
 import gate.util.GateException;
 
 import java.util.Arrays;
@@ -89,7 +90,7 @@ public abstract class PRSetup
 
 	public abstract ProcessingResource createPR() throws ResourceInstantiationException;
 
-	public static NotCheckingParametersSerialController buildGatePipeline(PRSetup [] prs, String name) throws ResourceInstantiationException	{
+	public static SerialAnalyserController buildGatePipeline(PRSetup [] prs, String name) throws ResourceInstantiationException	{
 		return buildGatePipeline(Arrays.asList(prs), name);
 	}
 
@@ -100,7 +101,7 @@ public abstract class PRSetup
 	}
 
 	public static void execGatePipeline(PRSetup [] prs, String name, Document doc) throws ResourceInstantiationException, ExecutionException {
-		NotCheckingParametersSerialController pipe = buildGatePipeline(Arrays.asList(prs), name);
+		SerialAnalyserController pipe = buildGatePipeline(Arrays.asList(prs), name);
 		Corpus corpus = Factory.newCorpus("corpus_for_"+name);
 		pipe.setCorpus(corpus);
 		corpus.add(doc);
@@ -110,7 +111,7 @@ public abstract class PRSetup
 		GateUtils.deepDeleteController(pipe);
 	}
 
-	public static NotCheckingParametersSerialController buildGatePipeline(List<PRSetup> prs, String name) throws ResourceInstantiationException
+	public static SerialAnalyserController buildGatePipeline(List<PRSetup> prs, String name) throws ResourceInstantiationException
 	{
 		try {
 			GateUtils.registerComponentIfNot(NotCheckingParametersSerialController.class);
@@ -118,8 +119,8 @@ public abstract class PRSetup
 			throw new ResourceInstantiationException(e1);
 		}
 		
-		NotCheckingParametersSerialController controller = (NotCheckingParametersSerialController)	    	   
-			Factory.createResource(NotCheckingParametersSerialController.class.getCanonicalName());
+		SerialAnalyserController controller = (SerialAnalyserController) Factory.createResource(
+			NotCheckingParametersSerialController.class.getCanonicalName());
 		
 		controller.setName(name);
 	
