@@ -64,7 +64,6 @@ public class BatikTreeBuilder<E> {
 	private SVGDocument doc;
 	protected Dimension origSize;
 	private E[] srcNodes;
-//	private SVGDocument tmpDoc;
 	private Element[] svgNodes;
 	private Element mainGroupRoot;
 
@@ -87,7 +86,6 @@ public class BatikTreeBuilder<E> {
 		DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
 		String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
 		doc = (SVGDocument) impl.createDocument(svgNS, "svg", null);
-		//tmpDoc = (SVGDocument) impl.createDocument(svgNS, "svg", null);
 		
 		// Get the root element (the 'svg' element).
 		Element svgRoot = doc.getDocumentElement();
@@ -107,7 +105,10 @@ public class BatikTreeBuilder<E> {
 			Element n = createSvgNode(j);
 			svgNodes[j] = n;
 		}
-
+		
+		
+		//compute coordinates
+		//prepare sizes 
 		SVGRect[] svgNodeBoxes = Arrays.stream(svgNodes)
 				.map(BatikTreeBuilder::getBBox)
 				.toArray(SVGRect[]::new);
@@ -124,16 +125,14 @@ public class BatikTreeBuilder<E> {
 			yOffsetForDepth[d] = Sizing.NODE_V_SPACE + yOffsetForDepth[d-1] + maxHeightPerDepth[d-1];
 		}
 		
-		//compute coordinates
+		//compute
 		x = new int[srcNodes.length];
 		y = new double[srcNodes.length];
 
 		for (int j = 0; j < srcNodes.length; j++) {
 			x[j] = nodeOrder[j] * Sizing.NODE_H_SPACE;
-			//y[j] = cmp.getDepth(j) * Sizing.NODE_V_SPACE;
 			
-			int d = cmp.getDepth(j);
-			y[j] = yOffsetForDepth[d];
+			y[j] = yOffsetForDepth[cmp.getDepth(j)];
 				
 			svgNodes[j].setAttributeNS(null, "transform", "translate("+x[j]+","+y[j]+")");
 		}
@@ -184,44 +183,11 @@ public class BatikTreeBuilder<E> {
 	    ctx.setDynamicState(BridgeContext.DYNAMIC);
 	    GVTBuilder builder = new GVTBuilder();
 	    builder.build(ctx, doc); 		
-		
-		//build the image
-		//new GVTBuilder().build(new BridgeContext(new UserAgentAdapter()), doc);
 	}
-	
-	/*
-	public static Dimension2DDouble getRecursiveDim(Dimension2DDouble d, Node elem) {
-		System.err.println(elem.getLocalName() + " "+elem.getTextContent());
-		
-		if ("g".equals(elem.getLocalName())) {
-			NodeList ch = elem.getChildNodes();
-			for (int i = 0; i < ch.getLength(); i++) {
-				getRecursiveDim(d, ch.item(i));
-			}
-			return d;
-		}
-			
-		//SVGRect box = getBBox(elem);
-		
-		SVGLocatable loc = (SVGLocatable) elem;
-		SVGRect box = loc.getBBox();
-		
-		System.err.format("%f %f %f %f\n", box.getX(), box.getY(), box.getWidth(), box.getHeight());
-		
-		d.setSize(
-			Math.max(d.getWidth(), box.getWidth()),
-			Math.max(d.getHeight(), box.getHeight()));
-		return d;
-	}
-	*/
 	
 	public static SVGRect getBBox(Node elem) {  
-
 		SVGLocatable loc = (SVGLocatable) elem;
 		SVGRect box = loc.getBBox();
-		
-		//System.err.format("%f %f %f %f\n", box.getX(), box.getY(), box.getWidth(), box.getHeight());
-		
 		return box;
 	}
 	
