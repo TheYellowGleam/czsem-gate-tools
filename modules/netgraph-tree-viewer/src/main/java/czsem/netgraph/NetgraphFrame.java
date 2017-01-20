@@ -62,6 +62,7 @@ public class NetgraphFrame {
 				new StaticLabel("FPHR"),
 				new StaticLabel("t_lemma", "=", "nejen"),
 				new StaticLabel("tttt_lemma", "==", "ne"),
+				new StaticLabel("tttt_lemma", "======", "ne"),
 				new StaticLabel("a", ".", "bbbbbbbb3210gpy"),
 			}, //6
 			{
