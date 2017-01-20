@@ -118,12 +118,9 @@ public class TreeComputation<E> {
 		
 		return ret;
 	}
-
-
-	public int[] contNodeOrder() {
-		int[] ret = new int[nodes.size()];
-		
-		
+	
+	
+	public Integer[] computeSortedNodes() {
 		Integer[] sortOredr =
 				treeSource.getOrderComparator() == null
 			?
@@ -131,6 +128,15 @@ public class TreeComputation<E> {
 			:
 				computeOrder()
 		;
+				
+		return sortOredr;
+	}
+
+
+	public int[] computeNodeOrder() {
+		int[] ret = new int[nodes.size()];
+		
+		Integer[] sortOredr = computeSortedNodes();
 				
 		for (int r = 0; r < ret.length; r++) {
 			ret[sortOredr[r]] = r;

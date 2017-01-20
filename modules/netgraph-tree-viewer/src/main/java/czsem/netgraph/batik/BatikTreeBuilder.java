@@ -28,7 +28,8 @@ public class BatikTreeBuilder<E> {
 
 		public static final int BORDER = 8;
 		public static final float NODE_V_SPACE = NODE_DIAM/2;
-		public static final int NODE_H_SPACE = NODE_DIAM*2;
+		public static final int NODE_H_SPACE = NODE_DIAM;
+		public static final int TEXT_H_SPACE = NODE_DIAM;
 
 		public static final int LINE_HEIGHT = 18; 
 		public static final int FIRST_LINE_Y = (int)(NODE_DIAM*1.7);
@@ -38,6 +39,8 @@ public class BatikTreeBuilder<E> {
 		public static final float TEXT_OFFSET_MIDDLE = 1.5f;
 
 		public static final String EDGE_STROKE = "5";
+
+		public static final String NODE_STROKE = "3";
 	}
 	
 	public static final class Color {
@@ -51,9 +54,9 @@ public class BatikTreeBuilder<E> {
 	}
 	
 	private final TreeSource<E> treeSource;
-	private int[] x;
-	private double[] y;
-	private int[] nodeOrder;
+	private float[] x;
+	private float[] y;
+	private Integer[] sortedNodes;
 	private TreeComputation<E> cmp;
 	
 	public static final String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
@@ -74,7 +77,7 @@ public class BatikTreeBuilder<E> {
 		
 		int[] edges = cmp.collectEdges();
 		srcNodes = cmp.collectNodes();
-		nodeOrder = cmp.contNodeOrder();
+		sortedNodes = cmp.computeSortedNodes();
 		
 		svgNodes = new Element[srcNodes.length];
 
@@ -121,18 +124,54 @@ public class BatikTreeBuilder<E> {
 		for (int d = 1; d < yOffsetForDepth.length; d++) {
 			yOffsetForDepth[d] = Sizing.NODE_V_SPACE + yOffsetForDepth[d-1] + maxHeightPerDepth[d-1];
 		}
+
+		float lastDirtyXOffsetForDepth[] = new float[cmp.getMaxDepth()+1];
+		for (int i = 0; i < lastDirtyXOffsetForDepth.length; i++) {
+			lastDirtyXOffsetForDepth[i] = -Float.MAX_VALUE;
+		}
+		
 		
 		//compute
-		x = new int[srcNodes.length];
-		y = new double[srcNodes.length];
+		//x
+		//the initial position of each node is centered around 0 x coordinate 
+		x = new float[srcNodes.length];
+		
+		int n0 = sortedNodes[0];
+		float w0 = svgNodeBoxes[n0].getWidth();
+		float x0 = svgNodeBoxes[n0].getX();
+		x[n0] = 0f;
+		lastDirtyXOffsetForDepth[cmp.getDepth(n0)] = x0 + w0;  
+		
+		for (int j = 1; j < srcNodes.length; j++) {
+			float prevX = x[sortedNodes[j-1]];
+			int n = sortedNodes[j];
+			
+			//System.err.println(srcNodes[n] +" "+ treeSource.getLabels(srcNodes[n]).get(0).getMiddle());
+			
+			float width = svgNodeBoxes[n].getWidth();
+			float origXN = svgNodeBoxes[n].getX();
+			int d = cmp.getDepth(n);
+			
+			x[n] = prevX + Sizing.NODE_H_SPACE;
+			
+			if (x[n]+origXN < lastDirtyXOffsetForDepth[d] + Sizing.TEXT_H_SPACE) {
+				x[n] = lastDirtyXOffsetForDepth[d] - origXN + Sizing.TEXT_H_SPACE;
+			}
+			
+			lastDirtyXOffsetForDepth[d] = x[n] + width + origXN;
+		}
+
+		//y
+		y = new float[srcNodes.length];
 
 		for (int j = 0; j < srcNodes.length; j++) {
-			x[j] = nodeOrder[j] * Sizing.NODE_H_SPACE;
 			
 			y[j] = yOffsetForDepth[cmp.getDepth(j)];
 				
 			svgNodes[j].setAttributeNS(null, "transform", "translate("+x[j]+","+y[j]+")");
 		}
+		
+		
 		
 		//draw edges
 		for (int i = 0; i < edges.length; i+=2) {
@@ -200,6 +239,7 @@ public class BatikTreeBuilder<E> {
 				.attr("cy", 	0)
 				.attr("r", 		Sizing.NODE_DIAM/2)
 				.attr("stroke", Color.NODE_STROKE)
+				.attr("stroke-width", Sizing.NODE_STROKE)
 				.attr("fill", 	Color.NODE_FILL)
 				.get(); 
 				

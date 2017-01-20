@@ -65,7 +65,7 @@ public class BatikView<E> {
 		
 		int[] edges = cmp.collectEdges();
 		E[] nodes = cmp.collectNodes();
-		int [] nodeOrder = cmp.contNodeOrder();
+		int [] nodeOrder = cmp.computeNodeOrder();
 		
 		//compute coordinates
 		int[] x = new int[nodes.length];
