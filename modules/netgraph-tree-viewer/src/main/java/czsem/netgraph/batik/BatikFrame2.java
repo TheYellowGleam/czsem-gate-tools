@@ -16,9 +16,10 @@ public class BatikFrame2 {
 		
 		BatikView<Integer> view = new BatikView<>(new TestSource());
         
+		frame.setLocationRelativeTo(null);		
 		frame.setSize(800, 600);
 		frame.getContentPane().add(view.getComponent());
-		//frame.pack();
+		frame.pack();
 		frame.setVisible(true);
 	}
 

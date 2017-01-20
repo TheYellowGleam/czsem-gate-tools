@@ -48,10 +48,18 @@ public class BatikView<E> {
 	public BatikView(TreeSource<E> treeSource) {
 		this.treeSource = treeSource;
 		
-		fillCanvas();
+		fillCanvasNew();
 	}
 
-	protected void fillCanvas() {
+	protected void fillCanvasNew() {
+		BatikTreeBuilder<E> b = new BatikTreeBuilder<>(treeSource);
+		b.buildNewSvgTree();
+		
+		origSize = b.getSize();
+		svgCanvas.setSVGDocument(b.getDoc());
+	}
+	
+	protected void fillCanvasOld() {
 		TreeComputation<E> cmp = new TreeComputation<>(treeSource);
 		cmp.compute();
 		
