@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.anim.dom.SVGOMRectElement;
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.swing.JSVGCanvas;
@@ -93,7 +94,7 @@ public class BatikFrame1 {
 		text.setTextContent("my text");
 		text.setAttributeNS(null, "style", "font-weight: bold;text-anchor: middle;font-size:24;");
 		text.setAttributeNS(null, "x", "50");
-		text.setAttributeNS(null, "y", "80");
+		text.setAttributeNS(null, "y", "200");
 		text.setAttributeNS(null, "fill", "#99f");
 		text.setAttributeNS(null, "stroke", "#99f");
 		text.setAttributeNS(null, "stroke-width", "3");
@@ -103,7 +104,7 @@ public class BatikFrame1 {
 
 		// Create text stroke
 		Element textStroke = doc.createElementNS(svgNS, "text");
-		textStroke.setTextContent("my text");
+		textStroke.setTextContent("my text 2222222222");
 		textStroke.setAttributeNS(null, "style", "font-weight: bold;text-anchor: middle;font-size:24;");
 		textStroke.setAttributeNS(null, "x", "50");
 		textStroke.setAttributeNS(null, "y", "80");
@@ -112,14 +113,39 @@ public class BatikFrame1 {
 		// Attach 
 		svgRoot.appendChild(textStroke);
 		
-		new GVTBuilder().build(new BridgeContext(new UserAgentAdapter()), doc);
+		//new GVTBuilder().build(new BridgeContext(new UserAgentAdapter()), doc);
 		
-		SVGLocatable loc = (SVGLocatable) text;
-		SVGRect bbox = loc.getBBox();
-		System.err.println("c "+text.getClass());
+
+		UserAgentAdapter userAgent = new UserAgentAdapter();
+	    DocumentLoader loader = new DocumentLoader(userAgent);
+	    BridgeContext ctx = new BridgeContext(userAgent, loader); 
+	    ctx.setDynamicState(BridgeContext.DYNAMIC);
+	    GVTBuilder builder = new GVTBuilder();
+	    builder.build(ctx, doc); 		
+		
+		Element elem;
+		SVGLocatable loc;
+		SVGRect bbox; 
+
+		elem = textStroke;
+		loc = (SVGLocatable) elem;
+		bbox = loc.getBBox();
+		System.err.println("i "+loc);
+		System.err.println("c "+loc.getClass());
+		System.err.println("t "+elem.getTextContent());
 		System.err.println("h "+loc.getBBox().getHeight());
 		System.err.println("w "+loc.getBBox().getWidth());
-		
+
+/**/
+		elem = text;
+		loc = (SVGLocatable) elem;
+		bbox = loc.getBBox();
+		System.err.println("i "+loc);
+		System.err.println("c "+loc.getClass());
+		System.err.println("t "+elem.getTextContent());
+		System.err.println("h "+loc.getBBox().getHeight());
+		System.err.println("w "+loc.getBBox().getWidth());
+/**/		
 		// Create the rectangle.
 		SVGOMRectElement rectangle = (SVGOMRectElement) doc.createElementNS(svgNS, "rect");
 		rectangle.setAttributeNS(null, "x", ""+bbox.getX());

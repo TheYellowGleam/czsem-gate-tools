@@ -45,6 +45,7 @@ public class NetgraphFrame {
 			{
 				new StaticLabel("klineta"),
 				new StaticLabel("APP"),
+				new StaticLabel("shift", "=", "looooong text")
 			}, //2
 			{
 				new StaticLabel("má"),

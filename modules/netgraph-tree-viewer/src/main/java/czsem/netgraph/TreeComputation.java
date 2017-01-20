@@ -199,6 +199,11 @@ public class TreeComputation<E> {
 	{
 	    return Arrays.copyOf(array, length);
 	}
+
+
+	public int getMaxDepth() {
+		return maxDepth;
+	}
 	
 }
 
