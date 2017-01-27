@@ -86,7 +86,7 @@ public class BatikTreeBuilder<E> {
 		protected int slectedNodeIndex = -1;
 		
 		public void fireSlectionChanged(int nodeIndex) {
-			if (slectedNodeIndex != -1) {
+			if (slectedNodeIndex >= 0 && slectedNodeIndex < circles.length) {
 				circles[slectedNodeIndex].setAttributeNS(null, "fill", Color.NODE_FILL);
 				circles[slectedNodeIndex].setAttributeNS(null, "stroke", Color.NODE_STROKE);
 			}
@@ -97,6 +97,10 @@ public class BatikTreeBuilder<E> {
 			circles[slectedNodeIndex].setAttributeNS(null, "stroke", Color.NODE_STROKE_SELECTED);
 		}
 
+		public void discardSeletion() {
+			slectedNodeIndex = -1;
+		}
+		
 		public E[] getNodes() {return nodes;}
 		public void setNodes(E[] nodes) {this.nodes = nodes;}
 		public Element[] getCircles() {return circles;}
@@ -133,6 +137,7 @@ public class BatikTreeBuilder<E> {
 		srcNodes = cmp.collectNodes();
 		sortedNodes = cmp.computeSortedNodes();
 		
+		selHandler.discardSeletion();
 		selHandler.setNodes(srcNodes);
 
 		
