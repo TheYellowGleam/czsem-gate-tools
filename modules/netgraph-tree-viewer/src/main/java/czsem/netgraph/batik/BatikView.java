@@ -56,6 +56,7 @@ public class BatikView<E> {
 		b.buildNewSvgTree();
 		
 		origSize = b.getSize();
+		svgCanvas.setBackground(BatikTreeBuilder.Color.CANVAS_BACKGROUND);
 		svgCanvas.setSVGDocument(b.getDoc());
 	}
 	

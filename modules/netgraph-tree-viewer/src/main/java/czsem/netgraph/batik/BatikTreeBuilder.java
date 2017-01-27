@@ -24,32 +24,35 @@ public class BatikTreeBuilder<E> {
 	
 	public static final class Sizing {
 
-		public static final int NODE_DIAM = 15; 
+		public static final int NODE_DIAM = 9; 
 
 		public static final int BORDER = 8;
 		public static final float NODE_V_SPACE = NODE_DIAM/2;
 		public static final int NODE_H_SPACE = NODE_DIAM;
 		public static final int TEXT_H_SPACE = NODE_DIAM;
 
-		public static final int LINE_HEIGHT = 18; 
-		public static final int FIRST_LINE_Y = (int)(NODE_DIAM*1.7);
+		public static final int LINE_HEIGHT = 13; 
+		public static final int FIRST_LINE_Y = (int)(NODE_DIAM*2.0);
 		
-		public static final String FONT_SIZE = "16";
-		public static final String FONT_STROKE = "3";
+		public static final String FONT_SIZE = "12";
+		public static final String FONT_STROKE = "5";
 		public static final float TEXT_OFFSET_MIDDLE = 1.5f;
 
-		public static final String EDGE_STROKE = "5";
+		public static final String EDGE_STROKE = "2";
 
-		public static final String NODE_STROKE = "3";
+		public static final String NODE_STROKE = "2";
 	}
 	
 	public static final class Color {
-		public static final String TEXT_STROKE = "#99f";
-		public static final String TEXT = "black";
-		public static final String NODE_STROKE = "black";
-		public static final String NODE_FILL = "red";
-		public static final String FRAME_FILL = "lightgray";
-		public static final String EDGE_STROKE = "blue";
+		public static final String TEXT_STROKE = "white";
+		public static final String TEXT_STROKE_OPACITY = "0.9";
+		public static final String TEXT = "#333";
+		public static final String NODE_STROKE = "#555555";
+		public static final String NODE_FILL = "#4488ff";
+		public static final String EDGE_STROKE = "#336699";
+		public static final String FRAME_FILL = "white";
+		public static final String FRAME_OPACITY = "0";
+		public static final java.awt.Color CANVAS_BACKGROUND = java.awt.Color.WHITE;
 		
 	}
 	
@@ -204,6 +207,7 @@ public class BatikTreeBuilder<E> {
 				.attr("width", origSize.getWidth())
 				.attr("height", origSize.getHeight())
 				.attr("fill", Color.FRAME_FILL)
+				.attr("opacity", Color.FRAME_OPACITY)				
 				.get();
 		svgRoot.insertBefore(frame, mainGroupRoot);
 		
@@ -292,6 +296,7 @@ public class BatikTreeBuilder<E> {
 		textStroke.attr("fill", Color.TEXT_STROKE);
 		textStroke.attr("stroke", Color.TEXT_STROKE);
 		textStroke.attr("stroke-width", Sizing.FONT_STROKE);
+		textStroke.attr("opacity", Color.TEXT_STROKE_OPACITY);				
 
 		// Attach 
 		strokeGroup.appendChild(textStroke.get());
@@ -309,9 +314,10 @@ public class BatikTreeBuilder<E> {
 	public static ElemBuilder createTextElem(SVGDocument doc, String textContent, String anchor, String xStr, String yStr) {
 		ElemBuilder text = new ElemBuilder(doc.createElementNS(svgNS, "text"));
 		text.textContent(textContent);
-		text.attr("font-weight", "bold");
+		//text.attr("font-weight", "bold");
 		text.attr("alignment-baseline", "text-after-edge");
 		text.attr("text-anchor", anchor);
+		text.attr("font-family", "Arial");
 		text.attr("font-size", Sizing.FONT_SIZE );
 		
 		text.attr("x", xStr);
