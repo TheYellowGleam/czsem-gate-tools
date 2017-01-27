@@ -12,6 +12,9 @@ import org.apache.batik.bridge.UserAgentAdapter;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGRect;
@@ -27,7 +30,7 @@ public class BatikTreeBuilder<E> {
 		public static final int NODE_DIAM = 9; 
 
 		public static final int BORDER = 8;
-		public static final float NODE_V_SPACE = NODE_DIAM/2;
+		public static final float NODE_V_SPACE = (int)(NODE_DIAM*1.3);
 		public static final int NODE_H_SPACE = NODE_DIAM;
 		public static final int TEXT_H_SPACE = NODE_DIAM;
 
@@ -53,10 +56,17 @@ public class BatikTreeBuilder<E> {
 		public static final String FRAME_FILL = "white";
 		public static final String FRAME_OPACITY = "0";
 		public static final java.awt.Color CANVAS_BACKGROUND = java.awt.Color.WHITE;
+		public static final String NODE_FILL_SELECTED = "#EFC94C";
+		public static final String NODE_STROKE_SELECTED = "#AD1B32";
+		
+		
+		
 		
 	}
 	
 	private final TreeSource<E> treeSource;
+	private final SelectionHandlder<E> selHandler;
+		
 	private float[] x;
 	private float[] y;
 	private Integer[] sortedNodes;
@@ -69,8 +79,49 @@ public class BatikTreeBuilder<E> {
 	private E[] srcNodes;
 	private Element[] svgNodes;
 	private Element mainGroupRoot;
+	
+	public static class SelectionHandlder<E> {
+		protected E[] nodes; 
+		protected Element[] circles;
+		protected int slectedNodeIndex = -1;
+		
+		public void fireSlectionChanged(int nodeIndex) {
+			if (slectedNodeIndex != -1) {
+				circles[slectedNodeIndex].setAttributeNS(null, "fill", Color.NODE_FILL);
+				circles[slectedNodeIndex].setAttributeNS(null, "stroke", Color.NODE_STROKE);
+			}
+			
+			slectedNodeIndex = nodeIndex;
+			
+			circles[slectedNodeIndex].setAttributeNS(null, "fill", Color.NODE_FILL_SELECTED);
+			circles[slectedNodeIndex].setAttributeNS(null, "stroke", Color.NODE_STROKE_SELECTED);
+		}
 
-	public BatikTreeBuilder(TreeSource<E> treeSource) {
+		public E[] getNodes() {return nodes;}
+		public void setNodes(E[] nodes) {this.nodes = nodes;}
+		public Element[] getCircles() {return circles;}
+		public void setCircles(Element[] circles) {this.circles = circles;}
+	}
+	
+	public static class SelectNodeEvent implements EventListener {
+
+		private SelectionHandlder<?> selectionHandlder;
+		private int nodeIndex;
+
+		public SelectNodeEvent(SelectionHandlder<?> selectionHandlder, int nodeIndex) {
+			this.selectionHandlder = selectionHandlder;
+			this.nodeIndex = nodeIndex;
+		}
+
+		@Override
+		public void handleEvent(Event evt) {
+			selectionHandlder.fireSlectionChanged(nodeIndex);
+		}
+		
+	}
+	
+	public BatikTreeBuilder(SelectionHandlder<E> selHandler, TreeSource<E> treeSource) {
+		this.selHandler = selHandler;
 		this.treeSource = treeSource;
 	}
 	
@@ -82,7 +133,12 @@ public class BatikTreeBuilder<E> {
 		srcNodes = cmp.collectNodes();
 		sortedNodes = cmp.computeSortedNodes();
 		
+		selHandler.setNodes(srcNodes);
+
+		
 		svgNodes = new Element[srcNodes.length];
+		selHandler.setCircles(new Element[srcNodes.length]);
+
 
 		//init batik
 		
@@ -257,6 +313,12 @@ public class BatikTreeBuilder<E> {
 			appendLabel(nodeGroup, strokeGroup, line, nodeLabel);
 			line++;
 		}
+		
+		
+		//addEvent
+		selHandler.getCircles()[j] = circile;
+		EventTarget t = (EventTarget) nodeGroup;
+		t.addEventListener("click", new SelectNodeEvent(selHandler, j), true);
 		
 		return nodeGroup;
 	}

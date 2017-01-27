@@ -28,9 +28,10 @@ import org.w3c.dom.svg.SVGRect;
 
 import czsem.netgraph.NetgraphView.Sizing;
 import czsem.netgraph.TreeComputation;
+import czsem.netgraph.batik.BatikTreeBuilder.SelectionHandlder;
 import czsem.netgraph.treesource.TreeSource;
 
-public class BatikView<E> {
+public class BatikView<E> extends SelectionHandlder<E> implements MouseWheelListener {
 	private final TreeSource<E> treeSource;
 	
 	protected double currentScale = 1.0;
@@ -44,20 +45,20 @@ public class BatikView<E> {
 		public void setMySize(Dimension d) {};
 		
 	};
-	
+
 	public BatikView(TreeSource<E> treeSource) {
 		this.treeSource = treeSource;
-		
-		fillCanvasNew();
 	}
 
 	protected void fillCanvasNew() {
-		BatikTreeBuilder<E> b = new BatikTreeBuilder<>(treeSource);
+		BatikTreeBuilder<E> b = new BatikTreeBuilder<>(this, treeSource);
 		b.buildNewSvgTree();
 		
 		origSize = b.getSize();
 		svgCanvas.setBackground(BatikTreeBuilder.Color.CANVAS_BACKGROUND);
 		svgCanvas.setSVGDocument(b.getDoc());
+
+		svgCanvas.setPreferredSize(origSize);
 	}
 	
 	protected void fillCanvasOld() {
@@ -217,14 +218,13 @@ public class BatikView<E> {
 	public Component getComponent() {
 		svgCanvas.setRecenterOnResize(false);
 		//svgCanvas.setMinimumSize(new Dimension(800, 600));
-		svgCanvas.setPreferredSize(origSize);
 		//svgCanvas.setEnableImageZoomInteractor(true);
 		//svgCanvas.setRequestFocusEnabled(true);
 		svgCanvas.setDoubleBufferedRendering(true);
 		
 		//svgCanvas.setRecenterOnResize(true);
 		
-	    //svgCanvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);		
+	    svgCanvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
 		//JSVGScrollPane scroll = new JSVGScrollPane(svgCanvas);
 		//scroll.setScrollbarsAlwaysVisible(true);
 		//scroll.setPreferredSize(new Dimension(600, 400));
@@ -236,29 +236,29 @@ public class BatikView<E> {
 		svgCanvas.setAlignmentX(Component.LEFT_ALIGNMENT);
 		svgCanvas.setAlignmentY(Component.TOP_ALIGNMENT);
 		
-		svgCanvas.addMouseWheelListener(new MouseWheelListener() {
+		svgCanvas.addMouseWheelListener(this);
 			
-			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0)
-					return;
-				//TODO scroll the pane
-				
-				e.consume();
-				currentScale -= e.getPreciseWheelRotation()*0.2;
-				svgCanvas.setRenderingTransform(AffineTransform.getScaleInstance(currentScale, currentScale));
-				
-				svgCanvas.setPreferredSize(new Dimension(
-						(int) (origSize.getWidth()*currentScale), 
-						(int) (origSize.getHeight()*currentScale)));
-				
-				pane.getViewport().getView().revalidate();
-			}
-		});
 		
 		pane = new JScrollPane(panel); 
 		pane.setWheelScrollingEnabled(true);
 		return pane;
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0)
+			return;
+		//TODO scroll the pane
+		
+		e.consume();
+		currentScale -= e.getPreciseWheelRotation()*0.2;
+		svgCanvas.setRenderingTransform(AffineTransform.getScaleInstance(currentScale, currentScale));
+		
+		svgCanvas.setPreferredSize(new Dimension(
+				(int) (origSize.getWidth()*currentScale), 
+				(int) (origSize.getHeight()*currentScale)));
+		
+		pane.getViewport().getView().revalidate();
 	}
 
 }
