@@ -1,4 +1,5 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.sf.czsem/czsem-gate-plugin/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22net.sf.czsem%22)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # czsem-gate-tools
 
