@@ -1,3 +1,5 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.sf.czsem/czsem-gate-plugin/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22net.sf.czsem%22)
+
 # czsem-gate-tools
 
 Utility functions for text processing.
