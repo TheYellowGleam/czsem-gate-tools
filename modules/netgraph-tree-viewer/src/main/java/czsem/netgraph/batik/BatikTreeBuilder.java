@@ -32,7 +32,6 @@ public class BatikTreeBuilder<E> {
 	}
 	
 	public static final class Sizing {
-
 		public static final int NODE_DIAM = 9; 
 
 		public static final int BORDER = 8;
@@ -40,18 +39,17 @@ public class BatikTreeBuilder<E> {
 		public static final int NODE_H_SPACE = NODE_DIAM;
 		public static final int TEXT_H_SPACE = NODE_DIAM;
 
-		public static final int LINE_HEIGHT = 13; 
+		public static final int LINE_HEIGHT = 15; 
 		public static final int FIRST_LINE_Y = (int)(NODE_DIAM*2.0);
 		
-		public static final String FONT_SIZE = "12";
+		public static final String FONT_SIZE = "14";
 		public static final String FONT_STROKE = "5";
 		public static final float TEXT_OFFSET_MIDDLE = 1.5f;
 
 		public static final String EDGE_STROKE = "2.6";
 
 		public static final String NODE_STROKE = "1.5";
-		public static final String NODE_STROKE_SELECTED = "3";
-		
+		public static final String NODE_STROKE_SELECTED = "3";		
 	}
 	
 	public static final class Color {
@@ -80,21 +78,29 @@ public class BatikTreeBuilder<E> {
 		};
 	}
 	
-	private final TreeSourceWithSelection<E> treeSource;
-		
-	private float[] x;
-	private float[] y;
-	private Integer[] sortedNodes;
-	private TreeComputation<E> cmp;
-	
 	public static final String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
+
+	protected final TreeSourceWithSelection<E> treeSource;
+	protected TreeComputation<E> cmp;
+
+	protected SVGDocument doc;
+	protected Element svgRoot;
+	protected Element mainGroupRoot;
+	protected Element edgesGroup;
+		
+	protected float[] x;
+	protected float[] y;
 	
-	private SVGDocument doc;
+	protected E[] srcNodes;
+	protected Element[] svgNodes;
+	protected Integer[] sortedNodes;
+
+	protected int[] edges;
+
 	protected Dimension origSize;
-	private E[] srcNodes;
-	private Element[] svgNodes;
-	private Element mainGroupRoot;
+
 	
+
 	public static class SelectNodeEvent implements EventListener {
 
 		private TreeSourceWithSelection<?> selectionHandlder;
@@ -116,51 +122,92 @@ public class BatikTreeBuilder<E> {
 		this.treeSource = treeSource;
 	}
 	
+	public SVGDocument getDoc() {
+		return doc;
+	}
+
+	public Dimension getSize() {
+		return origSize;
+	}
+
 	public void buildNewSvgTree(boolean keepSelectedNode) {
-		cmp = new TreeComputation<>(treeSource);
-		cmp.compute();
+	
+		fillDataStrucures();
 		
-		int[] edges = cmp.collectEdges();
-		srcNodes = cmp.collectNodes();
-		sortedNodes = cmp.computeSortedNodes();
+		initBatik();
 		
-		if (!keepSelectedNode )
-			treeSource.discardSeletion();
-		
-		treeSource.setNodes(srcNodes);
-
-		
-		svgNodes = new Element[srcNodes.length];
-		treeSource.setCircles(new Element[srcNodes.length]);
-
-
-		//init batik
-		
-		DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
-		String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
-		doc = (SVGDocument) impl.createDocument(svgNS, "svg", null);
-		
-		// Get the root element (the 'svg' element).
-		Element svgRoot = doc.getDocumentElement();
-
-		mainGroupRoot = doc.createElementNS(svgNS, "g");
-		svgRoot.appendChild(mainGroupRoot);
-
-		Element edgesGroup = doc.createElementNS(svgNS, "g");
-		mainGroupRoot.appendChild(edgesGroup);
-		
-
-		
-		setupDynamicSvgBridge(doc);
-		
-		//nodes
+		//add nodes
 		for (int j = 0; j < srcNodes.length; j++) {
 			Element n = createSvgNode(j);
 			svgNodes[j] = n;
 		}
 		
+		computeCoordinatesAndSpaceOutNodes();
 		
-		//compute coordinates
+		addEdges();
+		
+		fixTheFinalSize();
+		
+	
+		if (!keepSelectedNode ) {
+			treeSource.discardSeletion();
+		}
+		else if (treeSource.getSelectedCicle() != null) {
+			colorNodeAsSelected(treeSource.getSelectedCicle());
+		}
+	}
+
+	protected void fillDataStrucures() {
+		cmp = new TreeComputation<>(treeSource);
+		cmp.compute();
+		
+		edges = cmp.collectEdges();
+		srcNodes = cmp.collectNodes();
+		sortedNodes = cmp.computeSortedNodes();
+		
+		treeSource.setNodes(srcNodes);
+
+		svgNodes = new Element[srcNodes.length];
+		treeSource.setCircles(new Element[srcNodes.length]);		
+	}
+
+	protected void initBatik() {
+		DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
+		doc = (SVGDocument) impl.createDocument(svgNS, "svg", null);
+		
+		// Get the root element (the 'svg' element).
+		svgRoot = doc.getDocumentElement();
+
+		mainGroupRoot = doc.createElementNS(svgNS, "g");
+		svgRoot.appendChild(mainGroupRoot);
+
+		edgesGroup = doc.createElementNS(svgNS, "g");
+		mainGroupRoot.appendChild(edgesGroup);
+		
+		setupDynamicSvgBridge(doc);
+	}
+
+	protected void addEdges() {
+		for (int i = 0; i < edges.length; i+=2) {
+			int a = edges[i];
+			int b = edges[i+1];
+			
+			// Create line.
+			Element line = buildElem("line")
+				.attr("x1", x[a])
+				.attr("y1", y[a])
+				.attr("x2", x[b])
+				.attr("y2", y[b])
+				.attr("stroke", 	  Color.EDGE[getNodeType(b)])
+				.attr("stroke-width", Sizing.EDGE_STROKE)
+				.get();
+
+			// Attach
+			edgesGroup.appendChild(line);
+		}
+	}
+
+	protected void computeCoordinatesAndSpaceOutNodes() {
 		//prepare sizes 
 		SVGRect[] svgNodeBoxes = Arrays.stream(svgNodes)
 				.map(BatikTreeBuilder::getBBox)
@@ -221,32 +268,16 @@ public class BatikTreeBuilder<E> {
 			
 			y[j] = yOffsetForDepth[cmp.getDepth(j)];
 				
+			//space out nodes
 			svgNodes[j].setAttributeNS(null, "transform", "translate("+x[j]+","+y[j]+")");
 		}
-		
-		
-		
-		//draw edges
-		for (int i = 0; i < edges.length; i+=2) {
-			int a = edges[i];
-			int b = edges[i+1];
-			
-			// Create line.
-			Element line = buildElem("line")
-				.attr("x1", x[a])
-				.attr("y1", y[a])
-				.attr("x2", x[b])
-				.attr("y2", y[b])
-				.attr("stroke", 	  Color.EDGE[getNodeType(b)])
-				.attr("stroke-width", Sizing.EDGE_STROKE)
-				.get();
+	}
 
-			// Attach
-			edgesGroup.appendChild(line);
-		}
-		
-		
-		//get the final size
+	protected int getNodeType(int index) {
+		return treeSource.getNodeType(srcNodes[index]);
+	}
+
+	protected void fixTheFinalSize() {
 		SVGRect box = getBBox(svgRoot);
 		
 		origSize = new Dimension((int)(box.getWidth()+Sizing.BORDER*2), (int)(box.getHeight()+Sizing.BORDER*2));
@@ -264,14 +295,6 @@ public class BatikTreeBuilder<E> {
 		float trX = Sizing.BORDER-box.getX();
 		float trY = Sizing.BORDER-box.getY();
 		mainGroupRoot.setAttributeNS(null, "transform", "translate("+trX+","+trY+")");
-		
-		if (keepSelectedNode && treeSource.getSelectedCicle() != null)
-			colorNodeAsSelected(treeSource.getSelectedCicle());
-			
-	}
-	
-	protected int getNodeType(int index) {
-		return treeSource.getNodeType(srcNodes[index]);
 	}
 
 	public static void setupDynamicSvgBridge(SVGDocument doc) {
@@ -402,14 +425,6 @@ public class BatikTreeBuilder<E> {
 		return text;
 	}
 
-	public SVGDocument getDoc() {
-		return doc;
-	}
-
-	public Dimension getSize() {
-		return origSize;
-	}
-	
 	public ElemBuilder buildElem(String elemName) {
 		return new ElemBuilder(doc.createElementNS(svgNS, elemName));
 	}

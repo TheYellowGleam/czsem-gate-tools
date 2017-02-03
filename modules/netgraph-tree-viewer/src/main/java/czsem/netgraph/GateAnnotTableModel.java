@@ -15,6 +15,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -1999028584101610952L;
 	
 	public static class ATTR {
+		//TODO use GateAnnotationsNodeAttributesExtended
 
 		public static final String STRING = "_string";
 		public static final String TYPE = "_type";
@@ -49,6 +50,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 		
 		String str = attr.toString();
 		
+		//TODO use GateAnnotationsNodeAttributesExtended
 		switch (str) {
 		case ATTR.STRING:	return Utils.stringFor(d, a);
 		case ATTR.TYPE:		return a.getType();
