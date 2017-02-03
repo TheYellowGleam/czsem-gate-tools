@@ -60,8 +60,6 @@ public class BatikTreeBuilder<E> {
 		public static final String TEXT_STROKE_OPACITY = "0.9";
 		public static final String TEXT = "#333";
 		public static final String NODE_STROKE = "#666666";
-		//public static final String NODE_FILL = "#4488ff";
-		//public static final String EDGE_STROKE = "#336699";
 		public static final String FRAME_FILL = "white";
 		public static final String FRAME_OPACITY = "0";
 		public static final java.awt.Color CANVAS_BACKGROUND = java.awt.Color.WHITE;
