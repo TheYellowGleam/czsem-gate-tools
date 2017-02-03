@@ -3,28 +3,40 @@
  ******************************************************************************/
 package czsem.netgraph.batik;
 
-import java.util.Observable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Element;
 
 import czsem.netgraph.treesource.TreeSource;
 
-public class SelectionHandlder<E> extends Observable {
-	protected final TreeSource<E> treeSource;
+public abstract class TreeSourceWithSelection<E> implements TreeSource<E> {
+	public interface SelectionChangeListener<E> { 
+		void onSlectionChanged(E node);
+	}
 	
 	protected E[] nodes; 
 	protected Element[] circles;
 	protected int slectedNodeIndex = -1;
 	
-	public SelectionHandlder(TreeSource<E> treeSource) {
-		this.treeSource = treeSource;
+	private final List<SelectionChangeListener<E>> selectionChangeListeners = new ArrayList<>(); 
+	
+	protected void onSlectionChanged(E node) {
+		for (SelectionChangeListener<E> l : selectionChangeListeners) {
+			l.onSlectionChanged(node);
+		}
+	}
+	
+	public void fireSlectionChanged(int nodeIndex) {
+		performSlectionChanged(nodeIndex);
+		onSlectionChanged(nodes[nodeIndex]);
 	}
 
-	public void fireSlectionChanged(int nodeIndex) {
+	public void performSlectionChanged(int nodeIndex) {
 		if (slectedNodeIndex >= 0 && slectedNodeIndex < circles.length) {
 			BatikTreeBuilder.colorNodeAsNotSelected(
 					circles[slectedNodeIndex], 
-					treeSource.getNodeType(nodes[slectedNodeIndex]));
+					getNodeType(nodes[slectedNodeIndex]));
 		}
 		
 		slectedNodeIndex = nodeIndex;
@@ -40,4 +52,8 @@ public class SelectionHandlder<E> extends Observable {
 	public void setNodes(E[] nodes) {this.nodes = nodes;}
 	public Element[] getCircles() {return circles;}
 	public void setCircles(Element[] circles) {this.circles = circles;}
+
+	public List<SelectionChangeListener<E>> getSelectionChangeListeners() {
+		return selectionChangeListeners;
+	}
 }

@@ -20,7 +20,6 @@ import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGRect;
 
 import czsem.netgraph.TreeComputation;
-import czsem.netgraph.treesource.TreeSource;
 import czsem.netgraph.treesource.TreeSource.NodeLabel;
 
 public class BatikTreeBuilder<E> {
@@ -81,8 +80,7 @@ public class BatikTreeBuilder<E> {
 		};
 	}
 	
-	private final TreeSource<E> treeSource;
-	private final SelectionHandlder<E> selHandler;
+	private final TreeSourceWithSelection<E> treeSource;
 		
 	private float[] x;
 	private float[] y;
@@ -99,10 +97,10 @@ public class BatikTreeBuilder<E> {
 	
 	public static class SelectNodeEvent implements EventListener {
 
-		private SelectionHandlder<?> selectionHandlder;
+		private TreeSourceWithSelection<?> selectionHandlder;
 		private int nodeIndex;
 
-		public SelectNodeEvent(SelectionHandlder<?> selectionHandlder, int nodeIndex) {
+		public SelectNodeEvent(TreeSourceWithSelection<?> selectionHandlder, int nodeIndex) {
 			this.selectionHandlder = selectionHandlder;
 			this.nodeIndex = nodeIndex;
 		}
@@ -114,8 +112,7 @@ public class BatikTreeBuilder<E> {
 		
 	}
 	
-	public BatikTreeBuilder(SelectionHandlder<E> selHandler, TreeSource<E> treeSource) {
-		this.selHandler = selHandler;
+	public BatikTreeBuilder(TreeSourceWithSelection<E> treeSource) {
 		this.treeSource = treeSource;
 	}
 	
@@ -127,12 +124,12 @@ public class BatikTreeBuilder<E> {
 		srcNodes = cmp.collectNodes();
 		sortedNodes = cmp.computeSortedNodes();
 		
-		selHandler.discardSeletion();
-		selHandler.setNodes(srcNodes);
+		treeSource.discardSeletion();
+		treeSource.setNodes(srcNodes);
 
 		
 		svgNodes = new Element[srcNodes.length];
-		selHandler.setCircles(new Element[srcNodes.length]);
+		treeSource.setCircles(new Element[srcNodes.length]);
 
 
 		//init batik
@@ -327,9 +324,9 @@ public class BatikTreeBuilder<E> {
 		
 		
 		//addEvent
-		selHandler.getCircles()[j] = circile;
+		treeSource.getCircles()[j] = circile;
 		EventTarget t = (EventTarget) nodeGroup;
-		t.addEventListener("click", new SelectNodeEvent(selHandler, j), true);
+		t.addEventListener("click", new SelectNodeEvent(treeSource, j), true);
 		
 		return nodeGroup;
 	}

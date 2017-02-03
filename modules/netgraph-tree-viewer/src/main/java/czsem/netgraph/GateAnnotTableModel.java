@@ -39,6 +39,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 	
 	public GateAnnotTableModel(TreeIndexTreeSource treeSource) {
 		this.treeSource = treeSource;
+		treeSource.getSelectionChangeListeners().add(x -> fireTableDataChanged());
 	}
 
 

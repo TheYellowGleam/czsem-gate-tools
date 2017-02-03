@@ -16,9 +16,7 @@ import javax.swing.JScrollPane;
 
 import org.apache.batik.swing.JSVGCanvas;
 
-import czsem.netgraph.treesource.TreeSource;
-
-public class BatikView<E> extends SelectionHandlder<E> implements MouseWheelListener {
+public class BatikView implements MouseWheelListener {
 	protected double currentScale = 1.0;
 	protected Dimension origSize;
 	
@@ -31,12 +29,8 @@ public class BatikView<E> extends SelectionHandlder<E> implements MouseWheelList
 		
 	};
 
-	public BatikView(TreeSource<E> treeSource) {
-		super(treeSource);
-	}
-
-	protected void fillCanvasNew() {
-		BatikTreeBuilder<E> b = new BatikTreeBuilder<>(this, treeSource);
+	protected <E> void fillCanvasNew(TreeSourceWithSelection<E> treeSource) {
+		BatikTreeBuilder<E> b = new BatikTreeBuilder<>(treeSource);
 		b.buildNewSvgTree();
 		
 		origSize = b.getSize();
@@ -87,8 +81,8 @@ public class BatikView<E> extends SelectionHandlder<E> implements MouseWheelList
 		pane.getViewport().getView().revalidate();
 	}
 
-	public void reloadData() {
-		fillCanvasNew();
+	public <E> void reloadData(TreeSourceWithSelection<E> treeSource) {
+		fillCanvasNew(treeSource);
 	}
 
 }

@@ -15,8 +15,9 @@ import java.util.List;
 import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.GateAnnotTableModel;
 import czsem.netgraph.batik.BatikTreeBuilder;
+import czsem.netgraph.batik.TreeSourceWithSelection;
 
-public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Integer> {
+public class TreeIndexTreeSource extends TreeSourceWithSelection<Integer> implements Comparator<Integer> {
 	
 	protected GateAwareTreeIndexExtended index = new GateAwareTreeIndexExtended(null);
 	protected Document doc;
@@ -95,4 +96,12 @@ public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Inte
 		selectedNode = selectedNodeID;
 		rootNode = index.findRootForNode(selectedNode);
 	}
+
+	@Override
+	protected void onSlectionChanged(Integer node) {
+		selectNode(node);
+		
+		super.onSlectionChanged(node);
+	}
+
 }

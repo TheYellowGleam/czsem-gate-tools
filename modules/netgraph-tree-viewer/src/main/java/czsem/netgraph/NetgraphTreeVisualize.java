@@ -5,23 +5,16 @@ import gate.Document;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
 import czsem.fs.query.FSQuery.MatchingNode;
 import czsem.gate.utils.GateAwareTreeIndexExtended;
+import czsem.netgraph.batik.BatikView;
 import czsem.netgraph.treesource.TreeIndexTreeSource;
 
 public class NetgraphTreeVisualize extends Container {
@@ -30,21 +23,22 @@ public class NetgraphTreeVisualize extends Container {
 
 	protected final TreeIndexTreeSource treeSource = new TreeIndexTreeSource();
 	
-	protected final NetgraphView<Integer> forestDisplay = new NetgraphView<>(treeSource);
+	//protected final NetgraphView<Integer> forestDisplay = new NetgraphView<>(treeSource);
+	protected final BatikView forestDisplay = new BatikView();
 
 	private final GateAnnotTableModel dataModel = new GateAnnotTableModel(treeSource);
-
 	
 	public void initComponents() { // make the dialog
 		setLayout(new BorderLayout());
 
+		/*
 		final JPopupMenu pm = new JPopupMenu();
 		final JMenuItem mi_show_hiddden = new JCheckBoxMenuItem("Show hidden nodes", true);
 		mi_show_hiddden.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//forestDisplay.setShowHiddenNodes(mi_show_hiddden.isSelected());
-				forestDisplay.repaint();
+				//forestDisplay.repaint();
 			}
 		});
 		pm.add(mi_show_hiddden);
@@ -77,6 +71,7 @@ public class NetgraphTreeVisualize extends Container {
 				}
 			}
 		});
+		*/
 
 		JTable table = new JTable(dataModel);
 		TableColumn column = table.getColumnModel().getColumn(0);
@@ -88,12 +83,12 @@ public class NetgraphTreeVisualize extends Container {
 		JScrollPane tableScrollpane = new JScrollPane(table);
 
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				tableScrollpane, forestScrollpane);
+				tableScrollpane, forestDisplay.getComponent());
 		split.setDividerLocation(200);
 		add(split);
 	}
 
-
+/*
 	protected void fireTreeNodeSelected(int choosen_node) {
 		// TODO Auto-generated method stub
 		
@@ -101,14 +96,11 @@ public class NetgraphTreeVisualize extends Container {
 	
 	public void setDefaultLook()
 	{
-		/*
 		forestDisplay.getTreeProperties().setShowHiddenNodes(true);
 		forestDisplay.getTreeProperties().setShowNullValues(false);
 		forestDisplay.getTreeProperties().setShowMultipleSets(true);
 		forestDisplay.getTreeProperties().setShowAttrNames(false);
-		*/		
 	}
-	
 	
 	public void updateAttrTableDataModel()
 	{
@@ -127,10 +119,10 @@ public class NetgraphTreeVisualize extends Container {
 		//forestDisplay.addShownAttribute(attr);
 	}
 
-	
+	*/
 	public void selectNode(int selectedNodeID) {
 		treeSource.selectNode(selectedNodeID);
-		forestDisplay.updateData();
+		//forestDisplay.updateData();
 		dataModel.fireTableDataChanged();
 	}
 	/*
@@ -244,6 +236,7 @@ public class NetgraphTreeVisualize extends Container {
 
 	public void setTreeAS(Document d, AnnotationSet annotations) {
 		treeSource.setTreeAS(d, annotations);
+		forestDisplay.reloadData(treeSource);
 	}
 
 
@@ -251,6 +244,4 @@ public class NetgraphTreeVisualize extends Container {
 		treeSource.setIndex(doc, index);
 	}
 
-
-	
 }
