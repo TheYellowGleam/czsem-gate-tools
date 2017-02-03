@@ -14,21 +14,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.swing.JSVGCanvas;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGLocatable;
-import org.w3c.dom.svg.SVGRect;
 
-import czsem.netgraph.NetgraphView.Sizing;
-import czsem.netgraph.TreeComputation;
-import czsem.netgraph.batik.BatikTreeBuilder.SelectionHandlder;
 import czsem.netgraph.treesource.TreeSource;
 
 public class BatikView<E> extends SelectionHandlder<E> implements MouseWheelListener {
@@ -66,17 +53,12 @@ public class BatikView<E> extends SelectionHandlder<E> implements MouseWheelList
 		//svgCanvas.setRequestFocusEnabled(true);
 		svgCanvas.setDoubleBufferedRendering(true);
 		
-		//svgCanvas.setRecenterOnResize(true);
-		
 	    svgCanvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
-		//JSVGScrollPane scroll = new JSVGScrollPane(svgCanvas);
-		//scroll.setScrollbarsAlwaysVisible(true);
-		//scroll.setPreferredSize(new Dimension(600, 400));
 		
 		JPanel panel = new JPanel(true);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		panel.add(svgCanvas);
-		//panel.add(new JButton("Můůůůj douhýý textttttt"));
+
 		svgCanvas.setAlignmentX(Component.LEFT_ALIGNMENT);
 		svgCanvas.setAlignmentY(Component.TOP_ALIGNMENT);
 		

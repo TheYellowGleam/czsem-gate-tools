@@ -97,43 +97,6 @@ public class BatikTreeBuilder<E> {
 	private Element[] svgNodes;
 	private Element mainGroupRoot;
 	
-	public static class SelectionHandlder<E> {
-		protected final TreeSource<E> treeSource;
-		
-		protected E[] nodes; 
-		protected Element[] circles;
-		protected int slectedNodeIndex = -1;
-		
-		public SelectionHandlder(TreeSource<E> treeSource) {
-			this.treeSource = treeSource;
-		}
-
-		public void fireSlectionChanged(int nodeIndex) {
-			if (slectedNodeIndex >= 0 && slectedNodeIndex < circles.length) {
-				circles[slectedNodeIndex].setAttributeNS(null, "fill", 
-						Color.NODE[treeSource.getNodeType(nodes[slectedNodeIndex])]);
-				circles[slectedNodeIndex].setAttributeNS(null, "stroke", Color.NODE_STROKE);
-				circles[slectedNodeIndex].setAttributeNS(null, "stroke-width", Sizing.NODE_STROKE);
-			}
-			
-			slectedNodeIndex = nodeIndex;
-			
-			circles[slectedNodeIndex].setAttributeNS(null, "fill", Color.NODE_FILL_SELECTED);
-			circles[slectedNodeIndex].setAttributeNS(null, "stroke", Color.NODE_STROKE_SELECTED);
-			circles[slectedNodeIndex].setAttributeNS(null, "stroke-width", Sizing.NODE_STROKE_SELECTED);
-
-		}
-
-		public void discardSeletion() {
-			slectedNodeIndex = -1;
-		}
-		
-		public E[] getNodes() {return nodes;}
-		public void setNodes(E[] nodes) {this.nodes = nodes;}
-		public Element[] getCircles() {return circles;}
-		public void setCircles(Element[] circles) {this.circles = circles;}
-	}
-	
 	public static class SelectNodeEvent implements EventListener {
 
 		private SelectionHandlder<?> selectionHandlder;
@@ -321,6 +284,18 @@ public class BatikTreeBuilder<E> {
 		SVGLocatable loc = (SVGLocatable) elem;
 		SVGRect box = loc.getBBox();
 		return box;
+	}
+	
+	public static void colorNodeAsSelected(Element circle) {
+		circle.setAttributeNS(null, "fill", Color.NODE_FILL_SELECTED);
+		circle.setAttributeNS(null, "stroke", Color.NODE_STROKE_SELECTED);
+		circle.setAttributeNS(null, "stroke-width", Sizing.NODE_STROKE_SELECTED);
+	}
+
+	public static void colorNodeAsNotSelected(Element circle, int nodeType) {
+		circle.setAttributeNS(null, "fill",	Color.NODE[nodeType]);
+		circle.setAttributeNS(null, "stroke", Color.NODE_STROKE);
+		circle.setAttributeNS(null, "stroke-width", Sizing.NODE_STROKE);
 	}
 	
 	protected Element createSvgNode(int j) {
