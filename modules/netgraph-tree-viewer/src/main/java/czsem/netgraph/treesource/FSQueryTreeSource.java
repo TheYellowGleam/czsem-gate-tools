@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import czsem.fs.query.FSQuery.QueryObject;
 import czsem.fs.query.QueryNode;
 import czsem.fs.query.restrictions.PrintableRestriction;
+import czsem.netgraph.batik.BatikTreeBuilder;
 
 public class FSQueryTreeSource implements TreeSource<QueryNode> {
 	
@@ -23,6 +24,11 @@ public class FSQueryTreeSource implements TreeSource<QueryNode> {
 	@Override
 	public QueryNode getRoot() {
 		return queryObject.getRootNode();
+	}
+
+	@Override
+	public int getNodeType(QueryNode node) {
+		return BatikTreeBuilder.NodeType.STANDARD;
 	}
 
 	@Override

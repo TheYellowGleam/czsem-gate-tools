@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import czsem.netgraph.batik.BatikTreeBuilder;
 import czsem.netgraph.treesource.TreeSource;
 
 public class NetgraphFrame {
@@ -73,6 +74,23 @@ public class NetgraphFrame {
 			}, //7
 			
 		};
+		
+		private static final int NODE_TYPES[] = {
+			BatikTreeBuilder.NodeType.STANDARD,
+			BatikTreeBuilder.NodeType.STANDARD,
+			BatikTreeBuilder.NodeType.OPTIONAL,
+			BatikTreeBuilder.NodeType.EMPHASIZED,
+			BatikTreeBuilder.NodeType.WARN,
+			BatikTreeBuilder.NodeType.EMPHASIZED,
+			BatikTreeBuilder.NodeType.STANDARD,
+			BatikTreeBuilder.NodeType.EMPHASIZED,
+		};
+		
+		@Override
+		public int getNodeType(Integer node) {
+			return NODE_TYPES[node];
+		}
+		
 
 		@Override
 		public List<NodeLabel> getLabels(Integer node) {
@@ -86,7 +104,6 @@ public class NetgraphFrame {
 			//return null;
 			return Integer::compare;
 		}
-		
 	}
 
 	public static void main(String[] args) {

@@ -14,6 +14,7 @@ import java.util.List;
 
 import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.GateAnnotTableModel;
+import czsem.netgraph.batik.BatikTreeBuilder;
 
 public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Integer> {
 	
@@ -33,6 +34,11 @@ public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Inte
 	@Override
 	public Collection<Integer> getChildren(Integer parent) {
 		return index.getChildren(parent);
+	}
+
+	@Override
+	public int getNodeType(Integer node) {
+		return BatikTreeBuilder.NodeType.STANDARD;
 	}
 
 	@Override

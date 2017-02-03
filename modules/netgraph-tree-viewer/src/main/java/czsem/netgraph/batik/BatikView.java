@@ -32,8 +32,6 @@ import czsem.netgraph.batik.BatikTreeBuilder.SelectionHandlder;
 import czsem.netgraph.treesource.TreeSource;
 
 public class BatikView<E> extends SelectionHandlder<E> implements MouseWheelListener {
-	private final TreeSource<E> treeSource;
-	
 	protected double currentScale = 1.0;
 	protected Dimension origSize;
 	
@@ -47,7 +45,7 @@ public class BatikView<E> extends SelectionHandlder<E> implements MouseWheelList
 	};
 
 	public BatikView(TreeSource<E> treeSource) {
-		this.treeSource = treeSource;
+		super(treeSource);
 	}
 
 	protected void fillCanvasNew() {

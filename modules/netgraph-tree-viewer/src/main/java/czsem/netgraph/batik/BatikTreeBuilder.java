@@ -25,6 +25,13 @@ import czsem.netgraph.treesource.TreeSource.NodeLabel;
 
 public class BatikTreeBuilder<E> {
 	
+	public static final class NodeType {
+		public static final int STANDARD = 0; 
+		public static final int EMPHASIZED = 1; 
+		public static final int OPTIONAL = 2; 
+		public static final int WARN = 3; 
+	}
+	
 	public static final class Sizing {
 
 		public static final int NODE_DIAM = 9; 
@@ -41,27 +48,39 @@ public class BatikTreeBuilder<E> {
 		public static final String FONT_STROKE = "5";
 		public static final float TEXT_OFFSET_MIDDLE = 1.5f;
 
-		public static final String EDGE_STROKE = "2";
+		public static final String EDGE_STROKE = "2.6";
 
-		public static final String NODE_STROKE = "2";
+		public static final String NODE_STROKE = "1.5";
+		public static final String NODE_STROKE_SELECTED = "3";
+		
 	}
 	
 	public static final class Color {
 		public static final String TEXT_STROKE = "white";
 		public static final String TEXT_STROKE_OPACITY = "0.9";
 		public static final String TEXT = "#333";
-		public static final String NODE_STROKE = "#555555";
-		public static final String NODE_FILL = "#4488ff";
-		public static final String EDGE_STROKE = "#336699";
+		public static final String NODE_STROKE = "#666666";
+		//public static final String NODE_FILL = "#4488ff";
+		//public static final String EDGE_STROKE = "#336699";
 		public static final String FRAME_FILL = "white";
 		public static final String FRAME_OPACITY = "0";
 		public static final java.awt.Color CANVAS_BACKGROUND = java.awt.Color.WHITE;
 		public static final String NODE_FILL_SELECTED = "#EFC94C";
-		public static final String NODE_STROKE_SELECTED = "#AD1B32";
+		public static final String NODE_STROKE_SELECTED = "#c7001e";
 		
-		
-		
-		
+		public static final String[] NODE = {
+			"#669eff", //STANDARD = 0; 
+			"#91d4c7",//EMPHASIZED = 1; 
+			"#b3b3b3",//OPTIONAL = 2; 
+			"#ea7b8b", //WARN = 3; 
+		};
+
+		public static final String[] EDGE = {
+			"#336699",//STANDARD = 0; 
+			"#399381",//EMPHASIZED = 1; 
+			NODE_STROKE,//OPTIONAL = 2; 
+			"#b01c32", //WARN = 3; 
+		};
 	}
 	
 	private final TreeSource<E> treeSource;
@@ -81,20 +100,30 @@ public class BatikTreeBuilder<E> {
 	private Element mainGroupRoot;
 	
 	public static class SelectionHandlder<E> {
+		protected final TreeSource<E> treeSource;
+		
 		protected E[] nodes; 
 		protected Element[] circles;
 		protected int slectedNodeIndex = -1;
 		
+		public SelectionHandlder(TreeSource<E> treeSource) {
+			this.treeSource = treeSource;
+		}
+
 		public void fireSlectionChanged(int nodeIndex) {
 			if (slectedNodeIndex >= 0 && slectedNodeIndex < circles.length) {
-				circles[slectedNodeIndex].setAttributeNS(null, "fill", Color.NODE_FILL);
+				circles[slectedNodeIndex].setAttributeNS(null, "fill", 
+						Color.NODE[treeSource.getNodeType(nodes[slectedNodeIndex])]);
 				circles[slectedNodeIndex].setAttributeNS(null, "stroke", Color.NODE_STROKE);
+				circles[slectedNodeIndex].setAttributeNS(null, "stroke-width", Sizing.NODE_STROKE);
 			}
 			
 			slectedNodeIndex = nodeIndex;
 			
 			circles[slectedNodeIndex].setAttributeNS(null, "fill", Color.NODE_FILL_SELECTED);
 			circles[slectedNodeIndex].setAttributeNS(null, "stroke", Color.NODE_STROKE_SELECTED);
+			circles[slectedNodeIndex].setAttributeNS(null, "stroke-width", Sizing.NODE_STROKE_SELECTED);
+
 		}
 
 		public void discardSeletion() {
@@ -248,7 +277,7 @@ public class BatikTreeBuilder<E> {
 				.attr("y1", y[a])
 				.attr("x2", x[b])
 				.attr("y2", y[b])
-				.attr("stroke", 	  Color.EDGE_STROKE)
+				.attr("stroke", 	  Color.EDGE[getNodeType(b)])
 				.attr("stroke-width", Sizing.EDGE_STROKE)
 				.get();
 
@@ -277,6 +306,10 @@ public class BatikTreeBuilder<E> {
 		mainGroupRoot.setAttributeNS(null, "transform", "translate("+trX+","+trY+")");
 	}
 	
+	protected int getNodeType(int index) {
+		return treeSource.getNodeType(srcNodes[index]);
+	}
+
 	public static void setupDynamicSvgBridge(SVGDocument doc) {
 		UserAgentAdapter userAgent = new UserAgentAdapter();
 	    DocumentLoader loader = new DocumentLoader(userAgent);
@@ -305,7 +338,7 @@ public class BatikTreeBuilder<E> {
 				.attr("r", 		Sizing.NODE_DIAM/2)
 				.attr("stroke", Color.NODE_STROKE)
 				.attr("stroke-width", Sizing.NODE_STROKE)
-				.attr("fill", 	Color.NODE_FILL)
+				.attr("fill", 	Color.NODE[getNodeType(j)])
 				.get(); 
 				
 		nodeGroup.appendChild(circile);

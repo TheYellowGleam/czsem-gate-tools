@@ -15,6 +15,7 @@ public interface TreeSource<E> {
 	public E getRoot();
 	public Collection<E> getChildren(E parent);
 	public List<NodeLabel> getLabels(E node);
+	public int getNodeType(E node);
 	public Comparator<E> getOrderComparator();
 	
 	public static class StaticLabel implements NodeLabel {
