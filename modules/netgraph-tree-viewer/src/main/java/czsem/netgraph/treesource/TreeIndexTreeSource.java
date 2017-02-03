@@ -78,6 +78,8 @@ public class TreeIndexTreeSource extends TreeSourceWithSelection<Integer> implem
 		this.doc = doc;
 		this.index = index;
 		rootNode = selectedNode = index.findRootOrNull();
+		
+		fireViewChanged(false);
 	}
 
 	public Annotation getSelectedAnnot() {

@@ -116,7 +116,7 @@ public class BatikTreeBuilder<E> {
 		this.treeSource = treeSource;
 	}
 	
-	public void buildNewSvgTree() {
+	public void buildNewSvgTree(boolean keepSelectedNode) {
 		cmp = new TreeComputation<>(treeSource);
 		cmp.compute();
 		
@@ -124,7 +124,9 @@ public class BatikTreeBuilder<E> {
 		srcNodes = cmp.collectNodes();
 		sortedNodes = cmp.computeSortedNodes();
 		
-		treeSource.discardSeletion();
+		if (!keepSelectedNode )
+			treeSource.discardSeletion();
+		
 		treeSource.setNodes(srcNodes);
 
 		
@@ -262,6 +264,10 @@ public class BatikTreeBuilder<E> {
 		float trX = Sizing.BORDER-box.getX();
 		float trY = Sizing.BORDER-box.getY();
 		mainGroupRoot.setAttributeNS(null, "transform", "translate("+trX+","+trY+")");
+		
+		if (keepSelectedNode && treeSource.getSelectedCicle() != null)
+			colorNodeAsSelected(treeSource.getSelectedCicle());
+			
 	}
 	
 	protected int getNodeType(int index) {

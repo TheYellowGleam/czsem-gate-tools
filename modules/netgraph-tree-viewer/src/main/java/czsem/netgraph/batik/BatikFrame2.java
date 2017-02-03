@@ -14,13 +14,13 @@ public class BatikFrame2 {
 		JFrame frame = new JFrame("BatikFrame2");
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
-		BatikView view = new BatikView();
+		BatikView view = new BatikView(new TestSource());
         
 		frame.setLocationRelativeTo(null);		
 		frame.setSize(800, 600);
 		frame.getContentPane().add(view.getComponent());
 		
-		view.reloadData(new TestSource());
+		view.reloadData(false);
 
 		frame.pack();
 		frame.setVisible(true);

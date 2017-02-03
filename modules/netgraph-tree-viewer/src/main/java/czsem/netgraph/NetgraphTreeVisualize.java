@@ -24,7 +24,7 @@ public class NetgraphTreeVisualize extends Container {
 	protected final TreeIndexTreeSource treeSource = new TreeIndexTreeSource();
 	
 	//protected final NetgraphView<Integer> forestDisplay = new NetgraphView<>(treeSource);
-	protected final BatikView forestDisplay = new BatikView();
+	protected final BatikView forestDisplay = new BatikView(treeSource);
 
 	private final GateAnnotTableModel dataModel = new GateAnnotTableModel(treeSource);
 	
@@ -236,7 +236,7 @@ public class NetgraphTreeVisualize extends Container {
 
 	public void setTreeAS(Document d, AnnotationSet annotations) {
 		treeSource.setTreeAS(d, annotations);
-		forestDisplay.reloadData(treeSource);
+		//forestDisplay.reloadData(treeSource);
 	}
 
 

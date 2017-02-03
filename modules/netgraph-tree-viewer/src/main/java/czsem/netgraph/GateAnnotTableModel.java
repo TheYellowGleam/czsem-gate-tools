@@ -149,7 +149,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 		else
 			treeSource.getSelectedAttributes().remove(attr);
 		
-		
+		treeSource.fireViewChanged(true);
 	}
 	
 }

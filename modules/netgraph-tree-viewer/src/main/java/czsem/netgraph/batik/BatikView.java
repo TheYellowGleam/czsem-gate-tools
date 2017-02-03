@@ -16,11 +16,17 @@ import javax.swing.JScrollPane;
 
 import org.apache.batik.swing.JSVGCanvas;
 
-public class BatikView implements MouseWheelListener {
+import czsem.netgraph.batik.TreeSourceWithSelection.ViewChangedListener;
+
+public class BatikView implements MouseWheelListener, ViewChangedListener {
+	
+	protected final TreeSourceWithSelection<?> treeSource;
+	
 	protected double currentScale = 1.0;
 	protected Dimension origSize;
 	
 	private JScrollPane pane;
+	
 	private final JSVGCanvas svgCanvas = new JSVGCanvas() {
 		private static final long serialVersionUID = -4362953581038733653L;
 		
@@ -29,9 +35,14 @@ public class BatikView implements MouseWheelListener {
 		
 	};
 
-	protected <E> void fillCanvasNew(TreeSourceWithSelection<E> treeSource) {
+	public BatikView(TreeSourceWithSelection<?> treeSource) {
+		this.treeSource = treeSource;
+		treeSource.getViewChangedListeners().add(this);
+	}
+
+	protected <E> void fillCanvas(TreeSourceWithSelection<E> treeSource, boolean keepSelectedNode) {
 		BatikTreeBuilder<E> b = new BatikTreeBuilder<>(treeSource);
-		b.buildNewSvgTree();
+		b.buildNewSvgTree(keepSelectedNode);
 		
 		origSize = b.getSize();
 		svgCanvas.setBackground(BatikTreeBuilder.Color.CANVAS_BACKGROUND);
@@ -81,8 +92,13 @@ public class BatikView implements MouseWheelListener {
 		pane.getViewport().getView().revalidate();
 	}
 
-	public <E> void reloadData(TreeSourceWithSelection<E> treeSource) {
-		fillCanvasNew(treeSource);
+	public void reloadData(boolean keepSelectedNode) {
+		fillCanvas(treeSource, keepSelectedNode);
+	}
+
+	@Override
+	public void onViewChanged(boolean keepSelectedNode) {
+		reloadData(keepSelectedNode);
 	}
 
 }
