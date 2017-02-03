@@ -1,7 +1,6 @@
 package czsem.netgraph;
 
 import gate.AnnotationSet;
-import gate.Document;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -23,12 +22,12 @@ import czsem.fs.query.FSQuery.QueryData;
 import czsem.fs.query.FSQuery.QueryMatch;
 import czsem.fs.query.FSQueryParser.SyntaxError;
 import czsem.gate.utils.GateAwareTreeIndex;
-import czsem.gate.utils.GateAwareTreeIndexExtended;
+import czsem.netgraph.treesource.TreeIndexTreeSource;
 
 public class NetgraphResultsBrowser extends Container {
 	private static final long serialVersionUID = 4067711902912032236L;
 	
-	private final NetgraphTreeVisualize treeVisualize = new NetgraphTreeVisualize();
+	private final NetgraphTreeVisualize treeVisualize;
 
 	protected ResultsWalker resultsWalker;
 
@@ -36,7 +35,10 @@ public class NetgraphResultsBrowser extends Container {
 
 	private final JButton buttonPrevious = new JButton("< Previous");
 	private final JButton buttonNext = new JButton("Next >");
-
+	
+	public NetgraphResultsBrowser(TreeIndexTreeSource treeSource) {
+		treeVisualize = new NetgraphTreeVisualize(treeSource);
+	}
 	
 	protected static class ResultsWalker {
 		
@@ -147,14 +149,15 @@ public class NetgraphResultsBrowser extends Container {
 	}
 
 	protected void showMatch(QueryMatch match) {
+		@SuppressWarnings("unused")
 		int id = match.getMatchingNodes().iterator().next().getNodeId();
 		//Annotation ra = asIndexHelper.as.get(id);
 		
 		//FSSentenceStringBuilder fssb = new FSSentenceStringBuilder(ra, asIndexHelper.as);
 		
 		//treeVisualize.setForest(fssb.getAttributes(), fssb.getTree());
-		treeVisualize.selectNode(id);
-		treeVisualize.setMatchingNodes(match.getMatchingNodes());		
+		//treeVisualize.selectNode(id);
+		//treeVisualize.setMatchingNodes(match.getMatchingNodes());		
 	}
 
 	protected void showNext() {
@@ -176,12 +179,6 @@ public class NetgraphResultsBrowser extends Container {
 		}
 
 		buttonPrevious.setEnabled(resultsWalker.hasPrevious());		
-	}
-
-
-	public void setIndex(Document doc, GateAwareTreeIndexExtended index) {
-		treeVisualize.setIndex(doc, index);
-		
 	}
 
 }
