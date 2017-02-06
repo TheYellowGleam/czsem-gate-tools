@@ -40,9 +40,9 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		treeSource.getViewChangedListeners().add(this);
 	}
 
-	protected <E> void fillCanvas(TreeSourceWithSelection<E> treeSource, boolean keepSelectedNode) {
+	protected <E> void fillCanvas(TreeSourceWithSelection<E> treeSource) {
 		BatikTreeBuilder<E> b = new BatikTreeBuilder<>(treeSource);
-		b.buildNewSvgTree(keepSelectedNode);
+		b.buildNewSvgTree();
 		
 		origSize = b.getSize();
 		svgCanvas.setBackground(BatikTreeBuilder.Color.CANVAS_BACKGROUND);
@@ -92,13 +92,13 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		pane.getViewport().getView().revalidate();
 	}
 
-	public void reloadData(boolean keepSelectedNode) {
-		fillCanvas(treeSource, keepSelectedNode);
+	public void reloadData() {
+		fillCanvas(treeSource);
 	}
 
 	@Override
-	public void onViewChanged(boolean keepSelectedNode) {
-		reloadData(keepSelectedNode);
+	public void onViewChanged() {
+		reloadData();
 	}
 
 }

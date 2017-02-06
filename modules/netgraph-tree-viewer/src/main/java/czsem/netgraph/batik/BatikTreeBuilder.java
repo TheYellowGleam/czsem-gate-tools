@@ -130,7 +130,7 @@ public class BatikTreeBuilder<E> {
 		return origSize;
 	}
 
-	public void buildNewSvgTree(boolean keepSelectedNode) {
+	public void buildNewSvgTree() {
 	
 		fillDataStrucures();
 		
@@ -149,10 +149,7 @@ public class BatikTreeBuilder<E> {
 		fixTheFinalSize();
 		
 	
-		if (!keepSelectedNode ) {
-			treeSource.discardSeletion();
-		}
-		else if (treeSource.getSelectedCicle() != null) {
+		if (treeSource.getSelectedCicle() != null) {
 			colorNodeAsSelected(treeSource.getSelectedCicle());
 		}
 	}

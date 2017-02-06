@@ -20,7 +20,7 @@ public class BatikFrame2 {
 		frame.setSize(800, 600);
 		frame.getContentPane().add(view.getComponent());
 		
-		view.reloadData(false);
+		view.reloadData();
 
 		frame.pack();
 		frame.setVisible(true);

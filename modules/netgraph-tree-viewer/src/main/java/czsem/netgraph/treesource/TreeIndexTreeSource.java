@@ -21,7 +21,6 @@ public class TreeIndexTreeSource extends TreeSourceWithSelection<Integer> implem
 	
 	protected GateAwareTreeIndexExtended index = new GateAwareTreeIndexExtended(null);
 	protected Document doc;
-	protected Integer selectedNode;
 	protected Integer rootNode = null;
 	
 	protected final LinkedHashSet<Object> selectedAttributes 
@@ -77,13 +76,14 @@ public class TreeIndexTreeSource extends TreeSourceWithSelection<Integer> implem
 	public void setIndex(Document doc, GateAwareTreeIndexExtended index) {
 		this.doc = doc;
 		this.index = index;
-		rootNode = selectedNode = index.findRootOrNull();
+		rootNode = index.findRootOrNull();
+		setSelectedNode(rootNode);
 		
-		fireViewChanged(false);
+		fireViewChanged();
 	}
 
 	public Annotation getSelectedAnnot() {
-		return index.getAnnIdMap().get(selectedNode);
+		return index.getAnnIdMap().get(getSelectedNode());
 	}
 
 	public Document getDoc() {
@@ -95,15 +95,7 @@ public class TreeIndexTreeSource extends TreeSourceWithSelection<Integer> implem
 	}
 
 	public void selectNode(int selectedNodeID) {
-		selectedNode = selectedNodeID;
-		rootNode = index.findRootForNode(selectedNode);
+		setSelectedNode(selectedNodeID);
+		rootNode = index.findRootForNode(getSelectedNode());
 	}
-
-	@Override
-	protected void onSlectionChanged(Integer node) {
-		selectNode(node);
-		
-		super.onSlectionChanged(node);
-	}
-
 }

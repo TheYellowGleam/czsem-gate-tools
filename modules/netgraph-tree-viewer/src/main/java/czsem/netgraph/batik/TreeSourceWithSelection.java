@@ -16,12 +16,16 @@ public abstract class TreeSourceWithSelection<E> implements TreeSource<E> {
 	}
 
 	public interface ViewChangedListener { 
-		void onViewChanged(boolean keepSelectedNode);
+		void onViewChanged();
 	}
 	
 	protected E[] nodes; 
 	protected Element[] circles;
-	protected int slectedNodeIndex = -1;
+	
+	//change consistently
+	private int selectedNodeIndex = -1;
+	private E selectedNode;
+	
 	
 	private final List<SelectionChangeListener<E>> selectionChangeListeners = new ArrayList<>(); 
 	private final List<ViewChangedListener> viewChangedListeners = new ArrayList<>(); 
@@ -32,9 +36,9 @@ public abstract class TreeSourceWithSelection<E> implements TreeSource<E> {
 		}
 	}
 
-	public void fireViewChanged(boolean keepSelectedNode) {
+	public void fireViewChanged() {
 		for (ViewChangedListener l : viewChangedListeners) {
-			l.onViewChanged(keepSelectedNode);
+			l.onViewChanged();
 		}
 	}
 	
@@ -47,22 +51,23 @@ public abstract class TreeSourceWithSelection<E> implements TreeSource<E> {
 		Element sc = getSelectedCicle();
 		if (sc != null) {
 			BatikTreeBuilder.colorNodeAsNotSelected(sc,
-					getNodeType(nodes[slectedNodeIndex]));
+					getNodeType(nodes[selectedNodeIndex]));
 		}
 		
-		slectedNodeIndex = nodeIndex;
+		selectedNodeIndex = nodeIndex;
+		selectedNode = nodes[selectedNodeIndex];
 		
 		BatikTreeBuilder.colorNodeAsSelected(getSelectedCicle());
 	}
 
-	public void discardSeletion() {
-		slectedNodeIndex = -1;
-	}
-	
 	public E[] getNodes() {return nodes;}
-	public void setNodes(E[] nodes) {this.nodes = nodes;}
 	public Element[] getCircles() {return circles;}
 	public void setCircles(Element[] circles) {this.circles = circles;}
+
+	public void setNodes(E[] nodes) {
+		this.nodes = nodes;
+		updateSelectedNodeIndex();
+	}
 
 	public List<SelectionChangeListener<E>> getSelectionChangeListeners() {
 		return selectionChangeListeners;
@@ -73,10 +78,33 @@ public abstract class TreeSourceWithSelection<E> implements TreeSource<E> {
 	}
 
 	public Element getSelectedCicle() {
-		if (slectedNodeIndex >= 0 && slectedNodeIndex < circles.length) {
-			return circles[slectedNodeIndex];
+		if (selectedNodeIndex >= 0 && selectedNodeIndex < circles.length) {
+			return circles[selectedNodeIndex];
 		}
 		
 		return null;
+	}
+
+	public E getSelectedNode() {
+		return selectedNode;
+	}
+
+	public void setSelectedNode(E selectedNode) {
+		this.selectedNode = selectedNode;
+		updateSelectedNodeIndex();
+	}
+
+	protected void updateSelectedNodeIndex() {
+		selectedNodeIndex = -1;
+
+		if (selectedNode == null) return;
+		if (nodes == null) return;
+		
+		for (int i = 0; i < nodes.length; i++) {
+			if (selectedNode.equals(nodes[i])) {
+				selectedNodeIndex = i;
+				return;
+			}
+		}
 	}
 }
