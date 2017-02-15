@@ -143,7 +143,9 @@ public class FSQueryParser {
 	protected boolean moreCharsAvailable() {
 		for (int i = charIndex+1; i<chars.size(); i++)
 		{
-			if (chars.get(i) != ' ') return true; 
+			Character ch = chars.get(i);
+			if (ch == null) return true; 
+			if (ch != ' ') return true; 
 		}
 			
 		return false;
