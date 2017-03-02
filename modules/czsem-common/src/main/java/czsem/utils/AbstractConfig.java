@@ -126,6 +126,7 @@ public abstract class AbstractConfig {
 		
 		String [] tryPaths = { 
 			"",
+			CONFIG_DIR+"/",
 			"../",
 			"../"+TOOLS_DIR+"/"+CONFIG_DIR+"/",
 			"../../",
