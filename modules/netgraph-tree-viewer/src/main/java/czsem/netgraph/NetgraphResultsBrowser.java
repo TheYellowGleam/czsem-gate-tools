@@ -1,7 +1,5 @@
 package czsem.netgraph;
 
-import gate.AnnotationSet;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -15,13 +13,9 @@ import java.util.NoSuchElementException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import czsem.fs.DependencyConfiguration;
-import czsem.fs.GateAnnotationsNodeAttributes;
 import czsem.fs.query.FSQuery;
-import czsem.fs.query.FSQuery.QueryData;
 import czsem.fs.query.FSQuery.QueryMatch;
 import czsem.fs.query.FSQueryParser.SyntaxError;
-import czsem.gate.utils.GateAwareTreeIndex;
 import czsem.netgraph.treesource.TreeIndexTreeSource;
 
 public class NetgraphResultsBrowser extends Container {
@@ -87,6 +81,7 @@ public class NetgraphResultsBrowser extends Container {
 		
 	}
 	
+	/*
 	public static class AsIndexHelper {
 		private AnnotationSet as;
 		private GateAwareTreeIndex index;
@@ -104,6 +99,7 @@ public class NetgraphResultsBrowser extends Container {
 			return new FSQuery.QueryData(index, new GateAnnotationsNodeAttributes(as));
 		}
 	}
+	*/
 
 
 

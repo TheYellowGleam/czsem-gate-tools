@@ -15,7 +15,6 @@ import java.util.List;
 import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.GateAnnotTableModel;
 import czsem.netgraph.batik.BatikTreeBuilder;
-import czsem.netgraph.batik.TreeSourceWithSelection;
 
 public class TreeIndexTreeSource extends TreeSourceWithSelection<Integer> implements Comparator<Integer> {
 	

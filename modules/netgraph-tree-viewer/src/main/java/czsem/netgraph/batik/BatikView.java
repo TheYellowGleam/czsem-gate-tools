@@ -16,11 +16,13 @@ import javax.swing.JScrollPane;
 
 import org.apache.batik.swing.JSVGCanvas;
 
-import czsem.netgraph.batik.TreeSourceWithSelection.ViewChangedListener;
+import czsem.netgraph.treesource.TreeSourceWithSelection;
+import czsem.netgraph.treesource.TreeSourceWithSelection.ViewChangedListener;
 
 public class BatikView implements MouseWheelListener, ViewChangedListener {
 	
 	protected final TreeSourceWithSelection<?> treeSource;
+	public static final double scaleIncrement = 0.1; 
 	
 	protected double currentScale = 1.0;
 	protected Dimension origSize;
@@ -82,7 +84,7 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		//TODO scroll the pane
 		
 		e.consume();
-		currentScale -= e.getPreciseWheelRotation()*0.2;
+		currentScale -= e.getPreciseWheelRotation()*scaleIncrement;
 		svgCanvas.setRenderingTransform(AffineTransform.getScaleInstance(currentScale, currentScale));
 		
 		svgCanvas.setPreferredSize(new Dimension(

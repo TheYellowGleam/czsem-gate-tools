@@ -20,6 +20,7 @@ import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGRect;
 
 import czsem.netgraph.TreeComputation;
+import czsem.netgraph.treesource.TreeSourceWithSelection;
 import czsem.netgraph.treesource.TreeSource.NodeLabel;
 
 public class BatikTreeBuilder<E> {

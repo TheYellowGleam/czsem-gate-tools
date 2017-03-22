@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import czsem.netgraph.batik.BatikTreeBuilder;
-import czsem.netgraph.batik.TreeSourceWithSelection;
+import czsem.netgraph.treesource.TreeSourceWithSelection;
 
 public class NetgraphFrame {
 	

@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2017 Datlowe and/or its affiliates. All rights reserved.
  ******************************************************************************/
-package czsem.netgraph.batik;
+package czsem.netgraph.treesource;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Element;
 
-import czsem.netgraph.treesource.TreeSource;
+import czsem.netgraph.batik.BatikTreeBuilder;
 
 public abstract class TreeSourceWithSelection<E> implements TreeSource<E> {
 	public interface SelectionChangeListener<E> { 
