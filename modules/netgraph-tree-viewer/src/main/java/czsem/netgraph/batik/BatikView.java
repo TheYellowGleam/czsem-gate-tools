@@ -29,13 +29,7 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 	
 	private JScrollPane pane;
 	
-	private final JSVGCanvas svgCanvas = new JSVGCanvas() {
-		private static final long serialVersionUID = -4362953581038733653L;
-		
-		@Override
-		public void setMySize(Dimension d) {};
-		
-	};
+	private final JSVGCanvasUpdated svgCanvas = new JSVGCanvasUpdated();
 
 	public BatikView(TreeSourceWithSelection<?> treeSource) {
 		this.treeSource = treeSource;
@@ -50,7 +44,8 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		svgCanvas.setBackground(BatikTreeBuilder.Color.CANVAS_BACKGROUND);
 		svgCanvas.setSVGDocument(b.getDoc());
 
-		svgCanvas.setPreferredSize(origSize);
+		//svgCanvas.setPreferredSize(origSize);
+		applyScale();
 	}
 	
 	public Component getComponent() {
@@ -77,21 +72,33 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		return pane;
 	}
 
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0)
-			return;
-		//TODO scroll the pane
-		
-		e.consume();
-		currentScale -= e.getPreciseWheelRotation()*scaleIncrement;
-		svgCanvas.setRenderingTransform(AffineTransform.getScaleInstance(currentScale, currentScale));
-		
+	protected void applyScale() {
 		svgCanvas.setPreferredSize(new Dimension(
 				(int) (origSize.getWidth()*currentScale), 
 				(int) (origSize.getHeight()*currentScale)));
 		
+		AffineTransform tr = AffineTransform.getScaleInstance(currentScale, currentScale);
+		svgCanvas.setRenderingTransformAllowed(tr);
+
 		pane.getViewport().getView().revalidate();
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0) {
+			//TODO scroll the pane
+			
+			
+			//System.err.println(svgCanvas.getRenderingTransform().getScaleX());
+			//System.err.println(currentScale);
+			
+			return;
+		}
+		
+		e.consume();
+		currentScale -= e.getPreciseWheelRotation()*scaleIncrement;
+		
+		applyScale();
 	}
 
 	public void reloadData() {

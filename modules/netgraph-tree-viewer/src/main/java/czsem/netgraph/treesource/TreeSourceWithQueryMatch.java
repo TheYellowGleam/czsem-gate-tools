@@ -3,6 +3,6 @@
  ******************************************************************************/
 package czsem.netgraph.treesource;
 
-public class TreeSourceWithQueryMatch {
+public class TreeSourceWithQueryMatch extends TreeIndexTreeSource {
 
 }

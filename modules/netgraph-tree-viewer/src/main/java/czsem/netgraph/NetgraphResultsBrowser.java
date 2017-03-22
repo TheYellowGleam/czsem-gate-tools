@@ -17,6 +17,7 @@ import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryMatch;
 import czsem.fs.query.FSQueryParser.SyntaxError;
 import czsem.netgraph.treesource.TreeIndexTreeSource;
+import czsem.netgraph.treesource.TreeSourceWithQueryMatch;
 
 public class NetgraphResultsBrowser extends Container {
 	private static final long serialVersionUID = 4067711902912032236L;
@@ -24,6 +25,7 @@ public class NetgraphResultsBrowser extends Container {
 	private final NetgraphTreeVisualize treeVisualize;
 
 	protected ResultsWalker resultsWalker;
+	protected TreeSourceWithQueryMatch treeSource;
 
 	//public AsIndexHelper asIndexHelper = new AsIndexHelper(); 
 
