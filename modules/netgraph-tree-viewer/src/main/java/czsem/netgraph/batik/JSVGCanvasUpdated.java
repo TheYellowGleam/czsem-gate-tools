@@ -9,7 +9,9 @@ public class JSVGCanvasUpdated extends JSVGCanvas {
 	private static final long serialVersionUID = -2525482300192603444L;
 	
 	@Override
-	public void setMySize(Dimension d) {}
+	public void setMySize(Dimension d) {
+		// disabled
+	}
 
 	@Override
 	public void setRenderingTransform(AffineTransform at, boolean performRedraw) {
@@ -17,7 +19,8 @@ public class JSVGCanvasUpdated extends JSVGCanvas {
 		//super.setRenderingTransform(at, performRedraw);
 	}
 
-	public void setRenderingTransformAllowed(AffineTransform tr) {
+	public void setRenderingTransformExclusive(AffineTransform tr) {
+		// allowed
 		super.setRenderingTransform(tr, true);
 	};
 

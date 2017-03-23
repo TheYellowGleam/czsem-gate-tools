@@ -78,7 +78,7 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 				(int) (origSize.getHeight()*currentScale)));
 		
 		AffineTransform tr = AffineTransform.getScaleInstance(currentScale, currentScale);
-		svgCanvas.setRenderingTransformAllowed(tr);
+		svgCanvas.setRenderingTransformExclusive(tr);
 
 		pane.getViewport().getView().revalidate();
 	}
