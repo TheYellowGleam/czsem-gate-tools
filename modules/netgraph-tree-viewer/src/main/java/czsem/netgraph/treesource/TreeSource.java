@@ -15,8 +15,11 @@ public interface TreeSource<E> {
 	public E getRoot();
 	public Collection<E> getChildren(E parent);
 	public List<NodeLabel> getLabels(E node);
-	public int getNodeType(E node);
 	public Comparator<E> getOrderComparator();
+	public int getNodeType(E node);
+	public default int getEdgeType(E parent, E child) {
+		return getNodeType(child);
+	}
 	
 	public static class StaticLabel implements NodeLabel {
 

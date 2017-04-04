@@ -196,7 +196,7 @@ public class BatikTreeBuilder<E> {
 				.attr("y1", y[a])
 				.attr("x2", x[b])
 				.attr("y2", y[b])
-				.attr("stroke", 	  Color.EDGE[getNodeType(b)])
+				.attr("stroke", 	  Color.EDGE[getEdgeType(a, b)])
 				.attr("stroke-width", Sizing.EDGE_STROKE)
 				.get();
 
@@ -271,6 +271,10 @@ public class BatikTreeBuilder<E> {
 		}
 	}
 
+	protected int getEdgeType(int indexParent, int indexChild) {
+		return treeSource.getEdgeType(srcNodes[indexParent], srcNodes[indexChild]);
+	}
+	
 	protected int getNodeType(int index) {
 		return treeSource.getNodeType(srcNodes[index]);
 	}

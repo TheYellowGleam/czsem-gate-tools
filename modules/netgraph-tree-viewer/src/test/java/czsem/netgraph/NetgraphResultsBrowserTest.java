@@ -19,7 +19,7 @@ import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.gate.utils.GateUtils;
 import czsem.gate.utils.PRSetup;
 import czsem.gate.utils.PRSetup.SinglePRSetup;
-import czsem.netgraph.treesource.TreeIndexTreeSource;
+import czsem.netgraph.treesource.TreeSourceWithQueryMatch;
 
 
 public class NetgraphResultsBrowserTest {
@@ -54,7 +54,7 @@ public class NetgraphResultsBrowserTest {
 	    fr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	
 		
-		TreeIndexTreeSource src = new TreeIndexTreeSource();
+	    TreeSourceWithQueryMatch src = new TreeSourceWithQueryMatch();
 		NetgraphResultsBrowser rb = new NetgraphResultsBrowser(src);
 		rb.initComponents();
 

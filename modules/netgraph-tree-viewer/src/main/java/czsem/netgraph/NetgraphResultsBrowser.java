@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryMatch;
 import czsem.fs.query.FSQueryParser.SyntaxError;
-import czsem.netgraph.treesource.TreeIndexTreeSource;
 import czsem.netgraph.treesource.TreeSourceWithQueryMatch;
 
 public class NetgraphResultsBrowser extends Container {
@@ -25,14 +24,15 @@ public class NetgraphResultsBrowser extends Container {
 	private final NetgraphTreeVisualize treeVisualize;
 
 	protected ResultsWalker resultsWalker;
-	protected TreeSourceWithQueryMatch treeSource;
+	protected final TreeSourceWithQueryMatch treeSource;
 
 	//public AsIndexHelper asIndexHelper = new AsIndexHelper(); 
 
 	private final JButton buttonPrevious = new JButton("< Previous");
 	private final JButton buttonNext = new JButton("Next >");
 	
-	public NetgraphResultsBrowser(TreeIndexTreeSource treeSource) {
+	public NetgraphResultsBrowser(TreeSourceWithQueryMatch treeSource) {
+		this.treeSource = treeSource;
 		treeVisualize = new NetgraphTreeVisualize(treeSource);
 	}
 	
@@ -147,15 +147,7 @@ public class NetgraphResultsBrowser extends Container {
 	}
 
 	protected void showMatch(QueryMatch match) {
-		@SuppressWarnings("unused")
-		int id = match.getMatchingNodes().iterator().next().getNodeId();
-		//Annotation ra = asIndexHelper.as.get(id);
-		
-		//FSSentenceStringBuilder fssb = new FSSentenceStringBuilder(ra, asIndexHelper.as);
-		
-		//treeVisualize.setForest(fssb.getAttributes(), fssb.getTree());
-		//treeVisualize.selectNode(id);
-		//treeVisualize.setMatchingNodes(match.getMatchingNodes());		
+		treeSource.setQueryMatch(match);
 	}
 
 	protected void showNext() {
