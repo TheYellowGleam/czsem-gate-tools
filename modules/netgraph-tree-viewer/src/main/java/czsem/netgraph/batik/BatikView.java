@@ -45,7 +45,7 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		svgCanvas.setSVGDocument(b.getDoc());
 
 		//svgCanvas.setPreferredSize(origSize);
-		applyScale();
+		applyScale(false);
 	}
 	
 	public Component getComponent() {
@@ -72,13 +72,13 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		return pane;
 	}
 
-	protected void applyScale() {
+	protected void applyScale(boolean performRedraw) {
 		svgCanvas.setPreferredSize(new Dimension(
 				(int) (origSize.getWidth()*currentScale), 
 				(int) (origSize.getHeight()*currentScale)));
 		
 		AffineTransform tr = AffineTransform.getScaleInstance(currentScale, currentScale);
-		svgCanvas.setRenderingTransformExclusive(tr);
+		svgCanvas.setRenderingTransformExclusive(tr, performRedraw);
 
 		pane.getViewport().getView().revalidate();
 	}
@@ -98,7 +98,7 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		e.consume();
 		currentScale -= e.getPreciseWheelRotation()*scaleIncrement;
 		
-		applyScale();
+		applyScale(true);
 	}
 
 	public void reloadData() {

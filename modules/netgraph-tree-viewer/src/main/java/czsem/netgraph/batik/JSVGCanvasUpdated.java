@@ -19,9 +19,9 @@ public class JSVGCanvasUpdated extends JSVGCanvas {
 		//super.setRenderingTransform(at, performRedraw);
 	}
 
-	public void setRenderingTransformExclusive(AffineTransform tr) {
+	public void setRenderingTransformExclusive(AffineTransform tr, boolean performRedraw) {
 		// allowed
-		super.setRenderingTransform(tr, true);
+		super.setRenderingTransform(tr, performRedraw);
 	};
 
 	
