@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 
 import czsem.netgraph.batik.BatikTreeBuilder;
 
-public abstract class TreeSourceWithSelection<E> implements TreeSource<E> {
+public abstract class TreeSourceWithSelectionSupport<E> implements TreeSource<E> {
 	public interface SelectionChangeListener<E> { 
 		void onSlectionChanged(E node);
 	}

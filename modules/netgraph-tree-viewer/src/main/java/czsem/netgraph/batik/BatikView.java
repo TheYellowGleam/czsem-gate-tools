@@ -14,14 +14,17 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
+import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 
-import czsem.netgraph.treesource.TreeSourceWithSelection;
-import czsem.netgraph.treesource.TreeSourceWithSelection.ViewChangedListener;
+import czsem.netgraph.treesource.TreeSourceWithSelectionSupport;
+import czsem.netgraph.treesource.TreeSourceWithSelectionSupport.ViewChangedListener;
 
-public class BatikView implements MouseWheelListener, ViewChangedListener {
+public class BatikView extends GVTTreeRendererAdapter implements MouseWheelListener, ViewChangedListener {
 	
-	protected final TreeSourceWithSelection<?> treeSource;
+	protected final TreeSourceWithSelectionSupport<?> treeSource;
 	public static final double scaleIncrement = 0.1; 
 	
 	protected double currentScale = 1.0;
@@ -30,13 +33,14 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 	private JScrollPane pane;
 	
 	private final JSVGCanvasUpdated svgCanvas = new JSVGCanvasUpdated();
+	private boolean setRenderingTransformLater = false;
 
-	public BatikView(TreeSourceWithSelection<?> treeSource) {
+	public BatikView(TreeSourceWithSelectionSupport<?> treeSource) {
 		this.treeSource = treeSource;
 		treeSource.getViewChangedListeners().add(this);
 	}
 
-	protected <E> void fillCanvas(TreeSourceWithSelection<E> treeSource) {
+	protected <E> void fillCanvas(TreeSourceWithSelectionSupport<E> treeSource) {
 		BatikTreeBuilder<E> b = new BatikTreeBuilder<>(treeSource);
 		b.buildNewSvgTree();
 		
@@ -64,6 +68,7 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		svgCanvas.setAlignmentX(Component.LEFT_ALIGNMENT);
 		svgCanvas.setAlignmentY(Component.TOP_ALIGNMENT);
 		
+		svgCanvas.addGVTTreeRendererListener(this);
 		svgCanvas.addMouseWheelListener(this);
 			
 		
@@ -72,13 +77,17 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 		return pane;
 	}
 
-	protected void applyScale(boolean performRedraw) {
+	protected void applyScale(boolean performImmediateRedraw) {
 		svgCanvas.setPreferredSize(new Dimension(
 				(int) (origSize.getWidth()*currentScale), 
 				(int) (origSize.getHeight()*currentScale)));
 		
-		AffineTransform tr = AffineTransform.getScaleInstance(currentScale, currentScale);
-		svgCanvas.setRenderingTransformExclusive(tr, performRedraw);
+		if (performImmediateRedraw) {
+			AffineTransform tr = AffineTransform.getScaleInstance(currentScale, currentScale);
+			svgCanvas.setRenderingTransformExclusive(tr, performImmediateRedraw);
+		} else {
+			setRenderingTransformLater = true;
+		}
 
 		pane.getViewport().getView().revalidate();
 	}
@@ -108,6 +117,18 @@ public class BatikView implements MouseWheelListener, ViewChangedListener {
 	@Override
 	public void onViewChanged() {
 		reloadData();
+	}
+
+	@Override
+	public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
+		if (! setRenderingTransformLater) return;
+		
+		UpdateManager um = svgCanvas.getUpdateManager();
+		if (um != null) {
+			AffineTransform tr = AffineTransform.getScaleInstance(currentScale, currentScale);
+			um.getUpdateRunnableQueue().invokeLater(() -> svgCanvas.setRenderingTransformExclusive(tr, false));
+			setRenderingTransformLater = false;
+		}
 	}
 
 }

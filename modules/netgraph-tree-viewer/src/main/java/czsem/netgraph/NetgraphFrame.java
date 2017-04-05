@@ -9,11 +9,11 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import czsem.netgraph.batik.BatikTreeBuilder;
-import czsem.netgraph.treesource.TreeSourceWithSelection;
+import czsem.netgraph.treesource.TreeSourceWithSelectionSupport;
 
 public class NetgraphFrame {
 	
-	public static class TestSource extends TreeSourceWithSelection<Integer> {
+	public static class TestSource extends TreeSourceWithSelectionSupport<Integer> {
 
 		@Override
 		public Integer getRoot() {

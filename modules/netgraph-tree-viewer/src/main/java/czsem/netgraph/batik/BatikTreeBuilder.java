@@ -20,7 +20,7 @@ import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGRect;
 
 import czsem.netgraph.TreeComputation;
-import czsem.netgraph.treesource.TreeSourceWithSelection;
+import czsem.netgraph.treesource.TreeSourceWithSelectionSupport;
 import czsem.netgraph.treesource.TreeSource.NodeLabel;
 
 public class BatikTreeBuilder<E> {
@@ -81,7 +81,7 @@ public class BatikTreeBuilder<E> {
 	
 	public static final String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
 
-	protected final TreeSourceWithSelection<E> treeSource;
+	protected final TreeSourceWithSelectionSupport<E> treeSource;
 	protected TreeComputation<E> cmp;
 
 	protected SVGDocument doc;
@@ -104,10 +104,10 @@ public class BatikTreeBuilder<E> {
 
 	public static class SelectNodeEvent implements EventListener {
 
-		private TreeSourceWithSelection<?> selectionHandlder;
+		private TreeSourceWithSelectionSupport<?> selectionHandlder;
 		private int nodeIndex;
 
-		public SelectNodeEvent(TreeSourceWithSelection<?> selectionHandlder, int nodeIndex) {
+		public SelectNodeEvent(TreeSourceWithSelectionSupport<?> selectionHandlder, int nodeIndex) {
 			this.selectionHandlder = selectionHandlder;
 			this.nodeIndex = nodeIndex;
 		}
@@ -119,7 +119,7 @@ public class BatikTreeBuilder<E> {
 		
 	}
 	
-	public BatikTreeBuilder(TreeSourceWithSelection<E> treeSource) {
+	public BatikTreeBuilder(TreeSourceWithSelectionSupport<E> treeSource) {
 		this.treeSource = treeSource;
 	}
 	

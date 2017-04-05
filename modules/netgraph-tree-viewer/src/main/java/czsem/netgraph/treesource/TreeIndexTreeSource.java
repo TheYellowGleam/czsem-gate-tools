@@ -16,7 +16,7 @@ import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.GateAnnotTableModel;
 import czsem.netgraph.batik.BatikTreeBuilder;
 
-public class TreeIndexTreeSource extends TreeSourceWithSelection<Integer> implements Comparator<Integer> {
+public class TreeIndexTreeSource extends TreeSourceWithSelectionSupport<Integer> implements Comparator<Integer> {
 	
 	protected GateAwareTreeIndexExtended index = new GateAwareTreeIndexExtended(null);
 	protected Document doc;

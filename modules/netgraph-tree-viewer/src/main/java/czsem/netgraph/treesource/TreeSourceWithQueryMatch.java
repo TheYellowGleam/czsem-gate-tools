@@ -45,7 +45,7 @@ public class TreeSourceWithQueryMatch extends TreeIndexTreeSource {
 		if (matchingNodes.contains(node))
 			return BatikTreeBuilder.NodeType.EMPHASIZED;
 					
-		return BatikTreeBuilder.NodeType.STANDARD;
+		return super.getNodeType(node);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class TreeSourceWithQueryMatch extends TreeIndexTreeSource {
 		if (matchingNodes.contains(parent) && matchingNodes.contains(child))
 			return BatikTreeBuilder.NodeType.EMPHASIZED;
 		
-		return BatikTreeBuilder.NodeType.STANDARD;
+		return super.getNodeType(child);
 	}
 	
 	
