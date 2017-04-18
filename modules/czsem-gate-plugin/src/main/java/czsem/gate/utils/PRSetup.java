@@ -10,6 +10,8 @@ import gate.creole.ResourceInstantiationException;
 import gate.creole.SerialAnalyserController;
 import gate.util.GateException;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -114,8 +116,16 @@ public abstract class PRSetup
 	public static SerialAnalyserController buildGatePipeline(List<PRSetup> prs, String name) throws ResourceInstantiationException
 	{
 		try {
-			GateUtils.registerComponentIfNot(NotCheckingParametersSerialController.class);
-		} catch (GateException e1) {
+			URL res = NotCheckingParametersSerialController.class.getResource(
+					"/gate/creole/CreoleRegisterImpl.class");
+			
+			if (res != null)
+				GateUtils.registerComponentIfNot(NotCheckingParametersSerialController.class);
+			else {
+				GateUtils.registerPluginDirectory("czsem-gate-plugin");
+			}
+			
+		} catch (GateException | MalformedURLException e1) {
 			throw new ResourceInstantiationException(e1);
 		}
 		
