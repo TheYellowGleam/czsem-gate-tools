@@ -82,7 +82,7 @@ public class NetgraphTreeVisualize extends Container {
 		JScrollPane tableScrollpane = new JScrollPane(table);
 
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				tableScrollpane, forestDisplay.getComponent());
+				tableScrollpane, forestDisplay.initComponent());
 		split.setDividerLocation(200);
 		add(split);
 	}

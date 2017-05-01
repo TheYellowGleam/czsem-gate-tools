@@ -18,7 +18,7 @@ public class BatikFrame2 {
         
 		frame.setLocationRelativeTo(null);		
 		frame.setSize(800, 600);
-		frame.getContentPane().add(view.getComponent());
+		frame.getContentPane().add(view.initComponent());
 		
 		view.reloadData();
 

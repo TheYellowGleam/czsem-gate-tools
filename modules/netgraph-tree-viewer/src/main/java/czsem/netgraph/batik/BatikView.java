@@ -52,7 +52,7 @@ public class BatikView extends GVTTreeRendererAdapter implements MouseWheelListe
 		applyScale(false);
 	}
 	
-	public Component getComponent() {
+	public Component initComponent() {
 		svgCanvas.setRecenterOnResize(false);
 		//svgCanvas.setMinimumSize(new Dimension(800, 600));
 		//svgCanvas.setEnableImageZoomInteractor(true);
