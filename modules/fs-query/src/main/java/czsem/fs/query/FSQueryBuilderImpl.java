@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import czsem.fs.query.constants.MetaAttribute;
 import czsem.fs.query.eval.obsolete.IterateSubtreeEvaluator;
+import czsem.fs.query.restrictions.OtherPrintableRestriction.*;
 
 public class FSQueryBuilderImpl implements FSQueryBuilder {
 	private static final Logger logger = LoggerFactory.getLogger(FSQueryBuilderImpl.class);
@@ -54,6 +55,7 @@ public class FSQueryBuilderImpl implements FSQueryBuilder {
 		switch (arg1) {
 			case MetaAttribute.NODE_NAME:
 				curentNode.setName(arg2);
+				curentNode.addOtherPrintableRestriction(new PrintName(curentNode));
 				break;
 				
 			case MetaAttribute.OPTIONAL:
@@ -61,6 +63,7 @@ public class FSQueryBuilderImpl implements FSQueryBuilder {
 					curentNode.setOptional(true);
 					getOptionalNodes().add(curentNode);
 				}
+				curentNode.addOtherPrintableRestriction(new PrintOptional(curentNode));
 				break;
 				
 			case MetaAttribute.OPTIONAL_SUBTREE:
@@ -68,17 +71,20 @@ public class FSQueryBuilderImpl implements FSQueryBuilder {
 					curentNode.setOptionalSubtree(true);
 					getOptionalNodes().add(curentNode);
 				}
+				curentNode.addOtherPrintableRestriction(new PrintOptionalSubtree(curentNode));
 				break;
 				
 			case MetaAttribute.FORBIDDEN_SUBTREE:
 				if (MetaAttribute.TRUE.equals(arg2)) {
 					curentNode.setForbiddenSubtree(true);
 				}
+				curentNode.addOtherPrintableRestriction(new PrintForbiddenSubtree(curentNode));
 				break;
 				
 			case IterateSubtreeEvaluator.META_ATTR_SUBTREE_DEPTH:
 				int depth = Integer.parseInt(arg2);
 				curentNode.setSubtreeDepth(depth);
+				curentNode.addOtherPrintableRestriction(new PrintSubtreeDepth(curentNode));
 				break;
 				
 			default:

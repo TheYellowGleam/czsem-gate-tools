@@ -76,6 +76,10 @@ public class QueryNode  {
 		Restrictions.addRestriction(this, comparartor, arg1, arg2);
 	}
 	
+	public void addOtherPrintableRestriction(PrintableRestriction r) {
+		data.restrictions.add(r);
+	}
+	
 	public void addDirectRestriction(DirectAttrRestriction restriction) {
 		data.restrictions.add(restriction);
 		data.directRestrictions.add(restriction);			
