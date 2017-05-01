@@ -7,9 +7,12 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -25,99 +28,103 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import thirdparty.JTextPaneWithUndo;
+import thirdparty.ListAction;
 import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryObject;
 import czsem.fs.query.FSQueryParser.SyntaxError;
-import czsem.fs.query.QueryNode;
+import czsem.fs.query.constants.MetaAttribute;
+import czsem.netgraph.batik.BatikView;
 import czsem.netgraph.treesource.FSQueryTreeSource;
-import thirdparty.JTextPaneWithUndo;
-import thirdparty.ListAction;
 
-public class NetgraphQueryDesigner extends Container  {
+public class NetgraphQueryDesigner extends Container {
 	private static final long serialVersionUID = 3771937513564105054L;
 
 	private static final String DEFAULT_QUERY_STRING = "[attr_name=attr_value]";
 
 	public static void main(String[] args) {
 		JFrame fr = new JFrame(NetgraphQueryDesigner.class.getName());
-	    fr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-	
-		
-	    NetgraphQueryDesigner qd = new NetgraphQueryDesigner();
+		fr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+		NetgraphQueryDesigner qd = new NetgraphQueryDesigner();
 		qd.initComponents();
-		
+		qd.setAs(null);
+
 		fr.add(qd);
-		
+
 		fr.pack();
 		fr.setVisible(true);
 
 	}
-	
+
 	protected final FSQueryTreeSource treeSource = new FSQueryTreeSource();
 
-	private NetgraphView<QueryNode> forestDispaly; 
+	private BatikView forestDispaly;
 	private JTextPaneWithUndo queryString;
 	private JPanel panelBottom;
 	private JList<String> attrNames;
 	private JList<String> attrValues;
-	
-	//public AsIndexHelper asIndexHelper = new AsIndexHelper();
+
+	// public AsIndexHelper asIndexHelper = new AsIndexHelper();
 	private SortedMap<String, SortedSet<String>> attrIndex;
 
 	public void initComponents() {
-		trySetQueryString(DEFAULT_QUERY_STRING);
-		
 		setLayout(new BorderLayout());
 
-		//forest
-        forestDispaly = new NetgraphView<>(treeSource);
-        //forestDispaly.setPreferredSize(new Dimension(500,500));
-        
-        //TODO
-        //forestDispaly.setEmphasizeChosenNode(true);
+		// forest
+		forestDispaly = new BatikView(treeSource);
+		// forestDispaly.setPreferredSize(new Dimension(500,500));
 
-        JScrollPane query_tree_view_scroll_pane = new JScrollPane(forestDispaly);
-        query_tree_view_scroll_pane.setPreferredSize(new Dimension(500,400));
-        query_tree_view_scroll_pane.setBorder(BorderFactory.createTitledBorder("query tree:"));
-        
-        attrNames = new JList<>();
-        attrNames.setPreferredSize(new Dimension(70,0));
-        attrValues = new JList<>();
-        JSplitPane attrsSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, attrNames, attrValues);
-        JScrollPane attrsScrollPane = new JScrollPane(attrsSplit);
-        query_tree_view_scroll_pane.setPreferredSize(new Dimension(300,100));
-        attrsScrollPane.setPreferredSize(new Dimension(160,100));
-        attrsScrollPane.setBorder(BorderFactory.createTitledBorder("attributes:"));
-        //attrsPanel.setBorder(BorderFactory.createTitledBorder("attributes:"));
+		// TODO
+		// forestDispaly.setEmphasizeChosenNode(true);
 
-        initAttrListEvents();
-        
-        
-        JSplitPane centerSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, attrsScrollPane, query_tree_view_scroll_pane); 
-        
-        add(centerSplit, BorderLayout.CENTER);
-        
-        
-        panelBottom = new JPanel(new BorderLayout());
-        add(panelBottom, BorderLayout.SOUTH);
-        
-        //query string
-		queryString = new JTextPaneWithUndo();        
-        queryString.setText(DEFAULT_QUERY_STRING);
+		JScrollPane query_tree_view_scroll_pane = new JScrollPane(forestDispaly.initComponent());
+		query_tree_view_scroll_pane.setPreferredSize(new Dimension(500, 400));
+		query_tree_view_scroll_pane.setBorder(BorderFactory.createTitledBorder("query tree:"));
+
+		attrNames = new JList<>();
+		attrNames.setPreferredSize(new Dimension(70, 0));
+		attrValues = new JList<>();
+		attrValues.setPreferredSize(new Dimension(70, 0));
+		JSplitPane attrsSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, attrNames, attrValues);
+		JScrollPane attrsScrollPane = new JScrollPane(attrsSplit);
+		query_tree_view_scroll_pane.setPreferredSize(new Dimension(300, 100));
+		attrsScrollPane.setPreferredSize(new Dimension(200, 100));
+		attrsScrollPane.setBorder(BorderFactory.createTitledBorder("attributes:"));
+		// attrsPanel.setBorder(BorderFactory.createTitledBorder("attributes:"));
+
+		initAttrListEvents();
+
+		JSplitPane centerSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, attrsScrollPane,
+				query_tree_view_scroll_pane);
+
+		add(centerSplit, BorderLayout.CENTER);
+
+		panelBottom = new JPanel(new BorderLayout());
+		add(panelBottom, BorderLayout.SOUTH);
+
+		// query string
+		queryString = new JTextPaneWithUndo();
+		queryString.setText(DEFAULT_QUERY_STRING);
 		JPanel panel_query = new JPanel(new BorderLayout());
-        panel_query.setBorder(BorderFactory.createTitledBorder("query string:"));
-        panel_query.setLayout(new BorderLayout());
-        panel_query.add(queryString, BorderLayout.CENTER);        
-        panelBottom.add(panel_query, BorderLayout.CENTER);
+		panel_query.setBorder(BorderFactory.createTitledBorder("query string:"));
+		panel_query.setLayout(new BorderLayout());
+		panel_query.add(queryString, BorderLayout.CENTER);
+		panelBottom.add(panel_query, BorderLayout.CENTER);
 
-        //buttonUpdate
-        JButton buttonUpdate = new JButton("Update");
-        buttonUpdate.addActionListener(new ActionListener() {
-        	@Override public void actionPerformed(ActionEvent e) {onUpdateQueryButton();}});
-        panelBottom.add(buttonUpdate, BorderLayout.EAST);
+		// buttonUpdate
+		JButton buttonUpdate = new JButton("Update");
+		buttonUpdate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onUpdateQueryButton();
+			}
+		});
+		panelBottom.add(buttonUpdate, BorderLayout.EAST);
 
+		trySetQueryString(DEFAULT_QUERY_STRING);
 	}
-	
+
 	@SuppressWarnings("serial")
 	protected void initAttrListEvents() {
 		attrNames.addListSelectionListener(new ListSelectionListener() {
@@ -128,31 +135,34 @@ public class NetgraphQueryDesigner extends Container  {
 					attrValues.setModel(emptyModel);
 					return;
 				}
-				
+
 				SortedSet<String> values = attrIndex.get(v.toString());
-				if (values.size() < 3000){					
+				if (values.size() < 3000) {
 					attrValues.setModel(new ArrayListModel(values));
 				} else {
-					attrValues.setModel(emptyModel);					
+					attrValues.setModel(emptyModel);
 				}
 			}
 		});
-		
+
 		new ListAction(attrNames, new AbstractAction() {
 			@Override
-			public void actionPerformed(ActionEvent e) { onSelectAttrName(); }});
+			public void actionPerformed(ActionEvent e) {
+				onSelectAttrName();
+			}
+		});
 
 		new ListAction(attrValues, new AbstractAction() {
 			@Override
-			public void actionPerformed(ActionEvent e) { onSelectAttrValue(); }});
+			public void actionPerformed(ActionEvent e) {
+				onSelectAttrValue();
+			}
+		});
 	}
 
 	protected void onSelectAttrValue() {
-		insertTextToQuery(
-				attrNames.getSelectedValue().toString()+
-				"="+
-				attrValues.getSelectedValue().toString()
-				);		
+		insertTextToQuery(attrNames.getSelectedValue().toString() + "="
+				+ attrValues.getSelectedValue().toString());
 	}
 
 	protected void insertTextToQuery(String text) {
@@ -164,55 +174,50 @@ public class NetgraphQueryDesigner extends Container  {
 	}
 
 	protected void onSelectAttrName() {
-		insertTextToQuery(attrNames.getSelectedValue().toString());		
+		insertTextToQuery(attrNames.getSelectedValue().toString());
 	}
 
 	public JButton addSearchButton() {
-        //buttonSearch
-        JButton buttonSearch = new JButton("   Search !   ");
-        JPanel p = new JPanel();
-        p.add(buttonSearch);
-        panelBottom.add(p, BorderLayout.SOUTH);
-        
-        return buttonSearch;
+		// buttonSearch
+		JButton buttonSearch = new JButton("   Search !   ");
+		JPanel p = new JPanel();
+		p.add(buttonSearch);
+		panelBottom.add(p, BorderLayout.SOUTH);
+
+		return buttonSearch;
 	}
 
-	public String getQueryString()
-	{
+	public String getQueryString() {
 		return queryString.getText();
 	}
 
 	protected void onUpdateQueryButton() {
 		trySetQueryString(getQueryString());
-		forestDispaly.updateData();
-		forestDispaly.repaint();
 	}
 
 	protected void trySetQueryString(String queryString) {
 		try {
 			QueryObject q = FSQuery.buildQuery(queryString);
 			treeSource.setQueryObject(q);
+			treeSource.updateForNewQuery();
 		} catch (SyntaxError e) {
-			//TODO create err view
+			// TODO create err view
 			throw new RuntimeException(e);
 		}
-		
+
 		/*
-		try {
-			String[] attrs = AttrsCollectorFSQB.collectAttributes(getQueryString());
-			if (attrs.length == 0) attrs = new String [] {""};
-			
-			forestDispaly.setForest(attrs, getQueryString());
-			
-			for (int i = 0; i < attrs.length; i++) {
-		        forestDispaly.addShownAttribute(attrs[i]);				
-			}
-			
-			forestDispaly.repaint();		
-		} catch (SyntaxError e) {
-			throw new RuntimeException(e);
-		}
-		*/
+		 * try { String[] attrs =
+		 * AttrsCollectorFSQB.collectAttributes(getQueryString()); if
+		 * (attrs.length == 0) attrs = new String [] {""};
+		 * 
+		 * forestDispaly.setForest(attrs, getQueryString());
+		 * 
+		 * for (int i = 0; i < attrs.length; i++) {
+		 * forestDispaly.addShownAttribute(attrs[i]); }
+		 * 
+		 * forestDispaly.repaint(); } catch (SyntaxError e) { throw new
+		 * RuntimeException(e); }
+		 */
 	}
 
 	public void setQueryString(String queryString) {
@@ -221,18 +226,17 @@ public class NetgraphQueryDesigner extends Container  {
 	}
 
 	public void setAs(AnnotationSet annotation_set) {
-		//TODO
+		// TODO
 		/*
-		asIndexHelper.setSourceAS(annotation_set);
-		asIndexHelper.initIndex();
+		 * asIndexHelper.setSourceAS(annotation_set); asIndexHelper.initIndex();
+		 */
 		fillAttrIndexAndNamesList();
-		*/
 	}
-	
+
 	@SuppressWarnings("serial")
 	private static final class ArrayListModel extends AbstractListModel<String> {
 
-		String [] values;
+		String[] values;
 
 		public ArrayListModel(Collection<String> data) {
 			this(data.toArray(new String[0]));
@@ -252,25 +256,36 @@ public class NetgraphQueryDesigner extends Container  {
 			return values[index];
 		}
 	}
-	
+
 	@SuppressWarnings("serial")
 	public static final ListModel<String> emptyModel = new AbstractListModel<String>() {
 		@Override
-		public int getSize() { return 0; }
+		public int getSize() {
+			return 0;
+		}
+
 		@Override
-		public String getElementAt(int index) {	return null;}
+		public String getElementAt(int index) {
+			return null;
+		}
 	};
 
+	public static TreeSet<String> treeSet(String... values) {
+		return new TreeSet<String>(Arrays.asList(values));
+	}
+
 	protected void fillAttrIndexAndNamesList() {
-		//TODO
-		/*
-		attrIndex = asIndexHelper.createQueryData().buildAttrIndex();
-		
-		attrIndex.put(NGTreeHead.META_ATTR_NODE_NAME, new TreeSet<String>(Arrays.asList(new String [] {"subject", "predicate", "object"})));
-		attrIndex.put(NGTreeHead.META_ATTR_OPTIONAL, new TreeSet<String>(Arrays.asList(new String [] {NGTreeHead.META_ATTR_OPTIONAL_TRUE, "false"})));
-		
+		// TODO use a real AS annotations
+		// attrIndex = asIndexHelper.createQueryData().buildAttrIndex();
+		attrIndex = new TreeMap<String, SortedSet<String>>();
+
+		TreeSet<String> trueFalse = treeSet("true", "false");
+		attrIndex.put(MetaAttribute.NODE_NAME, treeSet("subject", "predicate", "object"));
+		attrIndex.put(MetaAttribute.OPTIONAL, trueFalse);
+		attrIndex.put(MetaAttribute.OPTIONAL_SUBTREE, trueFalse);
+		attrIndex.put(MetaAttribute.FORBIDDEN_SUBTREE, trueFalse);
+
 		attrNames.setModel(new ArrayListModel(attrIndex.keySet()));
-		*/
 	}
 
 }
