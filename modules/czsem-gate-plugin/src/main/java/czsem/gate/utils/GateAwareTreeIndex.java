@@ -7,9 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import czsem.fs.DependencyConfiguration;
-import czsem.fs.FSSentenceWriter.TokenDependecy;
 import czsem.fs.TreeIndex;
+import czsem.fs.depcfg.DependencySource;
 
 
 public class GateAwareTreeIndex extends TreeIndex
@@ -68,12 +67,9 @@ public class GateAwareTreeIndex extends TreeIndex
 		addDependecies(dependencyAnnotatons);							
 	}
 
-	public void addDependecies(AnnotationSet annotations, DependencyConfiguration configuration) {
-		for (String depName : configuration.getDependencyNames())
-			addDependecies(annotations.get(depName));
 
-		for (TokenDependecy tocDep : configuration.getTokenDepDefs())
-			addTokenDependecies(annotations.get(tocDep.tokenTypeName), tocDep.depFeatureName);
+	public void addDependencies(DependencySource src) {
+		src.addDependenciesToIndex(this);
 	}
 
 	public void addDependency(Annotation parentAnn, Annotation childAnn, String dependencyType) {

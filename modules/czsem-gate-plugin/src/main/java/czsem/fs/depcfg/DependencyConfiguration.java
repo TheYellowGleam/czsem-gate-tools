@@ -1,4 +1,4 @@
-package czsem.fs;
+package czsem.fs.depcfg;
 
 import java.util.Arrays;
 import java.util.Collection;
