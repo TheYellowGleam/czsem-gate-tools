@@ -7,9 +7,9 @@ import gate.AnnotationSet;
 public class DependencySourceFromCfg implements DependencySource {
 
 	private final AnnotationSet annotations;
-	private final DependencyConfiguration configuration;
+	private final DependencySetting configuration;
 
-	public DependencySourceFromCfg(DependencyConfiguration cfg, AnnotationSet annotations) {
+	public DependencySourceFromCfg(DependencySetting cfg, AnnotationSet annotations) {
 		this.configuration = cfg;
 		this.annotations = annotations;
 	}
@@ -20,7 +20,7 @@ public class DependencySourceFromCfg implements DependencySource {
 			index.addDependecies(annotations.get(depName));
 
 		for (TokenDependecy tocDep : configuration.getTokenDepDefs())
-			index.addTokenDependecies(annotations.get(tocDep.tokenTypeName), tocDep.depFeatureName);		
+			index.addTokenDependecies(annotations.get(tocDep.getTokenTypeName()), tocDep.getDepFeatureName());		
 	}
 
 }
