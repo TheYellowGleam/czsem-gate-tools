@@ -2,6 +2,7 @@ package czsem.fs.depcfg;
 
 import java.util.Arrays;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -35,6 +36,10 @@ public class DependencySettingsTest {
 		DependencySettings.selected = null;
 		DependencySettings.loadSettings();
 		
+		Assert.assertEquals(DependencySettings.available.getDependencyNames().get(0), "testDep");
+		Assert.assertEquals(DependencySettings.selected.getDependencyNames().get(0), "testDep2");
+		
+		Assert.assertEquals(DependencySettings.selected.getTokenDepDefs().get(0).getDepFeatureName(), "testFeature2");
 		
 		DependencySettings.available = prevSelected;
 		DependencySettings.selected = prevAvailable;
