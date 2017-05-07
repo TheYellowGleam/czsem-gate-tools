@@ -61,6 +61,8 @@ public class AddRemoveListsManager<E> extends Container {
 	private DefaultListModel<E> modelRight;
 	private DefaultListModel<E> modelLeft;
 
+	private ListDataSynchronizer<E> syncRight;
+	private ListDataSynchronizer<E> syncLeft;
 
 	public static void addMiddleButton(Container panel, String caption, ActionListener actionListener){
 		JButton b = new JButton(caption);
@@ -206,25 +208,36 @@ public class AddRemoveListsManager<E> extends Container {
 		modelRight.addElement(text);		
 	}
 	
-	public void addLeftModelSynchronization(List<E> set) {
-		addModelSynchronization(modelLeft, set);
+	public void addLeftModelSynchronization(List<E> orig) {
+		syncLeft = addModelSynchronization(modelLeft, orig);
 	}
 
-	public void addRightModelSynchronization(List<E> set) {
-		addModelSynchronization(modelRight, set);
+	public void addRightModelSynchronization(List<E> orig) {
+		syncRight = addModelSynchronization(modelRight, orig);
 	}
+
+	public ListDataSynchronizer<E> addModelSynchronization(DefaultListModel<E> model, List<E> orig) {
+		ListDataSynchronizer<E> sync = new ListDataSynchronizer<>(orig, model);
+		model.addListDataListener(sync);
+		return sync;
+	}
+
 	
 	public static class ListDataSynchronizer<E> implements ListDataListener {
-		protected ListDataSynchronizer(List<E> set, DefaultListModel<E> model) {
-			this.set = set;
+		protected ListDataSynchronizer(List<E> origin, DefaultListModel<E> model) {
+			this.origin = origin;
 			this.model = model;
 		}
-		private List<E> set;
+		private List<E> origin;
 		private DefaultListModel<E> model;
 		
-		public synchronized void synchronizeToSet() {
+		private boolean runningSynchronizeToModel = false;
+
+		
+		public void synchronizeToOrig() {
+			if (runningSynchronizeToModel) return;
 			
-			set.clear();
+			origin.clear();
 			
 			//@SuppressWarnings({ "unchecked", "rawtypes" })
 			//Collection<E> list = (Collection) Arrays.asList(model.toArray());
@@ -232,40 +245,33 @@ public class AddRemoveListsManager<E> extends Container {
 			
 			for (Enumeration<E> enumeration = model.elements(); enumeration.hasMoreElements(); ) {
 				E e = enumeration.nextElement();
-				set.add(e);
+				origin.add(e);
 			}
 		}
 
-		public synchronized void synchronizeToModel() {
+		public void synchronizeToModel() {
+			runningSynchronizeToModel = true;
+
 			model.clear();
-			for (E s : set) {
+			for (E s : origin) {
 				model.addElement(s);
 			}
+			
+			runningSynchronizeToModel = false;
 		}
 		
 		@Override
-		public void intervalRemoved(ListDataEvent e) {synchronizeToSet();}			
+		public void intervalRemoved(ListDataEvent e) {synchronizeToOrig();}			
 		@Override
-		public void intervalAdded(ListDataEvent e) {synchronizeToSet();}			
+		public void intervalAdded(ListDataEvent e) {synchronizeToOrig();}			
 		@Override
-		public void contentsChanged(ListDataEvent e) {synchronizeToSet();}
+		public void contentsChanged(ListDataEvent e) {synchronizeToOrig();}
 		
-	}
-
-	@SuppressWarnings("unchecked")
-	ListDataSynchronizer<E> synchronizers [] = new ListDataSynchronizer[2];  
-	
-	public void addModelSynchronization(DefaultListModel<E> model, List<E> set) {
-		if (synchronizers[0] == null) {
-			model.addListDataListener(synchronizers[0] = new ListDataSynchronizer<>(set, model));			
-		} else {
-			model.addListDataListener(synchronizers[1] = new ListDataSynchronizer<>(set, model));
-		}
 	}
 
 	public void synchronizeModels() {
-		synchronizers[0].synchronizeToModel();
-		synchronizers[1].synchronizeToModel();
+		syncLeft.synchronizeToModel();
+		syncRight.synchronizeToModel();
 	}
 
 }
