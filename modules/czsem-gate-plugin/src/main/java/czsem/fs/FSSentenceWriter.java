@@ -51,6 +51,11 @@ public class FSSentenceWriter
 			if (this.depFeatureName != null) throw new IllegalStateException("Cannot change previous non null value.");
 			this.depFeatureName = depFeatureName;
 		}
+
+		@Override
+		public String toString() {
+			return getTokenTypeName()+'.'+getDepFeatureName();
+		}
 		
 	}
 

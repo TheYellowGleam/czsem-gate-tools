@@ -85,5 +85,11 @@ public class DependencySetting {
 			
 		return ret;
 	}
+
+	public void replaceBy(DependencySetting other) {
+		dependencyNames.clear();
+		tokenDepDefs.clear();
+		addAll(other);
+	}
 	
 }
