@@ -5,7 +5,10 @@ import gate.Document;
 import gate.FeatureMap;
 import gate.Utils;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -35,7 +38,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 	
 
 	protected TreeIndexTreeSource treeSource;
-	protected Object[] lastSortedKeys;
+	protected Object[] lastSortedKeys = new Object[0];
 	protected Annotation lastSelectedAnnot;
 	
 	public GateAnnotTableModel(TreeIndexTreeSource treeSource) {
@@ -67,13 +70,9 @@ public class GateAnnotTableModel extends AbstractTableModel {
 	@Override
 	public int getRowCount() {
 		
-		int treeAttrsSize = 0;
-		Annotation selectedAnnot = treeSource.getSelectedAnnot();
+		updateLastSortedKeys();
 		
-		if (selectedAnnot != null)
-			treeAttrsSize = selectedAnnot.getFeatures().size();
-		
-		return DEFAULT_ATTRS.length + treeAttrsSize;
+		return DEFAULT_ATTRS.length + lastSortedKeys.length;
 	}
 
 	@Override
@@ -104,17 +103,36 @@ public class GateAnnotTableModel extends AbstractTableModel {
 		return lastSortedKeys[index-DEFAULT_ATTRS.length];
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected void updateLastSortedKeys(Annotation curr, Collection ... keysToJoin) {
+		Set<Object> union = new TreeSet<>((a,b) -> a.toString().compareTo(b.toString()));
+		
+		for (Collection keys : keysToJoin) {
+			union.addAll(keys);
+		}
+		
+		union.removeAll(Arrays.asList(DEFAULT_ATTRS));
+		
+		lastSortedKeys = union.toArray();
+		lastSelectedAnnot = curr; 
+		
+	}
 
 	protected void updateLastSortedKeys() {
-		
 		Annotation curr = treeSource.getSelectedAnnot();
+		Set<Object> selection = treeSource.getSelectedAttributes();
 		
+		if (curr == null) {
+			if (lastSelectedAnnot == null) return;
+			
+			updateLastSortedKeys(curr, selection);
+			return;
+		}
+
 		if (curr.equals(lastSelectedAnnot)) return;
-		
+
 		Set<Object> keys = curr.getFeatures().keySet();
-		lastSortedKeys = keys.stream().sorted((a,b) -> a.toString().compareTo(b.toString())).toArray(Object[]::new);
-		
-		lastSelectedAnnot = curr; 
+		updateLastSortedKeys(curr, selection, keys);
 	}
 
 
