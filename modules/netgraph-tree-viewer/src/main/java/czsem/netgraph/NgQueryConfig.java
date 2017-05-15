@@ -20,10 +20,10 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import czsem.fs.FSSentenceWriter.TokenDependecy;
 import czsem.fs.depcfg.DependencySetting;
 import czsem.fs.depcfg.DependencySettings;
 import czsem.netgraph.util.AddRemoveListsManager;
+import czsem.netgraph.util.AddRemoveListsManagerForTocDep;
 
 public class NgQueryConfig extends Container {
 	private static final long serialVersionUID = 8676767227162395664L;
@@ -84,7 +84,7 @@ public class NgQueryConfig extends Container {
         depMan.addRightModelSynchronization(available.getDependencyNames());
 		depMan.synchronizeModels();
 
-        final AddRemoveListsManager<TokenDependecy> tocDepMan = new AddRemoveListsManager<>();
+        final AddRemoveListsManagerForTocDep tocDepMan = new AddRemoveListsManagerForTocDep();
         panel_center.add(embedDependencyManager(tocDepMan, "Token Dependencies"));
         tocDepMan.addLeftModelSynchronization(selected.getTokenDepDefs());
         tocDepMan.addRightModelSynchronization(available.getTokenDepDefs());

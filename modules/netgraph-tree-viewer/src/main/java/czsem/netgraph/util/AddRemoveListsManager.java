@@ -100,6 +100,12 @@ public class AddRemoveListsManager<E> extends Container {
 		add(listComponenet, c);
 	}
 	
+	@SuppressWarnings("unchecked")
+	protected E createModelObjectFromString(String str) {
+		return (E) str;
+	}
+	
+	
 	@SuppressWarnings("serial")
 	public void initComponents() {
 		setLayout(new GridBagLayout());
@@ -132,7 +138,7 @@ public class AddRemoveListsManager<E> extends Container {
 		buttonAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addTextToRightList((E) textFieldAdd.getText());
+				addTextToRightList(createModelObjectFromString(textFieldAdd.getText()));
 			}
 		});
 		panelAdd.add(buttonAdd, BorderLayout.EAST);
