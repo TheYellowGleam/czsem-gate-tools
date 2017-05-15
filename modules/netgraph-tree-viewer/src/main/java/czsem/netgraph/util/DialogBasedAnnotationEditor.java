@@ -16,6 +16,8 @@ public abstract class DialogBasedAnnotationEditor extends AbstractAnnotationEdit
 	protected JDialog dialog;
 	
 	protected abstract void initGui();
+	protected abstract void updateInitDialog(JDialog dialog);
+
 
 	
 	@Override
@@ -42,10 +44,6 @@ public abstract class DialogBasedAnnotationEditor extends AbstractAnnotationEdit
 	}
 
 	
-	protected void updateInitDialog(JDialog dialog) {
-		dialog.add(this);		
-	}
-
 	@Override
 	public void placeDialog(int start, int end) {
 		dialog.setVisible(true);

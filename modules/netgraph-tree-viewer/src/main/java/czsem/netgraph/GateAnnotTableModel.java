@@ -64,7 +64,14 @@ public class GateAnnotTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return DEFAULT_ATTRS.length + treeSource.getSelectedAnnot().getFeatures().size();
+		
+		int treeAttrsSize = 0;
+		Annotation selectedAnnot = treeSource.getSelectedAnnot();
+		
+		if (selectedAnnot != null)
+			treeAttrsSize = selectedAnnot.getFeatures().size();
+		
+		return DEFAULT_ATTRS.length + treeAttrsSize;
 	}
 
 	@Override
