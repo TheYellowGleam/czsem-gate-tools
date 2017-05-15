@@ -14,12 +14,12 @@ import java.util.List;
 
 import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.GateAnnotTableModel;
+import czsem.netgraph.batik.BatikTreeBuilder;
 
-public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Integer> {
+public class TreeIndexTreeSource extends TreeSourceWithSelectionSupport<Integer> implements Comparator<Integer> {
 	
-	protected GateAwareTreeIndexExtended index = new GateAwareTreeIndexExtended(null);
-	protected Document doc;
-	protected Integer selectedNode;
+	private GateAwareTreeIndexExtended index = new GateAwareTreeIndexExtended(null);
+	private Document doc;
 	protected Integer rootNode = null;
 	
 	protected final LinkedHashSet<Object> selectedAttributes 
@@ -32,15 +32,25 @@ public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Inte
 
 	@Override
 	public Collection<Integer> getChildren(Integer parent) {
-		return index.getChildren(parent);
+		return getIndex().getChildren(parent);
+	}
+
+	@Override
+	public int getNodeType(Integer node) {
+		return BatikTreeBuilder.NodeType.STANDARD;
 	}
 
 	@Override
 	public List<TreeSource.NodeLabel> getLabels(Integer node) {
 		List<TreeSource.NodeLabel> ret = new ArrayList<>(selectedAttributes.size());
+		Annotation a = getIndex().getAnnIdMap().get(node);
+		if (a == null) {
+			return Collections.emptyList();
+		}
+
 		for (Object attr : selectedAttributes) {
-			Annotation a = index.getAnnIdMap().get(node);
-			Object val = GateAnnotTableModel.getAnnotationAttr(doc, a, attr);
+			
+			Object val = GateAnnotTableModel.getAnnotationAttr(getDoc(), a, attr);
 			if (val == null) val = "";
 			ret.add(new StaticLabel(val.toString()));
 		}
@@ -54,8 +64,8 @@ public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Inte
 
 	@Override
 	public int compare(Integer node1, Integer node2) {
-		Annotation a1 = index.getAnnIdMap().get(node1);
-		Annotation a2 = index.getAnnIdMap().get(node2);
+		Annotation a1 = getIndex().getAnnIdMap().get(node1);
+		Annotation a2 = getIndex().getAnnIdMap().get(node2);
 		return Utils.OFFSET_COMPARATOR.compare(a1, a2);
 	}
 
@@ -68,13 +78,17 @@ public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Inte
 	}
 
 	public void setIndex(Document doc, GateAwareTreeIndexExtended index) {
-		this.doc = doc;
-		this.index = index;
-		rootNode = selectedNode = index.findRootOrNull();
+		setDoc(doc);
+		setIndex(index);
+		
+		rootNode = index.findRootOrNull();
+		setSelectedNode(rootNode);
+		
+		fireViewChanged();
 	}
 
 	public Annotation getSelectedAnnot() {
-		return index.getAnnIdMap().get(selectedNode);
+		return getIndex().getAnnIdMap().get(getSelectedNode());
 	}
 
 	public Document getDoc() {
@@ -86,7 +100,19 @@ public class TreeIndexTreeSource implements TreeSource<Integer>, Comparator<Inte
 	}
 
 	public void selectNode(int selectedNodeID) {
-		selectedNode = selectedNodeID;
-		rootNode = index.findRootForNode(selectedNode);
+		setSelectedNode(selectedNodeID);
+		rootNode = getIndex().findRootForNode(getSelectedNode());
+	}
+
+	public void setDoc(Document doc) {
+		this.doc = doc;
+	}
+
+	public GateAwareTreeIndexExtended getIndex() {
+		return index;
+	}
+
+	public void setIndex(GateAwareTreeIndexExtended index) {
+		this.index = index;
 	}
 }

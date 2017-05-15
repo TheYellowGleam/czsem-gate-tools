@@ -10,6 +10,7 @@ import gate.creole.tokeniser.DefaultTokeniser;
 import czsem.gate.utils.GateUtils;
 import czsem.gate.utils.PRSetup;
 import czsem.gate.utils.PRSetup.*;
+import czsem.netgraph.treesource.TreeIndexTreeSource;
 
 public class NetgraphTreeVisualizeTest {
 	
@@ -32,11 +33,12 @@ public class NetgraphTreeVisualizeTest {
 	    fr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	
 		
-		NetgraphTreeVisualize tv = new NetgraphTreeVisualize();
+	    TreeIndexTreeSource src = new TreeIndexTreeSource(); 
+	    NetgraphTreeVisualize tv = new NetgraphTreeVisualize(src);
 
 		tv.initComponents();
 
-		tv.setTreeAS(doc, doc.getAnnotations());
+		src.setTreeAS(doc, doc.getAnnotations());
 		
 		fr.add(tv);
 		

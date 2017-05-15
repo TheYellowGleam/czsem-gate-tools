@@ -8,11 +8,12 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import czsem.netgraph.treesource.TreeSource;
+import czsem.netgraph.batik.BatikTreeBuilder;
+import czsem.netgraph.treesource.TreeSourceWithSelectionSupport;
 
 public class NetgraphFrame {
 	
-	public static class TestSource implements TreeSource<Integer> {
+	public static class TestSource extends TreeSourceWithSelectionSupport<Integer> {
 
 		@Override
 		public Integer getRoot() {
@@ -40,9 +41,11 @@ public class NetgraphFrame {
 			{
 				new StaticLabel("MMMMMMMMManželka"),
 				new StaticLabel("ACT"),
+				new StaticLabel("irregular"),
 			}, //1
 			{
 				new StaticLabel("klineta"),
+				new StaticLabel("shift", "=", "looooong text"),
 				new StaticLabel("APP"),
 			}, //2
 			{
@@ -62,6 +65,7 @@ public class NetgraphFrame {
 				new StaticLabel("FPHR"),
 				new StaticLabel("t_lemma", "=", "nejen"),
 				new StaticLabel("tttt_lemma", "==", "ne"),
+				new StaticLabel("tttt_lemma", "======", "ne"),
 				new StaticLabel("a", ".", "bbbbbbbb3210gpy"),
 			}, //6
 			{
@@ -70,6 +74,23 @@ public class NetgraphFrame {
 			}, //7
 			
 		};
+		
+		private static final int NODE_TYPES[] = {
+			BatikTreeBuilder.NodeType.STANDARD,
+			BatikTreeBuilder.NodeType.STANDARD,
+			BatikTreeBuilder.NodeType.OPTIONAL,
+			BatikTreeBuilder.NodeType.EMPHASIZED,
+			BatikTreeBuilder.NodeType.WARN,
+			BatikTreeBuilder.NodeType.EMPHASIZED,
+			BatikTreeBuilder.NodeType.STANDARD,
+			BatikTreeBuilder.NodeType.EMPHASIZED,
+		};
+		
+		@Override
+		public int getNodeType(Integer node) {
+			return NODE_TYPES[node];
+		}
+		
 
 		@Override
 		public List<NodeLabel> getLabels(Integer node) {
@@ -83,7 +104,6 @@ public class NetgraphFrame {
 			//return null;
 			return Integer::compare;
 		}
-		
 	}
 
 	public static void main(String[] args) {

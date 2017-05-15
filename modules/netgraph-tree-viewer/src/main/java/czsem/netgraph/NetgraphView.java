@@ -90,7 +90,7 @@ public class NetgraphView<E> extends JComponent {
 		this.edges = cmp.collectEdges();
 		this.nodes = cmp.collectNodes();
 		
-		int [] nodeOrder = cmp.contNodeOrder();
+		int [] nodeOrder = cmp.computeNodeOrder();
 
 		//compute coordinates
 		this.x = new int[nodes.length];

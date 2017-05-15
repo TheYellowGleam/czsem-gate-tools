@@ -9,6 +9,46 @@
 
 	<artifactId>netgraph-tree-viewer</artifactId>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>custom-properties-maven-plugin</artifactId>
+				<version>${project.parent.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>setproperties</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>install-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>prepared</finalName>
+							<attach>true</attach>
+							<descriptors>
+								<descriptor>src/main/assembly/gate-plugin-dir.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -21,6 +61,16 @@
 			<artifactId>fs-query</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-swing</artifactId>
+		    <version>1.8</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>xmlgraphics-commons</artifactId>
+		    <version>2.1</version>
 		</dependency>
 	</dependencies>
 </project>

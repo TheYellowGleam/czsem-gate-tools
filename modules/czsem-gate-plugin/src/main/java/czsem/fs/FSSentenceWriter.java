@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import czsem.fs.depcfg.DependencySetting;
+import czsem.fs.depcfg.DependencySettings;
+import czsem.fs.depcfg.DependencySourceFromCfgAndSet;
 import czsem.utils.NetgraphConstants;
 
 public class FSSentenceWriter
@@ -29,8 +32,31 @@ public class FSSentenceWriter
 			this.tokenTypeName = tokenTypeName;
 			this.depFeatureName = depFeatureName;
 		}
-		public String tokenTypeName;
-		public String depFeatureName;
+
+		public TokenDependecy() {};
+		
+		private String tokenTypeName;
+		private String depFeatureName;
+		
+		public String getTokenTypeName() {
+			return tokenTypeName;
+		}
+		public void setTokenTypeName(String tokenTypeName) {
+			if (this.tokenTypeName != null) throw new IllegalStateException("Cannot change previous non null value.");
+			this.tokenTypeName = tokenTypeName;
+		}
+		public String getDepFeatureName() {
+			return depFeatureName;
+		}
+		public void setDepFeatureName(String depFeatureName) {
+			if (this.depFeatureName != null) throw new IllegalStateException("Cannot change previous non null value.");
+			this.depFeatureName = depFeatureName;
+		}
+
+		@Override
+		public String toString() {
+			return getTokenTypeName()+'.'+getDepFeatureName();
+		}
 		
 	}
 
@@ -87,8 +113,15 @@ public class FSSentenceWriter
 	}
 
 	public void printTree()
+	{
+		printTree(DependencySettings.getSelectedConfigurationFromConfigOrDefault());
+	}
+	
+	public void printTree(DependencySetting depCfg)
 	{		
-		tw.getIndex().addDependecies(annotations, DependencyConfiguration.getSelectedConfigurationFromConfigOrDefault());
+		DependencySourceFromCfgAndSet depSrc = new DependencySourceFromCfgAndSet(depCfg, annotations);
+		
+		depSrc.addDependenciesToIndex(annotations.getDocument(), tw.getIndex());
 		
 		setupNodeOrder();
 		

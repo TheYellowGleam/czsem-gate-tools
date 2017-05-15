@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import czsem.fs.depcfg.DependencySettings;
 import czsem.gate.utils.GateUtils;
 
 public class FSSentenceWriterTest {
@@ -23,7 +24,7 @@ public class FSSentenceWriterTest {
 		StringWriter out = new StringWriter();
 		FSSentenceWriter wr = new FSSentenceWriter(doc.getAnnotations(), new PrintWriter(out));
 		
-		wr.printTree();
+		wr.printTree(DependencySettings.defaultConfigSelected);
 
 		System.err.println(out.toString());
 		System.err.println(wr.getAttributes());

@@ -15,6 +15,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -1999028584101610952L;
 	
 	public static class ATTR {
+		//TODO use GateAnnotationsNodeAttributesExtended
 
 		public static final String STRING = "_string";
 		public static final String TYPE = "_type";
@@ -39,15 +40,19 @@ public class GateAnnotTableModel extends AbstractTableModel {
 	
 	public GateAnnotTableModel(TreeIndexTreeSource treeSource) {
 		this.treeSource = treeSource;
+		treeSource.getSelectionChangeListeners().add(x -> fireTableDataChanged());
 	}
 
 
-	public static Object getAnnotationAttr(Document d, Annotation a, Object attr) { 
+	public static Object getAnnotationAttr(Document d, Annotation a, Object attr) {
+		if (a == null) return null;
+		
 		FeatureMap fm = a.getFeatures();
 		if (fm.containsKey(attr)) return fm.get(attr);
 		
 		String str = attr.toString();
 		
+		//TODO use GateAnnotationsNodeAttributesExtended
 		switch (str) {
 		case ATTR.STRING:	return Utils.stringFor(d, a);
 		case ATTR.TYPE:		return a.getType();
@@ -61,7 +66,14 @@ public class GateAnnotTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return DEFAULT_ATTRS.length + treeSource.getSelectedAnnot().getFeatures().size();
+		
+		int treeAttrsSize = 0;
+		Annotation selectedAnnot = treeSource.getSelectedAnnot();
+		
+		if (selectedAnnot != null)
+			treeAttrsSize = selectedAnnot.getFeatures().size();
+		
+		return DEFAULT_ATTRS.length + treeAttrsSize;
 	}
 
 	@Override
@@ -148,7 +160,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 		else
 			treeSource.getSelectedAttributes().remove(attr);
 		
-		
+		treeSource.fireViewChanged();
 	}
 	
 }
