@@ -3,6 +3,7 @@ package czsem.gate.plugins;
 import gate.Annotation;
 import gate.AnnotationSet;
 import gate.Document;
+import gate.creole.metadata.CreoleResource;
 
 import javax.swing.JDialog;
 import javax.swing.JTabbedPane;
@@ -23,6 +24,7 @@ import czsem.netgraph.treesource.TreeIndexTreeSource;
 import czsem.netgraph.treesource.TreeSourceWithQueryMatch;
 import czsem.netgraph.util.DialogBasedAnnotationEditor;
 
+@CreoleResource(name = "Netgraph TreeViewer")
 public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	private static final long serialVersionUID = -7161633338395041139L;
 	
