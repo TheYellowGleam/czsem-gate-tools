@@ -3,6 +3,7 @@ package czsem.gate.plugins;
 import gate.Annotation;
 import gate.AnnotationSet;
 import gate.Document;
+import gate.Utils;
 import gate.creole.metadata.CreoleResource;
 
 import javax.swing.JDialog;
@@ -71,14 +72,38 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		if (! canDisplayAnnotationType(ann.getType())) return;
 
 		setAnnotation(ann, set);
+		updateViewerAndResultsIndex();
 		
-		updateViewerAndResultsAnnSetEtc();
+		
+		if ("Sentence".equals(ann.getType())) {
+			setSentenceAnnotation(ann);
+		} 
+		
+		updateViewerAnnotation();
+		
 		updateQueryAs();
 
 		tabs.setSelectedComponent(tabViewer);		
 		dialog.setVisible(true);		
 	}
 
+	protected void setSentenceAnnotation(Annotation sentence) {
+		AnnotationSet set = getAnnotationSetCurrentlyEdited();
+		GateAwareTreeIndexExtended index = srcViewer.getIndex();
+		
+		AnnotationSet contained = Utils.getContainedAnnotations(set, sentence);
+		
+		for (Annotation c : contained) {
+			Integer cId = c.getId();
+			Integer rootId = index.findRootForNode(cId);
+			
+			if (rootId != cId) {
+				setAnnotation(set.get(rootId), set);
+				return;
+			}
+		}
+	}
+	
 	private void updateQueryAs() {
 		//TODO use the set
 		tabQuery.setAs(getAnnotationSetCurrentlyEdited());
@@ -106,11 +131,10 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		}
 	}
 
-	
-	protected void updateViewerAndResultsAnnSetEtc() {
+
+	protected void updateViewerAndResultsIndex() {
 		AnnotationSet set = getAnnotationSetCurrentlyEdited();
 		Document doc = set.getDocument();
-		Annotation ann = getAnnotationCurrentlyEdited();
 		
 		GateAwareTreeIndexExtended i = new GateAwareTreeIndexExtended(doc);
 		i.setNodesAS(set);
@@ -122,14 +146,21 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 				DependencySettings.getSelectedConfigurationFromConfigOrDefault(), 
 				set);
 		depSrc.addDependenciesToIndex(doc, i);
-
 		
-		srcViewer.setDoc(doc);
+
 		srcViewer.setIndex(i);
+		srcViewer.setDoc(doc);
+
+		srcResults.setIndex(doc, i);
+	}
+
+	
+	protected void updateViewerAnnotation() {
+		Annotation ann = getAnnotationCurrentlyEdited();
+
 		srcViewer.selectNode(ann.getId());
 		srcViewer.fireViewChanged();
 		
-		srcResults.setIndex(doc, i);
 	}
 	
 	
