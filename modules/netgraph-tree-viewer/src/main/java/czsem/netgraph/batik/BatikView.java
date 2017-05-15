@@ -78,6 +78,8 @@ public class BatikView extends GVTTreeRendererAdapter implements MouseWheelListe
 	}
 
 	protected void applyScale(boolean performImmediateRedraw) {
+		if (origSize == null) return;
+		
 		svgCanvas.setPreferredSize(new Dimension(
 				(int) (origSize.getWidth()*currentScale), 
 				(int) (origSize.getHeight()*currentScale)));

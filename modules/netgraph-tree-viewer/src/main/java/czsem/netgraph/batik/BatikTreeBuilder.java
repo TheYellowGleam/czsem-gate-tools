@@ -143,9 +143,12 @@ public class BatikTreeBuilder<E> {
 			svgNodes[j] = n;
 		}
 		
-		computeCoordinatesAndSpaceOutNodes();
+		if (srcNodes.length > 0) { 
 		
-		addEdges();
+			computeCoordinatesAndSpaceOutNodes();
+
+			addEdges();
+		}
 		
 		fixTheFinalSize();
 		
@@ -281,6 +284,8 @@ public class BatikTreeBuilder<E> {
 
 	protected void fixTheFinalSize() {
 		SVGRect box = getBBox(svgRoot);
+		
+		if (box == null) return;
 		
 		origSize = new Dimension((int)(box.getWidth()+Sizing.BORDER*2), (int)(box.getHeight()+Sizing.BORDER*2));
 		
