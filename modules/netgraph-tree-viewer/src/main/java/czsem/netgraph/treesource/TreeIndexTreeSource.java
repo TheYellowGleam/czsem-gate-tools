@@ -43,8 +43,13 @@ public class TreeIndexTreeSource extends TreeSourceWithSelectionSupport<Integer>
 	@Override
 	public List<TreeSource.NodeLabel> getLabels(Integer node) {
 		List<TreeSource.NodeLabel> ret = new ArrayList<>(selectedAttributes.size());
+		Annotation a = getIndex().getAnnIdMap().get(node);
+		if (a == null) {
+			return Collections.emptyList();
+		}
+
 		for (Object attr : selectedAttributes) {
-			Annotation a = getIndex().getAnnIdMap().get(node);
+			
 			Object val = GateAnnotTableModel.getAnnotationAttr(getDoc(), a, attr);
 			if (val == null) val = "";
 			ret.add(new StaticLabel(val.toString()));

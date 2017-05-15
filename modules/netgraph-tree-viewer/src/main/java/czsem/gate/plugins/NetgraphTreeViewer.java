@@ -1,7 +1,5 @@
 package czsem.gate.plugins;
 
-import java.util.Collections;
-
 import gate.Annotation;
 import gate.AnnotationSet;
 import gate.Document;
@@ -9,11 +7,13 @@ import gate.Document;
 import javax.swing.JDialog;
 import javax.swing.JTabbedPane;
 
+import czsem.fs.depcfg.DependencySettings;
+import czsem.fs.depcfg.DependencySourceFromCfgAndSet;
 import czsem.gate.utils.GateAwareTreeIndexExtended;
+import czsem.netgraph.NetgraphQueryConfig;
 import czsem.netgraph.NetgraphQueryDesigner;
 import czsem.netgraph.NetgraphResultsBrowser;
 import czsem.netgraph.NetgraphTreeVisualize;
-import czsem.netgraph.NetgraphQueryConfig;
 import czsem.netgraph.treesource.TreeIndexTreeSource;
 import czsem.netgraph.util.DialogBasedAnnotationEditor;
 
@@ -24,10 +24,15 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	
 	private TreeIndexTreeSource srcViewer = new TreeIndexTreeSource(); 
 
+	
+	
 	private NetgraphTreeVisualize tabViewer = new NetgraphTreeVisualize(srcViewer);
+	
 	private NetgraphQueryDesigner tabQuery;
 	private NetgraphResultsBrowser tabResults;
-	private NetgraphQueryConfig tabConfig;
+	
+	private NetgraphQueryConfig tabConfig = new NetgraphQueryConfig(
+			DependencySettings.getSelected(), DependencySettings.getAvailable()); 
 	
 	
 
@@ -40,9 +45,11 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	@Override
 	protected void initGui() {
 		tabViewer.initComponents();
+		tabConfig.initComponents();
 		
 		tabs = new JTabbedPane(JTabbedPane.BOTTOM);
 		tabs.addTab("Viewer", tabViewer);
+		tabs.addTab("Config", tabConfig);
 	
 	}
 	@Override
@@ -68,8 +75,14 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		GateAwareTreeIndexExtended i = new GateAwareTreeIndexExtended(doc);
 		i.setNodesAS(set);
 		
-		//TODO use config
-		i.addDependecies(set.get(null, Collections.singleton("args")));
+		//i.addDependecies(set.get(null, Collections.singleton("args")));
+		
+		//use config:
+		DependencySourceFromCfgAndSet depSrc = new DependencySourceFromCfgAndSet(
+				DependencySettings.getSelectedConfigurationFromConfigOrDefault(), 
+				set);
+		depSrc.addDependenciesToIndex(doc, i);
+
 		
 		srcViewer.setDoc(doc);
 		srcViewer.setIndex(i);

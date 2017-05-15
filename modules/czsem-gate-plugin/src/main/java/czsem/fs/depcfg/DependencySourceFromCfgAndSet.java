@@ -3,19 +3,20 @@ package czsem.fs.depcfg;
 import czsem.fs.FSSentenceWriter.TokenDependecy;
 import czsem.gate.utils.GateAwareTreeIndex;
 import gate.AnnotationSet;
+import gate.Document;
 
-public class DependencySourceFromCfg implements DependencySource {
+public class DependencySourceFromCfgAndSet implements DependencySource {
 
 	private final AnnotationSet annotations;
 	private final DependencySetting configuration;
 
-	public DependencySourceFromCfg(DependencySetting cfg, AnnotationSet annotations) {
+	public DependencySourceFromCfgAndSet(DependencySetting cfg, AnnotationSet annotations) {
 		this.configuration = cfg;
 		this.annotations = annotations;
 	}
 
 	@Override
-	public void addDependenciesToIndex(GateAwareTreeIndex index) {
+	public void addDependenciesToIndex(Document document, GateAwareTreeIndex index) {
 		for (String depName : configuration.getDependencyNames())
 			index.addDependecies(annotations.get(depName));
 

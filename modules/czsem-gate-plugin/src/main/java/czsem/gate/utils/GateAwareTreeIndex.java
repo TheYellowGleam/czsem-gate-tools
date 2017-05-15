@@ -2,6 +2,7 @@ package czsem.gate.utils;
 
 import gate.Annotation;
 import gate.AnnotationSet;
+import gate.Document;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +69,8 @@ public class GateAwareTreeIndex extends TreeIndex
 	}
 
 
-	public void addDependencies(DependencySource src) {
-		src.addDependenciesToIndex(this);
+	public void addDependencies(DependencySource src, Document doc) {
+		src.addDependenciesToIndex(doc, this);
 	}
 
 	public void addDependency(Annotation parentAnn, Annotation childAnn, String dependencyType) {

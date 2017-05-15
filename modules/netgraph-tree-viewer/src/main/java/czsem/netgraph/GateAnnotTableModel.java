@@ -44,7 +44,9 @@ public class GateAnnotTableModel extends AbstractTableModel {
 	}
 
 
-	public static Object getAnnotationAttr(Document d, Annotation a, Object attr) { 
+	public static Object getAnnotationAttr(Document d, Annotation a, Object attr) {
+		if (a == null) return null;
+		
 		FeatureMap fm = a.getFeatures();
 		if (fm.containsKey(attr)) return fm.get(attr);
 		

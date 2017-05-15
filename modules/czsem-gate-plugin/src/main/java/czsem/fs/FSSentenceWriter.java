@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import czsem.fs.depcfg.DependencySettings;
-import czsem.fs.depcfg.DependencySourceFromCfg;
+import czsem.fs.depcfg.DependencySourceFromCfgAndSet;
 import czsem.utils.NetgraphConstants;
 
 public class FSSentenceWriter
@@ -113,11 +113,11 @@ public class FSSentenceWriter
 
 	public void printTree()
 	{		
-		DependencySourceFromCfg depSrc = new DependencySourceFromCfg(
+		DependencySourceFromCfgAndSet depSrc = new DependencySourceFromCfgAndSet(
 				DependencySettings.getSelectedConfigurationFromConfigOrDefault(), 
 				annotations);
 		
-		depSrc.addDependenciesToIndex(tw.getIndex());
+		depSrc.addDependenciesToIndex(annotations.getDocument(), tw.getIndex());
 		
 		setupNodeOrder();
 		
