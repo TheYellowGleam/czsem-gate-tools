@@ -7,14 +7,20 @@ import gate.Document;
 import javax.swing.JDialog;
 import javax.swing.JTabbedPane;
 
+import czsem.fs.GateAnnotationsNodeAttributes;
 import czsem.fs.depcfg.DependencySettings;
 import czsem.fs.depcfg.DependencySourceFromCfgAndSet;
+import czsem.fs.query.FSQuery;
+import czsem.fs.query.FSQuery.QueryData;
+import czsem.fs.query.FSQuery.QueryMatch;
+import czsem.fs.query.FSQueryParser.SyntaxError;
 import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.NetgraphQueryConfig;
 import czsem.netgraph.NetgraphQueryDesigner;
 import czsem.netgraph.NetgraphResultsBrowser;
 import czsem.netgraph.NetgraphTreeVisualize;
 import czsem.netgraph.treesource.TreeIndexTreeSource;
+import czsem.netgraph.treesource.TreeSourceWithQueryMatch;
 import czsem.netgraph.util.DialogBasedAnnotationEditor;
 
 public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
@@ -23,12 +29,12 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	private JTabbedPane tabs; 
 	
 	private TreeIndexTreeSource srcViewer = new TreeIndexTreeSource(); 
+	private TreeSourceWithQueryMatch srcResults = new TreeSourceWithQueryMatch(); 
 
-	
 	
 	private NetgraphTreeVisualize tabViewer = new NetgraphTreeVisualize(srcViewer);
 	private NetgraphQueryDesigner tabQuery = new NetgraphQueryDesigner();
-	private NetgraphResultsBrowser tabResults;
+	private NetgraphResultsBrowser tabResults = new NetgraphResultsBrowser(srcResults);
 	
 	private NetgraphQueryConfig tabConfig = new NetgraphQueryConfig(
 			DependencySettings.getSelected(), DependencySettings.getAvailable()); 
@@ -46,11 +52,13 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		tabViewer.initComponents();
 		tabQuery.initComponents();
 		tabQuery.addSearchButton().addActionListener(e -> this.search());
+		tabResults.initComponents();
 		tabConfig.initComponents();
 		
 		tabs = new JTabbedPane(JTabbedPane.BOTTOM);
 		tabs.addTab("Viewer", tabViewer);
 		tabs.addTab("Query", tabQuery);
+		tabs.addTab("Results", tabResults);
 		tabs.addTab("Config", tabConfig);
 	
 	}
@@ -62,7 +70,7 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 
 		setAnnotation(ann, set);
 		
-		updateViewerAnnot();
+		updateViewerAndResultsAnnSetEtc();
 		updateQueryAs();
 
 		tabs.setSelectedComponent(tabViewer);		
@@ -75,13 +83,29 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	}
 	
 	protected void search() {
-		//TODO
+		GateAwareTreeIndexExtended index = srcResults.getIndex();
+		QueryData data = new FSQuery.QueryData(index, 
+				new GateAnnotationsNodeAttributes(
+						getAnnotationSetCurrentlyEdited()));
 		
-		System.err.println(tabQuery.getQueryString());
+		try {
+			Iterable<QueryMatch> results = 
+					FSQuery.buildQuery(
+							tabQuery.getQueryString()).evaluate(data);
+			
+			tabResults.setResults(results);
+			
+			tabs.setSelectedComponent(tabResults);
+
+			
+		} catch (SyntaxError e) {
+			//TODO handle syntax error
+			throw new RuntimeException(e);
+		}
 	}
 
 	
-	protected void updateViewerAnnot() {
+	protected void updateViewerAndResultsAnnSetEtc() {
 		AnnotationSet set = getAnnotationSetCurrentlyEdited();
 		Document doc = set.getDocument();
 		Annotation ann = getAnnotationCurrentlyEdited();
@@ -102,6 +126,8 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		srcViewer.setIndex(i);
 		srcViewer.selectNode(ann.getId());
 		srcViewer.fireViewChanged();
+		
+		srcResults.setIndex(doc, i);
 	}
 	
 	
