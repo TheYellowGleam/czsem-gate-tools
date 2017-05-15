@@ -27,8 +27,7 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	
 	
 	private NetgraphTreeVisualize tabViewer = new NetgraphTreeVisualize(srcViewer);
-	
-	private NetgraphQueryDesigner tabQuery;
+	private NetgraphQueryDesigner tabQuery = new NetgraphQueryDesigner();
 	private NetgraphResultsBrowser tabResults;
 	
 	private NetgraphQueryConfig tabConfig = new NetgraphQueryConfig(
@@ -45,10 +44,13 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	@Override
 	protected void initGui() {
 		tabViewer.initComponents();
+		tabQuery.initComponents();
+		tabQuery.addSearchButton().addActionListener(e -> this.search());
 		tabConfig.initComponents();
 		
 		tabs = new JTabbedPane(JTabbedPane.BOTTOM);
 		tabs.addTab("Viewer", tabViewer);
+		tabs.addTab("Query", tabQuery);
 		tabs.addTab("Config", tabConfig);
 	
 	}
@@ -61,12 +63,24 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		setAnnotation(ann, set);
 		
 		updateViewerAnnot();
-		
+		updateQueryAs();
+
 		tabs.setSelectedComponent(tabViewer);		
 		dialog.setVisible(true);		
-
 	}
 
+	private void updateQueryAs() {
+		//TODO use the set
+		tabQuery.setAs(getAnnotationSetCurrentlyEdited());
+	}
+	
+	protected void search() {
+		//TODO
+		
+		System.err.println(tabQuery.getQueryString());
+	}
+
+	
 	protected void updateViewerAnnot() {
 		AnnotationSet set = getAnnotationSetCurrentlyEdited();
 		Document doc = set.getDocument();
