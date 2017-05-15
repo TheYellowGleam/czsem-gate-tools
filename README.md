@@ -10,6 +10,9 @@ Utility functions for text processing.
 ### treex-gate-plugin
 Documentation: http://czsem-suite.atlassian.net/wiki/display/DOC/Treex+GATE+Plugin
 
+### netgraph-tree-viewer
+Documentation: [netgraph-tree-viewer (github wiki)](http://github.com/datlowe/czsem-gate-tools/wiki/netgraph-tree-viewer)
+
 ### czsem-gate-plugin
 
 ## Maven
