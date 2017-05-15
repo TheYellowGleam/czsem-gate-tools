@@ -25,28 +25,28 @@ import czsem.fs.depcfg.DependencySettings;
 import czsem.netgraph.util.AddRemoveListsManager;
 import czsem.netgraph.util.AddRemoveListsManagerForTocDep;
 
-public class NgQueryConfig extends Container {
+public class NetgraphQueryConfig extends Container {
 	private static final long serialVersionUID = 8676767227162395664L;
-	private static final Logger logger = LoggerFactory.getLogger(NgQueryConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(NetgraphQueryConfig.class);
 	
 	protected final DependencySetting selected;
 	protected final DependencySetting available;
 	
-	public NgQueryConfig(DependencySetting selected, DependencySetting available) {
+	public NetgraphQueryConfig(DependencySetting selected, DependencySetting available) {
 		this.selected = selected;
 		this.available = available;
 	}
 
-	public NgQueryConfig() {
+	public NetgraphQueryConfig() {
 		this(new DependencySetting(), new DependencySetting());
 	}
 
 	public static void main(String[] args) throws Exception {
-		JFrame fr = new JFrame(NgQueryConfig.class.getName());
+		JFrame fr = new JFrame(NetgraphQueryConfig.class.getName());
 	    fr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	
 		
-	    NgQueryConfig qd = new NgQueryConfig();
+	    NetgraphQueryConfig qd = new NetgraphQueryConfig();
 		qd.initComponents();
 		
 		fr.add(qd);
