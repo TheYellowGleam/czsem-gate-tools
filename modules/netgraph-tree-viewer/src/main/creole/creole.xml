@@ -1,11 +1,12 @@
 <?xml version="1.0"?>  
 <CREOLE-DIRECTORY  ID="${project.groupId}.${project.artifactId}" VERSION="${project.version}" >
-  <JAR SCAN="true">lib/${project.artifactId}-${project.version}.${project.packaging}</JAR>
 
-  <JAR SCAN="false">lib/czsem-common-${dependency.net.sf.czsem.czsem-common.version}.jar</JAR>  
-  <JAR SCAN="false">lib/czsem-gate-plugin-${dependency.net.sf.czsem.czsem-gate-plugin.version}.jar</JAR>
-  <JAR SCAN="false">lib/fs-query-${dependency.net.sf.czsem.fs-query.version}.jar</JAR>
-
+  <JAR SCAN="false">lib/xml-apis-${dependency.xml-apis.xml-apis.version}.jar</JAR>
+  <JAR SCAN="false">lib/xml-apis-ext-${dependency.xml-apis.xml-apis-ext.version}.jar</JAR>
+  <JAR SCAN="false">lib/guava-${dependency.com.google.guava.guava.version}.jar</JAR>
+  
+  <JAR SCAN="false">lib/slf4j-api-${dependency.org.slf4j.slf4j-api.version}.jar</JAR>
+  <JAR SCAN="false">lib/slf4j-log4j12-${dependency.org.slf4j.slf4j-log4j12.version}.jar</JAR>
 
   <JAR SCAN="false">lib/batik-swing-${dependency.org.apache.xmlgraphics.batik-swing.version}.jar</JAR>
   <JAR SCAN="false">lib/batik-gvt-${dependency.org.apache.xmlgraphics.batik-gvt.version}.jar</JAR>
@@ -21,10 +22,11 @@
   <JAR SCAN="false">lib/batik-parser-${dependency.org.apache.xmlgraphics.batik-parser.version}.jar</JAR>
   <JAR SCAN="false">lib/batik-awt-util-${dependency.org.apache.xmlgraphics.batik-awt-util.version}.jar</JAR>
   <JAR SCAN="false">lib/xmlgraphics-commons-${dependency.org.apache.xmlgraphics.xmlgraphics-commons.version}.jar</JAR>
+
+  <JAR SCAN="false">lib/czsem-common-${dependency.net.sf.czsem.czsem-common.version}.jar</JAR>  
+  <JAR SCAN="false">lib/czsem-gate-plugin-${dependency.net.sf.czsem.czsem-gate-plugin.version}.jar</JAR>
+  <JAR SCAN="false">lib/fs-query-${dependency.net.sf.czsem.fs-query.version}.jar</JAR>
+
+  <JAR SCAN="true">lib/${project.artifactId}-${project.version}.${project.packaging}</JAR>
   
-  <JAR SCAN="false">lib/xml-apis-ext-${dependency.xml-apis.xml-apis-ext.version}.jar</JAR>
-  <JAR SCAN="false">lib/guava-${dependency.com.google.guava.guava.version}.jar</JAR>
-  
-  <JAR SCAN="false">lib/slf4j-api-${dependency.org.slf4j.slf4j-api.version}.jar</JAR>
-  <JAR SCAN="false">lib/slf4j-log4j12-${dependency.org.slf4j.slf4j-log4j12.version}.jar</JAR>
 </CREOLE-DIRECTORY> 
