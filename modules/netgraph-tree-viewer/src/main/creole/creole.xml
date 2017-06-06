@@ -3,6 +3,7 @@
 
   <JAR SCAN="false">lib/xml-apis-${dependency.xml-apis.xml-apis.version}.jar</JAR>
   <JAR SCAN="false">lib/xml-apis-ext-${dependency.xml-apis.xml-apis-ext.version}.jar</JAR>
+  <JAR SCAN="false">lib/xalan-${dependency.xalan.xalan.version}.jar</JAR>
   <JAR SCAN="false">lib/guava-${dependency.com.google.guava.guava.version}.jar</JAR>
   
   <JAR SCAN="false">lib/slf4j-api-${dependency.org.slf4j.slf4j-api.version}.jar</JAR>
