@@ -252,4 +252,18 @@ public class AnnotatorTest {
 	public static void setLogLevelOff() {
 		Logger.getLogger(Annotator.class).setLevel(Level.OFF);		
 	}
+	
+	@Test
+	public static void getSpaceTokenKind() throws Exception {
+		Assert.assertEquals(Annotator.getSpaceTokenKind(" ", 0), "space");
+		Assert.assertEquals(Annotator.getSpaceTokenKind("\n", 0), "control");
+		Assert.assertEquals(Annotator.getSpaceTokenKind("\r", 0), "control");
+		Assert.assertEquals(Annotator.getSpaceTokenKind("\t", 0), "control");
+		Assert.assertEquals(Annotator.getSpaceTokenKind("\u00A0", 0), "space");
+		
+		Assert.assertEquals(Annotator.getSpaceTokenKind("a", 0), "other");
+		Assert.assertEquals(Annotator.getSpaceTokenKind("$", 0), "other");
+		Assert.assertEquals(Annotator.getSpaceTokenKind("1", 0), "other");
+	}
+
 }

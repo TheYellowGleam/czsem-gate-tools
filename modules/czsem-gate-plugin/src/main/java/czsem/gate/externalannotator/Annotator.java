@@ -5,6 +5,8 @@ import gate.AnnotationSet;
 import gate.Document;
 import gate.Factory;
 import gate.FeatureMap;
+import gate.Utils;
+import gate.creole.ANNIEConstants;
 import gate.util.InvalidOffsetException;
 
 import java.util.List;
@@ -164,8 +166,33 @@ public class Annotator implements AnnotatorInterface {
 	}
 	
 	protected void createSpaceTokens(long start, long end) throws InvalidOffsetException {
-		as.add(start, end, "SpaceToken", Factory.newFeatureMap());
+		createSpaceTokens(as, seq_anot.substring((int)start, (int)end), start, end);
 	}
+
+	public static void createSpaceTokens(AnnotationSet as, Document doc, long start, long end) throws InvalidOffsetException {
+		createSpaceTokens(as, Utils.stringFor(doc, start, end), start, end);
+	}
+
+	public static void createSpaceTokens(AnnotationSet as, String spanContent, long start, long end) throws InvalidOffsetException {
+		for (int i = 0; i < spanContent.length(); i++) {
+			as.add(start+i, start+i+1, ANNIEConstants.SPACE_TOKEN_ANNOTATION_TYPE, 
+				Utils.featureMap(
+					ANNIEConstants.TOKEN_STRING_FEATURE_NAME, spanContent.substring(i, i+1),
+					ANNIEConstants.TOKEN_KIND_FEATURE_NAME, getSpaceTokenKind(spanContent, i),
+					ANNIEConstants.TOKEN_LENGTH_FEATURE_NAME, 1
+			));
+		}
+	}
+	
+	public static String getSpaceTokenKind(String str, int offset) throws InvalidOffsetException {
+		int code = str.codePointAt(offset);
+		
+		if (Character.isISOControl(code)) return "control"; 
+		if (Character.isSpaceChar(code)) return "space"; 
+		
+		return "other";
+	}
+	
 
 	protected int annotateIterableSeqStep(List<? extends SeqAnnotable> sa, int i) throws InvalidOffsetException {
 		SeqAnnotable next = sa.get(i);
