@@ -178,8 +178,8 @@ public class Annotator implements AnnotatorInterface {
 			as.add(start+i, start+i+1, ANNIEConstants.SPACE_TOKEN_ANNOTATION_TYPE, 
 				Utils.featureMap(
 					ANNIEConstants.TOKEN_STRING_FEATURE_NAME, spanContent.substring(i, i+1),
-					ANNIEConstants.TOKEN_KIND_FEATURE_NAME, getSpaceTokenKind(spanContent, i),
-					ANNIEConstants.TOKEN_LENGTH_FEATURE_NAME, 1
+					ANNIEConstants.TOKEN_KIND_FEATURE_NAME, getSpaceTokenKind(spanContent, i)
+					//ANNIEConstants.TOKEN_LENGTH_FEATURE_NAME, 1
 			));
 		}
 	}
