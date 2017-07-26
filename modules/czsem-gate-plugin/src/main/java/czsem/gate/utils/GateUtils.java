@@ -482,6 +482,16 @@ public class GateUtils
 		set.add(oldID, newStartOffset, newEndOffset, oldAnnotation.getType(), oldAnnotation.getFeatures());
 	}
 	
+	public static void moveAnnotationSafe(AnnotationSet set, Annotation oldAnnotation, Long newStartOffset, Long newEndOffset) {
+		Integer oldID = oldAnnotation.getId();
+		set.remove(oldAnnotation);
+		try {
+			set.add(oldID, newStartOffset, newEndOffset, oldAnnotation.getType(), oldAnnotation.getFeatures());
+		} catch (InvalidOffsetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public static AnnotationSet getAnnotationsByRefString(String ref, Document doc) {
 		if (ref == null || ref.isEmpty()) return null; 
 			
