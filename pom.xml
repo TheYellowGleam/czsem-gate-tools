@@ -28,8 +28,8 @@
 	<scm>
 		<url>https://github.com/datlowe/czsem-gate-tools.git</url>
 		<connection>scm:git:https://github.com/datlowe/czsem-gate-tools.git</connection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
  	
 	<issueManagement>
 		<url>http://github.com/datlowe/czsem-gate-tools/issues</url>
