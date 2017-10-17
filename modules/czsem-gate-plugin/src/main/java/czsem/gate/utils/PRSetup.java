@@ -96,6 +96,10 @@ public abstract class PRSetup
 		return buildGatePipeline(Arrays.asList(prs), name);
 	}
 
+	public static SerialAnalyserController buildGatePipeline(String name, PRSetup ... prs) throws ResourceInstantiationException	{
+		return buildGatePipeline(Arrays.asList(prs), name);
+	}
+
 	public static void execGatePipeline(PRSetup [] prs, String name, String docContent) throws ResourceInstantiationException, ExecutionException {
 		Document doc = Factory.newDocument(docContent);
 		execGatePipeline(prs, name, doc);
