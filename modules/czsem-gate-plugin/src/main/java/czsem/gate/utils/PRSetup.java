@@ -108,13 +108,17 @@ public abstract class PRSetup
 
 	public static void execGatePipeline(PRSetup [] prs, String name, Document doc) throws ResourceInstantiationException, ExecutionException {
 		SerialAnalyserController pipe = buildGatePipeline(Arrays.asList(prs), name);
+		execGatePipeline(pipe, name, doc);
+		GateUtils.deepDeleteController(pipe);
+	}
+
+	public static void execGatePipeline(SerialAnalyserController pipe, String name, Document doc) throws ResourceInstantiationException, ExecutionException {
 		Corpus corpus = Factory.newCorpus("corpus_for_"+name);
 		pipe.setCorpus(corpus);
 		corpus.add(doc);
 		pipe.execute();
 		corpus.clear();
 		Factory.deleteResource(corpus);
-		GateUtils.deepDeleteController(pipe);
 	}
 
 	public static SerialAnalyserController buildGatePipeline(List<PRSetup> prs, String name) throws ResourceInstantiationException
