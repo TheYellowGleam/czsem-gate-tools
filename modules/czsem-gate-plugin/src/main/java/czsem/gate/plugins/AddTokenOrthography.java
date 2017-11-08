@@ -75,6 +75,9 @@ public class AddTokenOrthography  extends AbstractLanguageAnalyser {
 		//we are ignoring CONTROL chars 
 		types.remove(Character.getType(':'));
 		
+		//we are ignoring MODIFIER_LETTER chars 
+		types.remove(Character.getType('ˇ'));
+		
 		if (Character.getType(content.charAt(0)) == Character.UPPERCASE_LETTER)
 		{
 			if (lowerCaseTypesSet.containsAll(types))

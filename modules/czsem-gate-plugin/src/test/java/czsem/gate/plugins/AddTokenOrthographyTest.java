@@ -26,5 +26,7 @@ public class AddTokenOrthographyTest {
 
 		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan dedek"), "lowercase");
 		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan!dedek"), "lowercase");
+		
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("chlopeˇn"), "lowercase");
 	}
 }
