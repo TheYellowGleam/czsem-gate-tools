@@ -53,13 +53,17 @@ public abstract class PRSetup
 			fm.put(key, value);
 			return this;
 		}
-		public SinglePRSetup putFeatureList(Object key, String ... strig_list)
-		{
-			if (strig_list == null)
+		
+		public SinglePRSetup putFeatureObjList(Object key, Object ... obj_list) {
+			if (obj_list == null)
 				fm.put(key, null);
 			else
-				fm.put(key, Arrays.asList(strig_list));
+				fm.put(key, Arrays.asList(obj_list));
 			return this;
+		}
+		
+		public SinglePRSetup putFeatureList(Object key, String ... strig_list) {
+			return putFeatureObjList(key, (Object[]) strig_list);
 		}
 	
 		public ProcessingResource createPR() throws ResourceInstantiationException
