@@ -11,7 +11,7 @@
       <void index="4"><string>-p</string></void>
       <void index="5"><string>${port}:${port}</string></void>
       <void index="6"><string>-i</string></void>
-      <void index="7"><string>datlowe/treex-online</string></void>
+      <void index="7"><string>czsem/treex-online</string></void>
       <void index="8"><string>perl</string></void>
       <void index="9"><string>treex_online.pl</string></void>
       <void index="10"><string>${port}</string></void>
