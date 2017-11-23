@@ -71,6 +71,12 @@
 		    <groupId>org.apache.xmlgraphics</groupId>
 		    <artifactId>xmlgraphics-commons</artifactId>
 		    <version>2.1</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<artifactId>commons-io</artifactId>
+		    		<groupId>commons-io</groupId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 	</dependencies>
 </project>

@@ -3,6 +3,7 @@ package czsem.gate.plugins;
 import gate.Annotation;
 import gate.AnnotationSet;
 import gate.Document;
+import gate.Gate;
 import gate.Utils;
 import gate.creole.metadata.CreoleResource;
 
@@ -11,6 +12,7 @@ import javax.swing.JTabbedPane;
 
 import czsem.fs.GateAnnotationsNodeAttributes;
 import czsem.fs.depcfg.DependencySettings;
+import czsem.fs.depcfg.DependencySource;
 import czsem.fs.depcfg.DependencySourceFromCfgAndSet;
 import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryData;
@@ -130,6 +132,18 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public static boolean isDepSource(String clsName) {
+		if (clsName == null) return false;
+		
+		try {
+			Class<?> cls = Gate.getClassLoader().loadClass(clsName);
+			return DependencySource.class.isAssignableFrom(cls);
+		} catch (ClassNotFoundException e) {
+			System.err.println(e);
+			return false;
+		}
+	}
 
 
 	protected void updateViewerAndResultsIndex() {
@@ -146,6 +160,30 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 				DependencySettings.getSelectedConfigurationFromConfigOrDefault(), 
 				set);
 		depSrc.addDependenciesToIndex(doc, i);
+		
+		//TODO or use Grext
+		/*
+		CreoleRegister reg = Gate.getCreoleRegister();
+		List<String> types = reg.getPublicPrTypes();
+		for (String string : types) {
+			if (isDepSource(string)) {
+				System.err.println(string);
+				try {
+					List<Resource> insts = reg.getAllInstances(string);
+					for (Resource resource : insts) {
+						System.err.println(resource.getName());
+						
+						((DependencySource) resource).addDependenciesToIndex(doc, i);
+					}
+				} catch (GateException e) {
+					throw new RuntimeException(e);
+				}
+				
+			}
+		}
+		*/
+		
+		
 		
 
 		srcViewer.setIndex(i);
