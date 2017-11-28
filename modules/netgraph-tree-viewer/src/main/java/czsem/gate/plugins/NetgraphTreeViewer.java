@@ -162,6 +162,9 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		depSrc.addDependenciesToIndex(doc, i);
 		
 		//TODO or use Grext
+		
+		//for GUI use gate.gui.ResourceRenderer
+		
 		/*
 		CreoleRegister reg = Gate.getCreoleRegister();
 		List<String> types = reg.getPublicPrTypes();
