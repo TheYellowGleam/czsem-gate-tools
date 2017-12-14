@@ -1,6 +1,8 @@
 package czsem.netgraph;
 
+import gate.CreoleRegister;
 import gate.Gate;
+import gate.Resource;
 import gate.gui.ResourceRenderer;
 import gate.util.GateException;
 
@@ -14,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -29,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import czsem.fs.depcfg.DependencySetting;
 import czsem.fs.depcfg.DependencySettings;
+import czsem.fs.depcfg.DependencySource;
 import czsem.netgraph.util.AddRemoveListsManager;
 import czsem.netgraph.util.AddRemoveListsManagerForTocDep;
 
@@ -38,6 +43,7 @@ public class NetgraphQueryConfig extends Container {
 	
 	protected final DependencySetting selected;
 	protected final DependencySetting available;
+	protected JComboBox<Object> prsCombo;
 	
 	public NetgraphQueryConfig(DependencySetting selected, DependencySetting available) {
 		this.selected = selected;
@@ -135,7 +141,7 @@ public class NetgraphQueryConfig extends Container {
 		});
 		
 		
-		JComboBox<Object> combo = new JComboBox<Object>() {
+		prsCombo = new JComboBox<Object>() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public Dimension getPreferredSize() {
@@ -146,7 +152,7 @@ public class NetgraphQueryConfig extends Container {
 		
 		@SuppressWarnings("unchecked")
 		ListCellRenderer<Object> r = new ResourceRenderer();
-		combo.setRenderer(r);
+		prsCombo.setRenderer(r);
 		/*
 		try {
 			Document doc = Factory.newDocument("doc");
@@ -158,8 +164,9 @@ public class NetgraphQueryConfig extends Container {
 		*/
 		
 		Object[] values = new Object [] {"<none>"};
-		combo.setModel(new DefaultComboBoxModel<Object>(values));
-		combo.setSelectedItem("<none>");
+		prsCombo.setModel(new DefaultComboBoxModel<Object>(values));
+		prsCombo.setEditable(false);
+		prsCombo.setSelectedItem("<none>");
 
 		JPanel comboBorder = new JPanel();
 		comboBorder.setBorder(
@@ -167,7 +174,7 @@ public class NetgraphQueryConfig extends Container {
         				BorderFactory.createEmptyBorder(0, 10, 10, 0), 
         				BorderFactory.createTitledBorder("Use config from PR (instead of manual)")));
 		
-		comboBorder.add(combo);
+		comboBorder.add(prsCombo);
 		panel_south.add(comboBorder, BorderLayout.LINE_START);
 
 	}
@@ -180,5 +187,45 @@ public class NetgraphQueryConfig extends Container {
 			logger.warn("Save failed...", e);
 		}
 	}
+	
+	public void updatePrsCombo() {
+		Object sel = prsCombo.getSelectedItem();
+		
+		List<Object> values = new ArrayList<>();
+		values.add("<none>");
+		
+		CreoleRegister reg = Gate.getCreoleRegister();
+		List<String> types = reg.getPublicPrTypes();
+		for (String type : types) {
+			if (isDepSource(type)) {
+				try {
+					List<Resource> insts = reg.getAllInstances(type);
+					for (Resource resource : insts) {
+						values.add(resource);
+					}
+				} catch (GateException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		prsCombo.setModel(new DefaultComboBoxModel<Object>(values.toArray()));
+		
+		prsCombo.setSelectedItem(sel);
+		
+	}
+	
+	public static boolean isDepSource(String clsName) {
+		if (clsName == null) return false;
+		
+		try {
+			Class<?> cls = Gate.getClassLoader().loadClass(clsName);
+			return DependencySource.class.isAssignableFrom(cls);
+		} catch (ClassNotFoundException e) {
+			System.err.println(e);
+			return false;
+		}
+	}
+
+	
 
 }

@@ -3,7 +3,6 @@ package czsem.gate.plugins;
 import gate.Annotation;
 import gate.AnnotationSet;
 import gate.Document;
-import gate.Gate;
 import gate.Utils;
 import gate.creole.metadata.CreoleResource;
 
@@ -12,7 +11,6 @@ import javax.swing.JTabbedPane;
 
 import czsem.fs.GateAnnotationsNodeAttributes;
 import czsem.fs.depcfg.DependencySettings;
-import czsem.fs.depcfg.DependencySource;
 import czsem.fs.depcfg.DependencySourceFromCfgAndSet;
 import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryData;
@@ -72,6 +70,8 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		if (ann == null) return;
 		
 		if (! canDisplayAnnotationType(ann.getType())) return;
+		
+		tabConfig.updatePrsCombo();
 
 		setAnnotation(ann, set);
 		updateViewerAndResultsIndex();
@@ -133,19 +133,6 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		}
 	}
 	
-	public static boolean isDepSource(String clsName) {
-		if (clsName == null) return false;
-		
-		try {
-			Class<?> cls = Gate.getClassLoader().loadClass(clsName);
-			return DependencySource.class.isAssignableFrom(cls);
-		} catch (ClassNotFoundException e) {
-			System.err.println(e);
-			return false;
-		}
-	}
-
-
 	protected void updateViewerAndResultsIndex() {
 		AnnotationSet set = getAnnotationSetCurrentlyEdited();
 		Document doc = set.getDocument();
