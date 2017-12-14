@@ -1,9 +1,13 @@
 package czsem.netgraph;
 
+import gate.Gate;
+import gate.gui.ResourceRenderer;
 import gate.util.GateException;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,9 +16,12 @@ import java.awt.event.ComponentEvent;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 import javax.swing.WindowConstants;
 
 import org.slf4j.Logger;
@@ -42,6 +49,9 @@ public class NetgraphQueryConfig extends Container {
 	}
 
 	public static void main(String[] args) throws Exception {
+		Gate.runInSandbox(true);
+		Gate.init();
+		
 		JFrame fr = new JFrame(NetgraphQueryConfig.class.getName());
 	    fr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	
@@ -60,7 +70,7 @@ public class NetgraphQueryConfig extends Container {
         JPanel panel_dependencies = new JPanel(new BorderLayout());
         panel_dependencies.setBorder(
         		BorderFactory.createCompoundBorder(
-        				BorderFactory.createEmptyBorder(15, 15, 15, 15), 
+        				BorderFactory.createEmptyBorder(10, 10, 10, 10), 
         				BorderFactory.createTitledBorder(title)));
         man.initComponents();
 		panel_dependencies.add(man);
@@ -74,7 +84,7 @@ public class NetgraphQueryConfig extends Container {
 		JPanel panel_center = new JPanel(new GridLayout(1, 2));
         add(panel_center, BorderLayout.CENTER);
 
-        JPanel panel_south = new JPanel();
+        JPanel panel_south = new JPanel(new BorderLayout());
         add(panel_south, BorderLayout.SOUTH);
 		
 
@@ -101,17 +111,20 @@ public class NetgraphQueryConfig extends Container {
 				tocDepMan.synchronizeModels();
 			}
 		});
-		panel_south.add(buttonDefaults);
+		JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
+		panel_south.add(buttons, BorderLayout.LINE_END);
+		buttons.add(buttonDefaults);
 
 		
         JButton buttonSave = new JButton("Save");
+        buttonSave.setPreferredSize(buttonDefaults.getPreferredSize());
 		buttonSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				performSave();
 			}
 		});
-		panel_south.add(buttonSave);
+		buttons.add(buttonSave);
 		
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -120,6 +133,42 @@ public class NetgraphQueryConfig extends Container {
 				tocDepMan.synchronizeModels();				
 			}			
 		});
+		
+		
+		JComboBox<Object> combo = new JComboBox<Object>() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public Dimension getPreferredSize() {
+				Dimension ret = super.getPreferredSize();
+				return new Dimension(Math.max(ret.width, 350), ret.height);
+			}
+		};
+		
+		@SuppressWarnings("unchecked")
+		ListCellRenderer<Object> r = new ResourceRenderer();
+		combo.setRenderer(r);
+		/*
+		try {
+			Document doc = Factory.newDocument("doc");
+			Object[] values = new Object [] {"<none>", doc};
+			combo.setModel(new DefaultComboBoxModel<Object>(values));
+		} catch (ResourceInstantiationException e1) {
+			throw new RuntimeException(e1);
+		}
+		*/
+		
+		Object[] values = new Object [] {"<none>"};
+		combo.setModel(new DefaultComboBoxModel<Object>(values));
+		combo.setSelectedItem("<none>");
+
+		JPanel comboBorder = new JPanel();
+		comboBorder.setBorder(
+        		BorderFactory.createCompoundBorder(
+        				BorderFactory.createEmptyBorder(0, 10, 10, 0), 
+        				BorderFactory.createTitledBorder("Use config from PR (instead of manual)")));
+		
+		comboBorder.add(combo);
+		panel_south.add(comboBorder, BorderLayout.LINE_START);
 
 	}
 
