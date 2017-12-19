@@ -1,5 +1,6 @@
 package czsem.netgraph;
 
+import gate.AnnotationSet;
 import gate.CreoleRegister;
 import gate.Gate;
 import gate.Resource;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import czsem.fs.depcfg.DependencySetting;
 import czsem.fs.depcfg.DependencySettings;
 import czsem.fs.depcfg.DependencySource;
+import czsem.fs.depcfg.DependencySourceFromCfgAndSet;
 import czsem.netgraph.util.AddRemoveListsManager;
 import czsem.netgraph.util.AddRemoveListsManagerForTocDep;
 
@@ -153,15 +155,6 @@ public class NetgraphQueryConfig extends Container {
 		@SuppressWarnings("unchecked")
 		ListCellRenderer<Object> r = new ResourceRenderer();
 		prsCombo.setRenderer(r);
-		/*
-		try {
-			Document doc = Factory.newDocument("doc");
-			Object[] values = new Object [] {"<none>", doc};
-			combo.setModel(new DefaultComboBoxModel<Object>(values));
-		} catch (ResourceInstantiationException e1) {
-			throw new RuntimeException(e1);
-		}
-		*/
 		
 		Object[] values = new Object [] {"<none>"};
 		prsCombo.setModel(new DefaultComboBoxModel<Object>(values));
@@ -221,9 +214,22 @@ public class NetgraphQueryConfig extends Container {
 			Class<?> cls = Gate.getClassLoader().loadClass(clsName);
 			return DependencySource.class.isAssignableFrom(cls);
 		} catch (ClassNotFoundException e) {
-			System.err.println(e);
+			logger.warn("ClassNotFound when looking for DepSource {}", clsName, e);
 			return false;
 		}
+	}
+
+	public DependencySource getDependencySource(AnnotationSet annotationSet) {
+		Object sel = prsCombo.getSelectedItem();
+		if (sel != null && sel instanceof DependencySource) {
+			return (DependencySource) sel;
+		}
+
+		DependencySourceFromCfgAndSet depSrc = new DependencySourceFromCfgAndSet(
+				DependencySettings.getSelectedConfigurationFromConfigOrDefault(), 
+				annotationSet);
+		
+		return depSrc;
 	}
 
 	

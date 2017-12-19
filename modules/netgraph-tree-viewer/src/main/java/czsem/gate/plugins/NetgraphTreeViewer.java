@@ -11,7 +11,7 @@ import javax.swing.JTabbedPane;
 
 import czsem.fs.GateAnnotationsNodeAttributes;
 import czsem.fs.depcfg.DependencySettings;
-import czsem.fs.depcfg.DependencySourceFromCfgAndSet;
+import czsem.fs.depcfg.DependencySource;
 import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryData;
 import czsem.fs.query.FSQuery.QueryMatch;
@@ -140,42 +140,10 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		GateAwareTreeIndexExtended i = new GateAwareTreeIndexExtended(doc);
 		i.setNodesAS(set);
 		
-		//i.addDependecies(set.get(null, Collections.singleton("args")));
-		
 		//use config:
-		DependencySourceFromCfgAndSet depSrc = new DependencySourceFromCfgAndSet(
-				DependencySettings.getSelectedConfigurationFromConfigOrDefault(), 
-				set);
+		DependencySource depSrc = tabConfig.getDependencySource(set);
 		depSrc.addDependenciesToIndex(doc, i);
 		
-		//TODO or use Grext
-		
-		//for GUI use gate.gui.ResourceRenderer
-		
-		/*
-		CreoleRegister reg = Gate.getCreoleRegister();
-		List<String> types = reg.getPublicPrTypes();
-		for (String string : types) {
-			if (isDepSource(string)) {
-				System.err.println(string);
-				try {
-					List<Resource> insts = reg.getAllInstances(string);
-					for (Resource resource : insts) {
-						System.err.println(resource.getName());
-						
-						((DependencySource) resource).addDependenciesToIndex(doc, i);
-					}
-				} catch (GateException e) {
-					throw new RuntimeException(e);
-				}
-				
-			}
-		}
-		*/
-		
-		
-		
-
 		srcViewer.setIndex(i);
 		srcViewer.setDoc(doc);
 
