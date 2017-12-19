@@ -121,8 +121,15 @@ public class NetgraphQueryConfig extends Container {
 		});
 		JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
 		panel_south.add(buttons, BorderLayout.LINE_END);
-		buttons.add(buttonDefaults);
 
+        JButton buttonApply = new JButton("Apply");
+        buttonApply.setPreferredSize(buttonDefaults.getPreferredSize());
+        buttonApply.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				applyChanges();
+			}
+		});
 		
         JButton buttonSave = new JButton("Save");
         buttonSave.setPreferredSize(buttonDefaults.getPreferredSize());
@@ -132,6 +139,10 @@ public class NetgraphQueryConfig extends Container {
 				performSave();
 			}
 		});
+
+		//What is the right order of these buttons? :-)
+		buttons.add(buttonApply);
+		buttons.add(buttonDefaults);
 		buttons.add(buttonSave);
 		
 		addComponentListener(new ComponentAdapter() {
@@ -179,6 +190,10 @@ public class NetgraphQueryConfig extends Container {
 		} catch (IOException | GateException e) {
 			logger.warn("Save failed...", e);
 		}
+	}
+
+	protected void applyChanges() {
+		/** to be overridden... **/
 	}
 	
 	public void updatePrsCombo() {

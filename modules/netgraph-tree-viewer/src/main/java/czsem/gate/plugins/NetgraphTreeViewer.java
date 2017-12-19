@@ -40,7 +40,15 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	private NetgraphResultsBrowser tabResults = new NetgraphResultsBrowser(srcResults);
 	
 	private NetgraphQueryConfig tabConfig = new NetgraphQueryConfig(
-			DependencySettings.getSelected(), DependencySettings.getAvailable()); 
+			DependencySettings.getSelected(), DependencySettings.getAvailable()) 
+	{
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		protected void applyChanges() {
+			updateForCurrentAnnotation();
+		}
+	}; 
 	
 	
 
@@ -65,6 +73,21 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		tabs.addTab("Config", tabConfig);
 	
 	}
+	
+	protected void updateForCurrentAnnotation() {
+		updateViewerAndResultsIndex();
+		
+		
+		if ("Sentence".equals(getAnnotationCurrentlyEdited().getType())) {
+			setSentenceAnnotation(getAnnotationCurrentlyEdited());
+		} 
+		
+		updateViewerAnnotation();
+		
+		updateQueryAs();
+	}
+
+	
 	@Override
 	public void editAnnotation(Annotation ann, AnnotationSet set) {
 		if (ann == null) return;
@@ -74,16 +97,8 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		tabConfig.updatePrsCombo();
 
 		setAnnotation(ann, set);
-		updateViewerAndResultsIndex();
 		
-		
-		if ("Sentence".equals(ann.getType())) {
-			setSentenceAnnotation(ann);
-		} 
-		
-		updateViewerAnnotation();
-		
-		updateQueryAs();
+		updateForCurrentAnnotation();
 
 		tabs.setSelectedComponent(tabViewer);		
 		dialog.setVisible(true);		
