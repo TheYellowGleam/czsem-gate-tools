@@ -23,6 +23,10 @@
       	<exclude>commons-io:*</exclude>
       	<exclude>commons-logging:*</exclude>
       	<exclude>org.apache.commons:*</exclude>
+      	<!-- TODO 
+      	<exclude>*:czsem-gate-plugin:*</exclude>
+      	-->
+      	
       	<!--  
       	<exclude>xalan:*</exclude>
       	<exclude>xml-apis:xml-apis:*</exclude>  
