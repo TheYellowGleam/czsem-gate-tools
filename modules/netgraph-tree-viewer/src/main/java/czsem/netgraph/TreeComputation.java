@@ -14,6 +14,7 @@ import czsem.netgraph.treesource.TreeSource;
 public class TreeComputation<E> {
 	private final TreeSource<E> treeSource;
 	private final List<NodeInfo<E>> nodes = new ArrayList<>();
+	private final List<Integer> nonTreeLinks = new ArrayList<>();
 	private final Map<E,Integer> node_index = new HashMap<>();
 	private List<Integer> balacedOrder;
 	private int maxDepth = -1;
@@ -69,27 +70,38 @@ public class TreeComputation<E> {
 
 
 	/** fills the nodes array **/
-	protected int addNodeAndCountDescendants(E parent, int depth, int parentIndex) {
-		/*
-		if (node_index.containsKey(parent)) 
-			//TODO display this edge
-			return nodes.get(node_index.get(parent)).numDescendants;
-		*/
-		
+	protected int addNodeAndCountDescendants(E node, int depth, int parentIndex) {
 		if (depth > maxDepth) maxDepth = depth;
 		
+		
+		if (node_index.containsKey(node)) {
+			//existing node = "cycles" in this tree
+			
+			int index = node_index.get(node);
+			
+			
+			if (parentIndex != -1) {
+				//nodes.get(parentIndex).childrenIndexes.add(index);
+				nonTreeLinks.add(parentIndex);
+				nonTreeLinks.add(index);
+			}
+			
+			return nodes.get(index).numDescendants;
+		} 
+		
+		
 		int index = nodes.size();
-		node_index.put(parent, index);
+		node_index.put(node, index);
+		NodeInfo<E> info = new NodeInfo<>(node, depth, index, parentIndex);
+		nodes.add(info);
 
 		if (parentIndex != -1) {
 			nodes.get(parentIndex).childrenIndexes.add(index);
 		}
 		
-		NodeInfo<E> info = new NodeInfo<>(parent, depth, index, parentIndex);
-		nodes.add(info);
 		
 		int descendants = 0;
-		Collection<E> children = treeSource.getChildren(parent);
+		Collection<E> children = treeSource.getChildren(node);
 		if (children != null) {
 			for (E ch : children) {
 				descendants += 1 + addNodeAndCountDescendants(ch, depth+1, index);
@@ -220,6 +232,11 @@ public class TreeComputation<E> {
 
 	public int getMaxDepth() {
 		return maxDepth;
+	}
+
+
+	public int[] collectLinks() {
+		return nonTreeLinks.stream().mapToInt(i->i).toArray();
 	}
 	
 }

@@ -30,12 +30,12 @@ public class NetgraphFrameAwtGraphics {
 			case 5:
 				return Arrays.asList(4);
 			case 7:
-				return Arrays.asList(6, /*debug cycles 3,*/ 4);
+				return Arrays.asList(6, /*debug cycles*/ 3, 4);
 				//return Arrays.asList(6);
 			//debug cycles
-/*			case 4:
+			case 4:
 				return Arrays.asList(4);
-*/			}
+			}
 			
 			return Collections.emptyList();
 		}

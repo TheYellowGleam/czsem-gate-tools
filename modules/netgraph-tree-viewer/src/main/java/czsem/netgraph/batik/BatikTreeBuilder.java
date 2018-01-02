@@ -48,9 +48,16 @@ public class BatikTreeBuilder<E> {
 		public static final float TEXT_OFFSET_MIDDLE = 1.5f;
 
 		public static final String EDGE_STROKE = "2.6";
+		public static final float LINK_STROKE_F = 1.6f;
+		public static final String LINK_STROKE = ((Float)LINK_STROKE_F).toString();
+		public static final String LINK_DASHARRAY = "5,1";		
 
 		public static final String NODE_STROKE = "1.5";
-		public static final String NODE_STROKE_SELECTED = "3";		
+		public static final String NODE_STROKE_SELECTED = "3";
+
+		public static final float LINK_END_SHIFT = NODE_DIAM*0.9f;
+
+		public static final float LINK_SELF_RADIUS = 10f;
 	}
 	
 	public static final class Color {
@@ -97,6 +104,7 @@ public class BatikTreeBuilder<E> {
 	protected Integer[] sortedNodes;
 
 	protected int[] edges;
+	protected int[] links;
 
 	protected Dimension origSize;
 
@@ -147,6 +155,7 @@ public class BatikTreeBuilder<E> {
 		
 			computeCoordinatesAndSpaceOutNodes();
 
+			addLinks();
 			addEdges();
 		}
 		
@@ -162,6 +171,7 @@ public class BatikTreeBuilder<E> {
 		cmp = new TreeComputation<>(treeSource);
 		cmp.compute();
 		
+		links = cmp.collectLinks();
 		edges = cmp.collectEdges();
 		srcNodes = cmp.collectNodes();
 		sortedNodes = cmp.computeSortedNodes();
@@ -186,6 +196,74 @@ public class BatikTreeBuilder<E> {
 		mainGroupRoot.appendChild(edgesGroup);
 		
 		setupDynamicSvgBridge(doc);
+	}
+
+	protected void addSelfLink(int a, int b) {
+		// Create circle.
+		Element arc = buildElem("circle")
+			.attr("cx", x[a]-Sizing.LINK_SELF_RADIUS+Sizing.LINK_STROKE_F*2f) 
+			.attr("cy", y[a]-Sizing.LINK_SELF_RADIUS+Sizing.LINK_STROKE_F*2f) 
+			.attr("r", Sizing.LINK_SELF_RADIUS) 
+			.attr("fill", "none")
+			.attr("stroke", 	  Color.EDGE[getEdgeType(a, b)])
+			.attr("stroke-width", Sizing.LINK_STROKE)
+			.attr("stroke-dasharray", Sizing.LINK_DASHARRAY)
+			.get();
+	
+		// Attach
+		edgesGroup.appendChild(arc);
+	}
+
+	protected void addLinks() {
+		for (int i = 0; i < links.length; i+=2) {
+			int a = links[i];
+			int b = links[i+1];
+			
+			if (x[a] == x[b] && y[a] == y[b]) {
+				addSelfLink(a, b);
+				continue;
+			}
+			
+			float sx = (x[b] + x[a])/2.0f;
+			float sy = (y[b] + y[a])/2.0f;
+			float norm_x = -(y[b] - y[a]);
+			float norm_y = (x[b] - x[a]);
+			float norm = norm_x*norm_x + norm_y*norm_y; 
+			if (norm != 0) {
+				norm = (float) Math.sqrt(norm);
+				norm_x /= norm;
+				norm_x /= norm;
+			}
+			float bezier_end_x = sx + norm_x*Sizing.LINK_END_SHIFT*0.03f;
+			float bezier_end_y = sy + norm_y*Sizing.LINK_END_SHIFT*0.03f;
+
+			float back_sx = (bezier_end_x - x[b])/10f;
+			float back_sy = (bezier_end_y - y[b])/10f;
+			
+			String arcStr = new StringBuilder("M")
+				//start point
+				.append(x[a]).append(',').append(y[a]).append(" C")
+				//control point at the beginning
+				.append(x[a]).append(',').append(y[a]).append(" ")
+				//control point at the end
+				.append(bezier_end_x).append(',').append(bezier_end_y).append(" ")
+				//end point
+				.append(x[b]+back_sx).append(',').append(y[b]+back_sy)
+				.toString();
+			
+			// Create path.
+			Element arc = buildElem("path")
+				.attr("d", arcStr) 
+				.attr("fill", "none")
+				.attr("stroke", 	  Color.EDGE[getEdgeType(a, b)])
+				.attr("stroke-width", Sizing.LINK_STROKE)
+				.attr("stroke-dasharray", Sizing.LINK_DASHARRAY)
+				.get();
+
+			// Attach
+			edgesGroup.appendChild(arc);
+		}
+		
 	}
 
 	protected void addEdges() {
