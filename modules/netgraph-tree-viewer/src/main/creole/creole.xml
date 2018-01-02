@@ -1,6 +1,8 @@
 <?xml version="1.0"?>  
 <CREOLE-DIRECTORY  ID="${project.groupId}.${project.artifactId}" VERSION="${project.version}" >
 
+  <REQUIRES>$gatehome$plugins/czsem-gate-plugin/</REQUIRES>   
+
   <JAR SCAN="false">lib/xml-apis-${dependency.xml-apis.xml-apis.version}.jar</JAR>
   <JAR SCAN="false">lib/xml-apis-ext-${dependency.xml-apis.xml-apis-ext.version}.jar</JAR>
   <JAR SCAN="false">lib/xalan-${dependency.xalan.xalan.version}.jar</JAR>
@@ -24,8 +26,10 @@
   <JAR SCAN="false">lib/batik-awt-util-${dependency.org.apache.xmlgraphics.batik-awt-util.version}.jar</JAR>
   <JAR SCAN="false">lib/xmlgraphics-commons-${dependency.org.apache.xmlgraphics.xmlgraphics-commons.version}.jar</JAR>
 
+  <!-- 
   <JAR SCAN="false">lib/czsem-common-${dependency.net.sf.czsem.czsem-common.version}.jar</JAR>  
   <JAR SCAN="false">lib/czsem-gate-plugin-${dependency.net.sf.czsem.czsem-gate-plugin.version}.jar</JAR>
+   -->
   <JAR SCAN="false">lib/fs-query-${dependency.net.sf.czsem.fs-query.version}.jar</JAR>
 
   <JAR SCAN="true">lib/${project.artifactId}-${project.version}.${project.packaging}</JAR>
