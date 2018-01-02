@@ -5,7 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TreeIndex {
+	private static final Logger logger = LoggerFactory.getLogger(TreeIndex.class);
 	
 	protected Map<Integer, Integer> parentIndex;
 	protected Map<Integer, Set<Integer>> childIndex;
@@ -71,9 +75,17 @@ public class TreeIndex {
 	
 	public Integer findRootForNode(Integer nodeParam)
 	{
+		Set<Integer> knownNodes = new HashSet<>();
+		
 		Integer root = nodeParam;
 		for (Integer i = nodeParam; i != null; i = getParent(i))
 		{
+			boolean isNew = knownNodes.add(i);
+			if (! isNew) {
+				logger.warn("Failed to find root for node id "+nodeParam+", Cyclic graph detected.");
+				return nodeParam;
+				
+			}
 			//System.err.println(i);
 			root = i;
 		}
