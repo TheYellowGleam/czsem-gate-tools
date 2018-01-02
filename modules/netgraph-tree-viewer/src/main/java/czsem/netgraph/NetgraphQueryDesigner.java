@@ -34,7 +34,7 @@ import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryObject;
 import czsem.fs.query.FSQueryParser.SyntaxError;
 import czsem.fs.query.constants.MetaAttribute;
-import czsem.netgraph.batik.BatikView;
+import czsem.netgraph.batik.NetgraphViewBatik;
 import czsem.netgraph.treesource.FSQueryTreeSource;
 
 public class NetgraphQueryDesigner extends Container {
@@ -59,7 +59,7 @@ public class NetgraphQueryDesigner extends Container {
 
 	protected final FSQueryTreeSource treeSource = new FSQueryTreeSource();
 
-	private BatikView forestDispaly;
+	private NetgraphViewBatik forestDispaly;
 	private JTextPaneWithUndo queryString;
 	private JPanel panelBottom;
 	private JList<String> attrNames;
@@ -72,7 +72,7 @@ public class NetgraphQueryDesigner extends Container {
 		setLayout(new BorderLayout());
 
 		// forest
-		forestDispaly = new BatikView(treeSource);
+		forestDispaly = new NetgraphViewBatik(treeSource);
 		// forestDispaly.setPreferredSize(new Dimension(500,500));
 
 		// TODO

@@ -25,12 +25,12 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGRect;
 
-public class BatikFrame1 {
+public class BatikTest {
 
 	public static void main(String[] args) {
 		  // Create a new JFrame.
         JFrame f = new JFrame("Batik");
-        BatikFrame1 app = new BatikFrame1(f);
+        BatikTest app = new BatikTest(f);
 
         // Add components to the frame.
         f.getContentPane().add(app.createComponents());
@@ -49,7 +49,7 @@ public class BatikFrame1 {
 	
 	protected JSVGCanvas svgCanvas = new JSVGCanvas();
 
-	public BatikFrame1(JFrame frame) {
+	public BatikTest(JFrame frame) {
 		this.frame = frame;
 	}
 	

@@ -11,7 +11,7 @@ import javax.swing.WindowConstants;
 import czsem.netgraph.batik.BatikTreeBuilder;
 import czsem.netgraph.treesource.TreeSourceWithSelectionSupport;
 
-public class NetgraphFrame {
+public class NetgraphFrameAwtGraphics {
 	
 	public static class TestSource extends TreeSourceWithSelectionSupport<Integer> {
 
@@ -30,8 +30,12 @@ public class NetgraphFrame {
 			case 5:
 				return Arrays.asList(4);
 			case 7:
-				return Arrays.asList(6);
-			}
+				return Arrays.asList(6, /*debug cycles 3,*/ 4);
+				//return Arrays.asList(6);
+			//debug cycles
+/*			case 4:
+				return Arrays.asList(4);
+*/			}
 			
 			return Collections.emptyList();
 		}
@@ -111,7 +115,7 @@ public class NetgraphFrame {
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         
 		frame.setSize(700, 500);
-		frame.add(new NetgraphView<>(new TestSource()));
+		frame.add(new NetgraphViewAwtGraphics<>(new TestSource()));
 		frame.pack();
 		frame.setVisible(true);
 

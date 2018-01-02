@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import czsem.netgraph.treesource.TreeSource;
@@ -12,6 +14,7 @@ import czsem.netgraph.treesource.TreeSource;
 public class TreeComputation<E> {
 	private final TreeSource<E> treeSource;
 	private final List<NodeInfo<E>> nodes = new ArrayList<>();
+	private final Map<E,Integer> node_index = new HashMap<>();
 	private List<Integer> balacedOrder;
 	private int maxDepth = -1;
 	private List<Integer>[] nodesByDepth;
@@ -65,10 +68,18 @@ public class TreeComputation<E> {
 	}
 
 
+	/** fills the nodes array **/
 	protected int addNodeAndCountDescendants(E parent, int depth, int parentIndex) {
+		/*
+		if (node_index.containsKey(parent)) 
+			//TODO display this edge
+			return nodes.get(node_index.get(parent)).numDescendants;
+		*/
+		
 		if (depth > maxDepth) maxDepth = depth;
 		
 		int index = nodes.size();
+		node_index.put(parent, index);
 
 		if (parentIndex != -1) {
 			nodes.get(parentIndex).childrenIndexes.add(index);

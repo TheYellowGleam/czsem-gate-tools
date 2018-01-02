@@ -16,7 +16,7 @@ import javax.swing.JComponent;
 import czsem.netgraph.treesource.TreeSource;
 import czsem.netgraph.treesource.TreeSource.NodeLabel;
 
-public class NetgraphView<E> extends JComponent {
+public class NetgraphViewAwtGraphics<E> extends JComponent {
 	private static final long serialVersionUID = 5301240098183332164L;
 	private final TreeSource<E> treeSource;
 	
@@ -59,7 +59,7 @@ public class NetgraphView<E> extends JComponent {
 	private int min_y;
 	private int x_shift;
 
-	public NetgraphView(TreeSource<E> treeSource) {
+	public NetgraphViewAwtGraphics(TreeSource<E> treeSource) {
 		this.treeSource = treeSource;
 		
 		addHierarchyListener(e -> {

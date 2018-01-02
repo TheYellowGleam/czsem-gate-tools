@@ -8,7 +8,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
-import czsem.netgraph.batik.BatikView;
+import czsem.netgraph.batik.NetgraphViewBatik;
 import czsem.netgraph.treesource.TreeIndexTreeSource;
 
 public class NetgraphTreeVisualize extends Container {
@@ -17,13 +17,13 @@ public class NetgraphTreeVisualize extends Container {
 	protected final TreeIndexTreeSource treeSource;
 	
 	//protected final NetgraphView<Integer> forestDisplay = new NetgraphView<>(treeSource);
-	protected final BatikView forestDisplay;
+	protected final NetgraphViewBatik forestDisplay;
 
 	private final GateAnnotTableModel dataModel;
 
 	public NetgraphTreeVisualize(TreeIndexTreeSource treeSource) {
 		this.treeSource = treeSource;
-		forestDisplay = new BatikView(treeSource);
+		forestDisplay = new NetgraphViewBatik(treeSource);
 		dataModel = new GateAnnotTableModel(treeSource);
 	}
 	

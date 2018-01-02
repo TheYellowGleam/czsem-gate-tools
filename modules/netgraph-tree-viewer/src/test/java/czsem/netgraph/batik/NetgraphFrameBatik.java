@@ -6,15 +6,15 @@ package czsem.netgraph.batik;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import czsem.netgraph.NetgraphFrame.TestSource;
+import czsem.netgraph.NetgraphFrameAwtGraphics.TestSource;
 
-public class BatikFrame2 {
+public class NetgraphFrameBatik {
 
 	public static void main(String[] args) {
-		JFrame frame = new JFrame("BatikFrame2");
+		JFrame frame = new JFrame("NetgraphFrameBatik");
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
-		BatikView view = new BatikView(new TestSource());
+		NetgraphViewBatik view = new NetgraphViewBatik(new TestSource());
         
 		frame.setLocationRelativeTo(null);		
 		frame.setSize(800, 600);

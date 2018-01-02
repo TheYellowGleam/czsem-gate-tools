@@ -22,7 +22,7 @@ import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 import czsem.netgraph.treesource.TreeSourceWithSelectionSupport;
 import czsem.netgraph.treesource.TreeSourceWithSelectionSupport.ViewChangedListener;
 
-public class BatikView extends GVTTreeRendererAdapter implements MouseWheelListener, ViewChangedListener {
+public class NetgraphViewBatik extends GVTTreeRendererAdapter implements MouseWheelListener, ViewChangedListener {
 	
 	protected final TreeSourceWithSelectionSupport<?> treeSource;
 	public static final double scaleIncrement = 0.1; 
@@ -35,7 +35,7 @@ public class BatikView extends GVTTreeRendererAdapter implements MouseWheelListe
 	private final JSVGCanvasUpdated svgCanvas = new JSVGCanvasUpdated();
 	private boolean setRenderingTransformLater = false;
 
-	public BatikView(TreeSourceWithSelectionSupport<?> treeSource) {
+	public NetgraphViewBatik(TreeSourceWithSelectionSupport<?> treeSource) {
 		this.treeSource = treeSource;
 		treeSource.getViewChangedListeners().add(this);
 	}
