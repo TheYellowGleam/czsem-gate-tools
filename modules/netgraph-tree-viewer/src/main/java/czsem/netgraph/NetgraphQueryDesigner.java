@@ -37,6 +37,8 @@ import czsem.fs.query.constants.MetaAttribute;
 import czsem.netgraph.batik.NetgraphViewBatik;
 import czsem.netgraph.treesource.FSQueryTreeSource;
 
+import static czsem.fs.GateAnnotationsNodeAttributesExtended.*;
+
 public class NetgraphQueryDesigner extends Container {
 	private static final long serialVersionUID = 3771937513564105054L;
 
@@ -284,6 +286,13 @@ public class NetgraphQueryDesigner extends Container {
 		attrIndex.put(MetaAttribute.OPTIONAL, trueFalse);
 		attrIndex.put(MetaAttribute.OPTIONAL_SUBTREE, trueFalse);
 		attrIndex.put(MetaAttribute.FORBIDDEN_SUBTREE, trueFalse);
+		attrIndex.put(META_ATTR_ANN_STRING, treeSet("some string"));
+		attrIndex.put(META_ATTR_ANN_TYPE, treeSet("Token"));
+		attrIndex.put(META_ATTR_ANN_START_OFFSET, treeSet("123"));
+		attrIndex.put(META_ATTR_ANN_END_OFFSET, treeSet("123"));
+		attrIndex.put(META_ATTR_ANN_LENGTH, treeSet("123"));
+		attrIndex.put(META_ATTR_ANN_ID, treeSet("123"));
+		attrIndex.put(META_ATTR_DEP_TYPE, treeSet("Dependency", "aDependency", "tDependency", "_overlapping"));
 
 		attrNames.setModel(new ArrayListModel(attrIndex.keySet()));
 	}

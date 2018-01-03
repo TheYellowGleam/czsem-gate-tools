@@ -1,6 +1,7 @@
 package czsem.netgraph.treesource;
 
 import gate.Annotation;
+
 import gate.AnnotationSet;
 import gate.Document;
 import gate.Utils;
@@ -16,6 +17,8 @@ import czsem.gate.utils.GateAwareTreeIndexExtended;
 import czsem.netgraph.GateAnnotTableModel;
 import czsem.netgraph.batik.BatikTreeBuilder;
 
+import static czsem.fs.GateAnnotationsNodeAttributesExtended.*;
+
 public class TreeIndexTreeSource extends TreeSourceWithSelectionSupport<Integer> implements Comparator<Integer> {
 	
 	private GateAwareTreeIndexExtended index = new GateAwareTreeIndexExtended(null);
@@ -23,7 +26,7 @@ public class TreeIndexTreeSource extends TreeSourceWithSelectionSupport<Integer>
 	protected Integer rootNode = null;
 	
 	protected final LinkedHashSet<Object> selectedAttributes 
-		= new LinkedHashSet<>(Collections.singleton(GateAnnotTableModel.ATTR.STRING));
+		= new LinkedHashSet<>(Collections.singleton(META_ATTR_ANN_STRING));
 
 	@Override
 	public Integer getRoot() {
@@ -50,7 +53,7 @@ public class TreeIndexTreeSource extends TreeSourceWithSelectionSupport<Integer>
 
 		for (Object attr : selectedAttributes) {
 			
-			Object val = GateAnnotTableModel.getAnnotationAttr(getDoc(), a, attr);
+			Object val = GateAnnotTableModel.getAnnotationAttr(this, a, attr);
 			if (val == null) val = "";
 			ret.add(new StaticLabel(val.toString()));
 		}

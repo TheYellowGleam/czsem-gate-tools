@@ -1,7 +1,6 @@
 package czsem.netgraph;
 
 import gate.Annotation;
-import gate.Document;
 import gate.FeatureMap;
 import gate.Utils;
 
@@ -12,28 +11,20 @@ import java.util.TreeSet;
 
 import javax.swing.table.AbstractTableModel;
 
+import static czsem.fs.GateAnnotationsNodeAttributesExtended.*;
 import czsem.netgraph.treesource.TreeIndexTreeSource;
 
 public class GateAnnotTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -1999028584101610952L;
 	
-	public static class ATTR {
-		//TODO use GateAnnotationsNodeAttributesExtended
-
-		public static final String STRING = "_string";
-		public static final String TYPE = "_type";
-		public static final String STRAT = "_start";
-		public static final String END = "_end";
-		public static final String ID = "_id";
-		
-	}
-	
 	public static final String [] DEFAULT_ATTRS = {
-		ATTR.STRING,
-		ATTR.TYPE,
-		ATTR.STRAT,
-		ATTR.END,
-		ATTR.ID,
+		META_ATTR_ANN_STRING,
+		META_ATTR_ANN_TYPE,
+		META_ATTR_ANN_START_OFFSET,
+		META_ATTR_ANN_END_OFFSET,
+		META_ATTR_ANN_LENGTH,
+		META_ATTR_ANN_ID,
+		META_ATTR_DEP_TYPE,
 	};
 	
 
@@ -47,7 +38,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 	}
 
 
-	public static Object getAnnotationAttr(Document d, Annotation a, Object attr) {
+	public static Object getAnnotationAttr(TreeIndexTreeSource treeSource, Annotation a, Object attr) {
 		if (a == null) return null;
 		
 		FeatureMap fm = a.getFeatures();
@@ -57,11 +48,13 @@ public class GateAnnotTableModel extends AbstractTableModel {
 		
 		//TODO use GateAnnotationsNodeAttributesExtended
 		switch (str) {
-		case ATTR.STRING:	return Utils.stringFor(d, a);
-		case ATTR.TYPE:		return a.getType();
-		case ATTR.STRAT:	return a.getStartNode().getOffset();
-		case ATTR.END:		return a.getEndNode().getOffset();
-		case ATTR.ID:		return a.getId();
+		case META_ATTR_ANN_STRING:	return Utils.stringFor(treeSource.getDoc(), a);
+		case META_ATTR_ANN_TYPE:		return a.getType();
+		case META_ATTR_ANN_START_OFFSET:	return a.getStartNode().getOffset();
+		case META_ATTR_ANN_END_OFFSET:		return a.getEndNode().getOffset();
+		case META_ATTR_ANN_LENGTH:		return Utils.length(a);
+		case META_ATTR_ANN_ID:		return a.getId();
+		case META_ATTR_DEP_TYPE:	return treeSource.getIndex().getDependecyTypeMap().get(a.getId());
 		default:			return null;
 		}
 	}
@@ -88,7 +81,7 @@ public class GateAnnotTableModel extends AbstractTableModel {
 		case 1:
 			return getAttrByIndex(rowIndex);
 		case 2:
-			return getAnnotationAttr(treeSource.getDoc(), treeSource.getSelectedAnnot(), getAttrByIndex(rowIndex));
+			return getAnnotationAttr(treeSource, treeSource.getSelectedAnnot(), getAttrByIndex(rowIndex));
 		}
 		
 		return null;
