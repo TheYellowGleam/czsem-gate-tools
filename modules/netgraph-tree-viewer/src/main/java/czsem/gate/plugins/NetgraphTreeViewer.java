@@ -9,7 +9,7 @@ import gate.creole.metadata.CreoleResource;
 import javax.swing.JDialog;
 import javax.swing.JTabbedPane;
 
-import czsem.fs.GateAnnotationsNodeAttributes;
+import czsem.fs.GateAnnotationsNodeAttributesWithOnto;
 import czsem.fs.depcfg.DependencySettings;
 import czsem.fs.depcfg.DependencySource;
 import czsem.fs.query.FSQuery;
@@ -129,8 +129,7 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	protected void search() {
 		GateAwareTreeIndexExtended index = srcResults.getIndex();
 		QueryData data = new FSQuery.QueryData(index, 
-				new GateAnnotationsNodeAttributes(
-						getAnnotationSetCurrentlyEdited()));
+				new GateAnnotationsNodeAttributesWithOnto(index));
 		
 		try {
 			Iterable<QueryMatch> results = 

@@ -36,7 +36,10 @@ public abstract class GateAnnotationsNodeAttributesAbstract implements NodeAttri
 
 	@Override
 	public Object getValue(int node_id, String attrName) {
-		return getAnnotation(node_id).getFeatures().get(attrName);
+		Annotation a = getAnnotation(node_id);
+		if (a == null)
+			return null;
+		return a.getFeatures().get(attrName);
 	}
 
 	@Override
