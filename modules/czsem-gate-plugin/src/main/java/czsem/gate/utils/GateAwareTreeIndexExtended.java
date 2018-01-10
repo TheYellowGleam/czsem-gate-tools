@@ -3,6 +3,7 @@ package czsem.gate.utils;
 import gate.Annotation;
 import gate.AnnotationSet;
 import gate.Document;
+import gate.creole.ontology.Ontology;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,8 @@ public class GateAwareTreeIndexExtended extends GateAwareTreeIndex {
 	protected Map<Integer, Annotation> annIdMap = new HashMap<>();
 	protected Map<Integer, String> annIdDependecyKindMap = new HashMap<>();
 	protected final Document document;
+	
+	protected Ontology ontology;
 	
 	public GateAwareTreeIndexExtended(Document document) {
 		this.document = document;
@@ -62,6 +65,14 @@ public class GateAwareTreeIndexExtended extends GateAwareTreeIndex {
 
 	public Document getDocument() {
 		return document;
+	}
+
+	public Ontology getOntology() {
+		return ontology;
+	}
+
+	public void setOntology(Ontology ontology) {
+		this.ontology = ontology;
 	}
 
 }

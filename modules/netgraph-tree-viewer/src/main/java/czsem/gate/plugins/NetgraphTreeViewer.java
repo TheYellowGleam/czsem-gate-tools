@@ -128,8 +128,10 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	
 	protected void search() {
 		GateAwareTreeIndexExtended index = srcResults.getIndex();
-		QueryData data = new FSQuery.QueryData(index, 
-				new GateAnnotationsNodeAttributesWithOnto(index));
+		
+		GateAnnotationsNodeAttributesWithOnto attrs = new GateAnnotationsNodeAttributesWithOnto(index);
+		attrs.setOntology(index.getOntology());
+		QueryData data = new QueryData(index, attrs); 
 		
 		try {
 			Iterable<QueryMatch> results = 
