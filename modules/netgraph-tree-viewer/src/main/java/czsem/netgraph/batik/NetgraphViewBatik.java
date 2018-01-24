@@ -6,13 +6,19 @@ package czsem.netgraph.batik;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.BoxLayout;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.swing.JSVGCanvas;
@@ -70,12 +76,46 @@ public class NetgraphViewBatik extends GVTTreeRendererAdapter implements MouseWh
 		
 		svgCanvas.addGVTTreeRendererListener(this);
 		svgCanvas.addMouseWheelListener(this);
+		
+		svgCanvas.addMouseListener(initPopupMenu());
 			
 		
 		pane = new JScrollPane(panel); 
 		pane.setWheelScrollingEnabled(true);
 		pane.getVerticalScrollBar().setUnitIncrement(16);		
 		return pane;
+	}
+
+	protected MouseListener initPopupMenu() {
+		MouseListener ret = new MouseAdapter() {
+			JPopupMenu popup = new JPopupMenu();
+			
+			{
+				UIManager.getIcon("FileView.floppyDriveIcon");
+				JMenuItem menuItem;
+			    menuItem = new JMenuItem("Zoom in");
+			    menuItem.addActionListener(e -> zoom(-1.0));
+			    popup.add(menuItem);				
+				menuItem = new JMenuItem("Zoom out");
+			    menuItem.addActionListener(e -> zoom(1.0));
+			    popup.add(menuItem);
+				menuItem = new JMenuItem("Zoom reset");
+			    menuItem.addActionListener(e -> zoomReset());
+			    popup.add(menuItem);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {maybeShowPopup(e);}
+			@Override
+			public void mouseReleased(MouseEvent e) {maybeShowPopup(e);}
+
+			private void maybeShowPopup(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+		return ret;
 	}
 
 	protected void applyScale(boolean performImmediateRedraw) {
@@ -94,16 +134,25 @@ public class NetgraphViewBatik extends GVTTreeRendererAdapter implements MouseWh
 
 		pane.getViewport().getView().revalidate();
 	}
+	
+	protected void zoomReset() {
+		currentScale = 1.0;
+		applyScale(true);
+	}
+	
+	protected void zoom(double delta) {
+		currentScale -= delta*scaleIncrement;
+		applyScale(true);
+	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
 			
 			//zoom
+			zoom(e.getPreciseWheelRotation());
 			
 			e.consume();
-			currentScale -= e.getPreciseWheelRotation()*scaleIncrement;
-			applyScale(true);
 			
 			return;
 		}
