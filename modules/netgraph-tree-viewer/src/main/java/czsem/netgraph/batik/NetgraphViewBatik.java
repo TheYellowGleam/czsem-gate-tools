@@ -74,6 +74,7 @@ public class NetgraphViewBatik extends GVTTreeRendererAdapter implements MouseWh
 		
 		pane = new JScrollPane(panel); 
 		pane.setWheelScrollingEnabled(true);
+		pane.getVerticalScrollBar().setUnitIncrement(16);		
 		return pane;
 	}
 
@@ -96,20 +97,20 @@ public class NetgraphViewBatik extends GVTTreeRendererAdapter implements MouseWh
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0) {
-			//TODO scroll the pane
+		if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
 			
+			//zoom
 			
-			//System.err.println(svgCanvas.getRenderingTransform().getScaleX());
-			//System.err.println(currentScale);
+			e.consume();
+			currentScale -= e.getPreciseWheelRotation()*scaleIncrement;
+			applyScale(true);
 			
 			return;
 		}
-		
-		e.consume();
-		currentScale -= e.getPreciseWheelRotation()*scaleIncrement;
-		
-		applyScale(true);
+
+		//needed to make scroll pane wheel events work
+		//probably because of the strange JSVGCanvas component
+		if (pane != null) pane.dispatchEvent(e);
 	}
 
 	public void reloadData() {
