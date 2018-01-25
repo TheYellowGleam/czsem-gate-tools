@@ -12,8 +12,15 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -21,9 +28,11 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.apache.batik.bridge.UpdateManager;
+import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
 import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
+import org.w3c.dom.svg.SVGDocument;
 
 import czsem.netgraph.treesource.TreeSourceWithSelectionSupport;
 import czsem.netgraph.treesource.TreeSourceWithSelectionSupport.ViewChangedListener;
@@ -101,6 +110,10 @@ public class NetgraphViewBatik extends GVTTreeRendererAdapter implements MouseWh
 			    popup.add(menuItem);
 				menuItem = new JMenuItem("Zoom reset");
 			    menuItem.addActionListener(e -> zoomReset());
+			    popup.add(menuItem);
+			    popup.addSeparator();
+				menuItem = new JMenuItem("Save to SVG file...");
+			    menuItem.addActionListener(e -> saveAsSvg());
 			    popup.add(menuItem);
 			}
 
@@ -180,6 +193,27 @@ public class NetgraphViewBatik extends GVTTreeRendererAdapter implements MouseWh
 			AffineTransform tr = AffineTransform.getScaleInstance(currentScale, currentScale);
 			um.getUpdateRunnableQueue().invokeLater(() -> svgCanvas.setRenderingTransformExclusive(tr, false));
 			setRenderingTransformLater = false;
+		}
+	}
+	
+	protected void saveAsSvg() {
+		if (svgCanvas == null) return;
+		SVGDocument doc = svgCanvas.getSVGDocument();
+		if (doc == null) return;
+		
+		JFileChooser fc = new JFileChooser();
+		fc.setSelectedFile(new File("netgraph_tree.svg"));		
+		int returnVal = fc.showSaveDialog(svgCanvas);
+		
+		if (returnVal != JFileChooser.APPROVE_OPTION) return;
+
+		try {
+			Writer w = new OutputStreamWriter(new FileOutputStream(fc.getSelectedFile()), StandardCharsets.UTF_8);
+			DOMUtilities.writeDocument(doc, w);
+			w.flush();
+			w.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
