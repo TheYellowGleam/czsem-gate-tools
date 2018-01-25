@@ -1,5 +1,7 @@
 package czsem.gate.plugins;
 
+import java.util.Collections;
+
 import gate.Annotation;
 import gate.AnnotationSet;
 import gate.Document;
@@ -75,7 +77,7 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	}
 	
 	protected void updateForCurrentAnnotation() {
-		updateViewerAndResultsIndex();
+		updateViewer();
 		
 		
 		if ("Sentence".equals(getAnnotationCurrentlyEdited().getType())) {
@@ -127,11 +129,13 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 	}
 	
 	protected void search() {
-		GateAwareTreeIndexExtended index = srcResults.getIndex();
+		GateAwareTreeIndexExtended index = srcViewer.getIndex();
+		srcResults.setIndexOnly(srcViewer.getDoc(), index);		
 		
 		GateAnnotationsNodeAttributesWithOnto attrs = new GateAnnotationsNodeAttributesWithOnto(index);
 		attrs.setOntology(index.getOntology());
 		QueryData data = new QueryData(index, attrs); 
+		
 		
 		try {
 			Iterable<QueryMatch> results = 
@@ -144,12 +148,14 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 
 			
 		} catch (SyntaxError e) {
+			tabResults.setResults(Collections.emptyList());
+			
 			//TODO handle syntax error
 			throw new RuntimeException(e);
 		}
 	}
 	
-	protected void updateViewerAndResultsIndex() {
+	protected void updateViewer() {
 		AnnotationSet set = getAnnotationSetCurrentlyEdited();
 		Document doc = set.getDocument();
 		
@@ -163,7 +169,9 @@ public class NetgraphTreeViewer extends DialogBasedAnnotationEditor {
 		srcViewer.setIndex(i);
 		srcViewer.setDoc(doc);
 
-		srcResults.setIndex(doc, i);
+		//srcResults.setIndexOnly(doc, i);
+		//tabResults.setResults(Collections.emptyList());
+
 	}
 
 	

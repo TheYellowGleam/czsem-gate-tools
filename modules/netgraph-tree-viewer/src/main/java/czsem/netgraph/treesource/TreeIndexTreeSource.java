@@ -77,12 +77,16 @@ public class TreeIndexTreeSource extends TreeSourceWithSelectionSupport<Integer>
 		i.setNodesAS(annotations);
 		i.addDependecies(annotations.get(null, Collections.singleton("args")));
 		
-		setIndex(doc, i);
+		setIndexAndUpdateSelection(doc, i);
 	}
 
-	public void setIndex(Document doc, GateAwareTreeIndexExtended index) {
+	public void setIndexOnly(Document doc, GateAwareTreeIndexExtended index) {
 		setDoc(doc);
 		setIndex(index);
+	}
+
+	public void setIndexAndUpdateSelection(Document doc, GateAwareTreeIndexExtended index) {
+		setIndexOnly(doc, index);
 		
 		rootNode = index.findRootOrNull();
 		setSelectedNode(rootNode);

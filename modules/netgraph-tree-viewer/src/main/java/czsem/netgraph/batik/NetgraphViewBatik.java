@@ -92,6 +92,7 @@ public class NetgraphViewBatik extends GVTTreeRendererAdapter implements MouseWh
 		pane = new JScrollPane(panel); 
 		pane.setWheelScrollingEnabled(true);
 		pane.getVerticalScrollBar().setUnitIncrement(16);		
+		pane.getHorizontalScrollBar().setUnitIncrement(16);		
 		return pane;
 	}
 

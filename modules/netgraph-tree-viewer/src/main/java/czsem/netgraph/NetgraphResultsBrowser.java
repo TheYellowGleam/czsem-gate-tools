@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -15,7 +16,6 @@ import javax.swing.JPanel;
 
 import czsem.fs.query.FSQuery;
 import czsem.fs.query.FSQuery.QueryMatch;
-import czsem.fs.query.FSQueryParser.SyntaxError;
 import czsem.netgraph.treesource.TreeSourceWithQueryMatch;
 
 public class NetgraphResultsBrowser extends Container {
@@ -106,21 +106,20 @@ public class NetgraphResultsBrowser extends Container {
 
 
 	public void setResults(Iterable<QueryMatch> results) {
-		resultsWalker = new ResultsWalker(results.iterator());
-		showNext();
-		buttonPrevious.setEnabled(false);		
-	}
-	
-	
-	public void setResultsUsingQuery(String queryString) throws SyntaxError {
-		//QueryData data = asIndexHelper.createQueryData();
+		Iterator<QueryMatch> i = results.iterator();
+		if (! i.hasNext()) {
+			//empty results
+			showMatch(null);
+			treeSource.selectNode(-1);
+			treeSource.fireViewChanged();
+		}
 		
-//		Iterable<QueryMatch> results = q.buildQuery("[lex.rf=32154]))").evaluate();
-		//Iterable<QueryMatch> results = FSQuery.buildQuery(queryString).evaluate(data);
-		//setResults(results);
+		resultsWalker = new ResultsWalker(i);
+		showNext();
+		buttonPrevious.setEnabled(false);
 	}
-
-
+	
+	
 	public void initComponents() {
 		setLayout(new BorderLayout());
 		
@@ -142,8 +141,7 @@ public class NetgraphResultsBrowser extends Container {
 
 		southPanel.add(buttonNext);
 		
-		
-		
+		setResults(Collections.emptyList());
 	}
 
 	protected void showMatch(QueryMatch match) {

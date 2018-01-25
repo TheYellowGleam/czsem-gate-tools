@@ -59,7 +59,7 @@ public class NetgraphResultsBrowserTest {
 		rb.initComponents();
 
 		//rb.asIndexHelper.setSourceAS(as);
-		src.setIndex(doc, index);
+		src.setIndexAndUpdateSelection(doc, index);
 		rb.setResults(results);
 		
 		
