@@ -45,6 +45,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipGpg>true</skipGpg>
+		<gate.version>8.5.1</gate.version>
 	</properties>
   
 	<modules>

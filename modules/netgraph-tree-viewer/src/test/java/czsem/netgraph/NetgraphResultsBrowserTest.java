@@ -3,6 +3,8 @@ package czsem.netgraph;
 import gate.AnnotationSet;
 import gate.Document;
 import gate.Factory;
+import gate.Gate;
+import gate.creole.Plugin;
 import gate.creole.splitter.SentenceSplitter;
 import gate.creole.tokeniser.DefaultTokeniser;
 
@@ -26,8 +28,8 @@ public class NetgraphResultsBrowserTest {
 	
 	public static void main(String[] args) throws Exception {
 		GateUtils.initGateKeepLog();
-		GateUtils.registerPluginDirectory("ANNIE");
-		GateUtils.registerPluginDirectory("Stanford_CoreNLP");
+		GateUtils.registerANNIE();
+		Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins", "stanford-corenlp", "8.5.1"));
 		
 		
 		PRSetup[] prs = {
