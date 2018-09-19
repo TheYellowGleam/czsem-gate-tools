@@ -6,6 +6,7 @@ import gate.Corpus;
 import gate.Document;
 import gate.Factory;
 import gate.Gate;
+import gate.creole.Plugin;
 import gate.creole.SerialAnalyserController;
 import gate.creole.splitter.SentenceSplitter;
 import gate.creole.tokeniser.DefaultTokeniser;
@@ -24,10 +25,8 @@ public class MarkFirstAndLastSentenceTokensTest {
 	@Test
 	public static void execute() throws Exception {
 		GateUtils.initGateKeepLog();
-		System.err.println(Gate.getPluginsHome());
-		System.err.println(Gate.getGateHome());
-		GateUtils.registerPluginDirectory("ANNIE");
-		Gate.getCreoleRegister().registerComponent(MarkFirstAndLastSentenceTokens.class);
+		GateUtils.registerAllCzsemPrs();
+		GateUtils.registerANNIE();
 		
 		PRSetup [] setup = {
 			new PRSetup.SinglePRSetup(DefaultTokeniser.class),	

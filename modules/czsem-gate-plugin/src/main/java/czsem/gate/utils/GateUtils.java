@@ -15,6 +15,7 @@ import gate.ProcessingResource;
 import gate.Resource;
 import gate.Utils;
 import gate.corpora.DocumentImpl;
+import gate.creole.Plugin;
 import gate.creole.ResourceData;
 import gate.creole.ResourceInstantiationException;
 import gate.creole.metadata.CreoleResource;
@@ -238,8 +239,8 @@ public class GateUtils
 
 	public static void registerPluginDirectory(File pluginDirectory) throws MalformedURLException, GateException
 	{
-	    Gate.getCreoleRegister().registerDirectories( 
-	    		pluginDirectory.toURI().toURL());		
+		Gate.getCreoleRegister().registerPlugin(
+				new Plugin.Directory(pluginDirectory.toURI().toURL()));
 	}
 	
 	public static String getUserPluginsHome() {
@@ -446,9 +447,21 @@ public class GateUtils
 		return Utils.stringFor(doc, annotation);
 	}
 
+	public static class PluginFromClass extends Plugin.Component {
+
+		public PluginFromClass(Class<? extends Resource> resourceClass)	throws MalformedURLException {
+			super(resourceClass);
+			baseURL = resourceClass.getResource(resourceClass.getSimpleName()+".class");
+		}
+	}
+	
 	public static void registerComponentIfNot(Class<? extends Resource> class1) throws GateException {
 		if (! isPrCalssRegisteredInCreole(class1)) {
-			Gate.getCreoleRegister().registerComponent(class1);
+			try {
+				Gate.getCreoleRegister().registerPlugin(new PluginFromClass(class1));
+			} catch (MalformedURLException e) {
+				throw new RuntimeException("registerPlugin failed", e);
+			}
 		}
 	}
 
@@ -553,6 +566,18 @@ public class GateUtils
 	
 	public static synchronized Object persistenceManagerLoadObjectFromFileSynchronized(File file) throws PersistenceException, ResourceInstantiationException, IOException {
 		return PersistenceManager.loadObjectFromFile(file);
+	}
+
+	public static void addKnownPluginDir(File pluginDir) throws MalformedURLException {
+		Gate.addKnownPlugin(new Plugin.Directory(pluginDir.toURI().toURL()));
+	}
+
+	public static void registerANNIE() throws GateException {
+		Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins", "annie", "8.5"));
+	}
+
+	public static void setPluginsHome() {
+		Gate.setPluginsHome(new File(Gate.getGateHome(), "plugins"));
 	}
 
 }

@@ -35,6 +35,10 @@ import czsem.gate.utils.PRSetup.SinglePRSetup;
 
 @CreoleResource
 public class LevenshteinWholeLineMatchingGazetteer extends DefaultGazetteer {
+	
+	public LevenshteinWholeLineMatchingGazetteer() {
+		caseSensitive = true;
+	}
 
 	/** This parameter is disabled **/
 	@Override
