@@ -47,8 +47,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<artifactId>${project.groupId}</artifactId>
-					<groupId>czsem-common</groupId>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
