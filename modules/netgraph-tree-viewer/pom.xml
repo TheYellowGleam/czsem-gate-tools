@@ -12,38 +12,22 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- set properties for old style /src/main/creole/creole.xml variable expansion -->
 				<groupId>${project.groupId}</groupId>
 				<artifactId>custom-properties-maven-plugin</artifactId>
-				<version>${project.parent.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>setproperties</goal>
-						</goals>
-						<phase>generate-resources</phase>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
+				<!-- crete the old style gate-plugin-dir.zip -->
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>install-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<finalName>prepared</finalName>
-							<attach>true</attach>
-							<descriptors>
-								<descriptor>src/main/assembly/gate-plugin-dir.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
+			</plugin>
+			<plugin>
+				<!-- crete the new style expanded creole.xml from src/main/resources/creole.xml -->
+				<groupId>uk.ac.gate</groupId>
+				<artifactId>gate-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<!-- crete the new style creole.jar for GATE GUI -->
+				<artifactId>maven-jar-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -54,13 +38,19 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>czsem-gate-plugin</artifactId>
 			<version>${project.parent.version}</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>fs-query</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>${project.groupId}</artifactId>
+					<groupId>czsem-common</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 		    <groupId>org.apache.xmlgraphics</groupId>
@@ -89,7 +79,7 @@
 			<groupId>uk.ac.gate.plugins</groupId>
 			<artifactId>annie</artifactId>
 			<version>8.5</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 		
 	</dependencies>

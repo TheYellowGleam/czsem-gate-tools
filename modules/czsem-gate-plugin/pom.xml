@@ -12,37 +12,22 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>uk.ac.gate</groupId>
-				<artifactId>gate-maven-plugin</artifactId>
-				<version>${gate.version}</version>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>DumpCreoleToXML</goal>
-						</goals>
-					</execution>
-				</executions>
+				<!-- set properties for old style /src/main/creole/creole.xml variable expansion -->
+				<groupId>${project.groupId}</groupId>
+				<artifactId>custom-properties-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
+				<!-- crete the old style gate-plugin-dir.zip -->
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<!-- crete the new style expanded creole.xml from src/main/resources/creole.xml -->
+				<groupId>uk.ac.gate</groupId>
+				<artifactId>gate-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<!-- crete the new style creole.jar for GATE GUI -->
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<id>creole</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<phase>package</phase>
-						<configuration>
-							<classifier>creole</classifier>
-							<includes>
-								<include>META-INF/gate/creole.xml</include>
-								<include>resources</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

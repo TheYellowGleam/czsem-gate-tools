@@ -59,6 +59,29 @@
 	</modules>
 
 	<build>
+		<resources>
+			<!-- this adds the maven coordinates into the test resource file creole.properties 
+				which is used to help load this plugin for testing -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>creole.xml</include>
+				</includes>
+			</resource>
+	
+			<!-- copy all the other resources without altering them so we don't accidentally 
+				corrupt datastores or other binary formats -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>creole.xml</exclude>
+				</excludes>
+			</resource>
+		</resources>
+	
+	
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -94,8 +117,77 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>uk.ac.gate</groupId>
+					<artifactId>gate-maven-plugin</artifactId>
+					<version>${gate.version}</version>
+					<executions>
+						<execution>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>DumpCreoleToXML</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.1.0</version>
+					<executions>
+						<execution>
+							<id>creole</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+							<phase>package</phase>
+							<configuration>
+								<classifier>creole</classifier>
+								<includes>
+									<include>META-INF/gate/creole.xml</include>
+									<include>resources</include>
+								</includes>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>custom-properties-maven-plugin</artifactId>
+					<version>${project.parent.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>setproperties</goal>
+							</goals>
+							<phase>generate-resources</phase>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.6</version>
+					<executions>
+						<execution>
+							<id>install-assembly</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+							<configuration>
+								<finalName>prepared</finalName>
+								<attach>true</attach>
+								<descriptors>
+									<descriptor>src/main/assembly/gate-plugin-dir.xml</descriptor>
+								</descriptors>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
+		
+		
 		<plugins>
 			<plugin>
 			   <groupId>external.atlassian.jgitflow</groupId>
