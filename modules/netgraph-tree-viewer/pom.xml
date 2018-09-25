@@ -73,6 +73,7 @@
 			<groupId>uk.ac.gate</groupId>
 			<artifactId>gate-core</artifactId>
 			<version>${gate.version}</version>
+			<!-- 8.6-SNAPSHOT ${gate.version} -->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
