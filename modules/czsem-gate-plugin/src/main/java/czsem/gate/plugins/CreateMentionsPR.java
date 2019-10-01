@@ -17,7 +17,7 @@ import czsem.Utils;
 import czsem.gate.AbstractLanguageAnalyserWithInputAnnotTypes;
 
 // 
-@CreoleResource(name = "czsem CreateMentions", comment = "Creates annotations of a type �Mention� and puts class labels (original annotation types) to the feature �class�.")
+@CreoleResource(name = "czsem CreateMentions", comment = "Creates annotations of a type 'Mention' and puts class labels (original annotation types) to the feature 'class'.")
 public class CreateMentionsPR extends AbstractLanguageAnalyserWithInputAnnotTypes 
 {
 	
