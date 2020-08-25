@@ -11,14 +11,7 @@ import gate.creole.metadata.CreoleResource;
 import gate.creole.metadata.RunTime;
 import gate.util.AnnotationDiffer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -29,7 +22,7 @@ import czsem.gate.DocumentFeaturesDiff;
 import czsem.utils.MultiSet;
 
 /**
- * Mostly copied form {@link QualityAssurancePR}, slightly modified. 
+ * Mostly copied form {@link gate.qa.QualityAssurancePR}, slightly modified.
  * @author dedek
  *
  */
@@ -344,7 +337,7 @@ public class LearningEvaluator extends AbstractLanguageAnalyser
 	}
 
 	/**
-	 * @see {@link AnnotationDiffer#setSignificantFeaturesSet(java.util.Set)}
+	 * @see {@link AnnotationDiffer#setSignificantFeaturesSet(Set)}
 	 */
 	@RunTime
 	@CreoleParameter(defaultValue="")

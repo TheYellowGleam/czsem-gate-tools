@@ -14,7 +14,7 @@ import javax.swing.*;
  *
  *  The Action can be reset at any time.
  */
-/** @author Rob Camick {@link http://tips4java.wordpress.com/2008/10/14/list-action/} */
+/** @author Rob Camick <a href="http://tips4java.wordpress.com/2008/10/14/list-action/">tips4java</a> */
 public class ListAction extends MouseAdapter
 {
 	private static final KeyStroke ENTER = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);

@@ -29,6 +29,7 @@ public class PackMavenCache {
 
 		File parentDir = new File("target/pack_tmp");
 		parentDir.mkdirs();
+		System.err.println(parentDir.getAbsolutePath());
 		
 
 		File originalGapp = new File(parentDir, "original.xgapp");
