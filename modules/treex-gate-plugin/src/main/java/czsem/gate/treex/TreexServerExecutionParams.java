@@ -3,19 +3,18 @@
  ******************************************************************************/
 package czsem.gate.treex;
 
-import org.apache.commons.lang3.text.StrLookup;
-import org.apache.commons.lang3.text.StrSubstitutor;
-
 import czsem.utils.AbstractConfig.ConfigLoadException;
+import org.apache.commons.text.StringSubstitutor;
+import org.apache.commons.text.lookup.StringLookup;
 
-public class TreexServerExecutionParams extends StrLookup<Object> {
+public class TreexServerExecutionParams implements StringLookup {
 
 	protected final TreexServerExecution treexServerExecution;
-	protected final StrSubstitutor subst;
+	protected final StringSubstitutor subst;
 
 	public TreexServerExecutionParams(TreexServerExecution treexServerExecution) {
 		this.treexServerExecution = treexServerExecution;
-		subst = new StrSubstitutor(this);
+		subst = new StringSubstitutor(this);
 	}
 
 	public String[] expandCmdArray(String[] cmdarray) {

@@ -1,19 +1,12 @@
 package czsem.gate.plugins;
 
-import gate.Annotation;
-import gate.AnnotationSet;
-import gate.Document;
-import gate.FeatureMap;
-import gate.Utils;
+import czsem.gate.utils.GateUtils;
+import gate.*;
 import gate.creole.AbstractLanguageAnalyser;
-import gate.creole.ExecutionException;
 import gate.creole.metadata.CreoleParameter;
 import gate.creole.metadata.CreoleResource;
 import gate.creole.metadata.RunTime;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-
-import czsem.gate.utils.GateUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 @CreoleResource(name = "czsem NormalizeTokenForms", comment = "Adds clean_lemma, clean_lemma_noAccents and form_noAccents features to existing tokens.")
 public class NormalizeTokenForms extends AbstractLanguageAnalyser {
@@ -27,7 +20,7 @@ public class NormalizeTokenForms extends AbstractLanguageAnalyser {
 	protected String negationRegexp = "^..........N....$";
 	
 	@Override
-	public void execute() throws ExecutionException {
+	public void execute() {
 		
 		Document doc = getDocument();
 		AnnotationSet as = doc.getAnnotations(getAnnotationSetName());
