@@ -15,6 +15,14 @@
 				<!-- set properties for old style /src/main/creole/creole.xml variable expansion -->
 				<groupId>${project.groupId}</groupId>
 				<artifactId>custom-properties-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>setproperties</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<!-- crete the old style gate-plugin-dir.zip -->
