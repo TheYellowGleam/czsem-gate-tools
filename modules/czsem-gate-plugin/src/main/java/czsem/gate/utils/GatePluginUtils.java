@@ -42,7 +42,7 @@ public class GatePluginUtils {
 	}
 	
 	public static void registerANNIE() throws GateException {
-		Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins", "annie", "8.5"));
+		Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins", "annie", "8.6"));
 	}
 
 }

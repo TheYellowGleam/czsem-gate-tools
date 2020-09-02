@@ -27,7 +27,17 @@ public class GateUtilsTest {
 		}
 		return sb.toString();
 	}
-	
+
+
+	@Test
+	public void registerAllCzsemPrs() throws Exception {
+		GateUtils.initGateKeepLog();
+		logger.info("PR types before: {}", Gate.getCreoleRegister().getPrTypes());
+		GateUtils.registerAllCzsemPrs();
+		GateUtils.registerComponentIfNot(NotCheckingParametersSerialController.class);
+		logger.info("PR types after: {}", Gate.getCreoleRegister().getPrTypes());
+	}
+
 	@Test
 	public void leakyTest() throws Exception {
 		

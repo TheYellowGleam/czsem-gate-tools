@@ -49,11 +49,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
 			<version>1.9</version>
 		</dependency>
@@ -84,13 +79,13 @@
 		<dependency>
 			<groupId>uk.ac.gate.plugins</groupId>
 			<artifactId>annie</artifactId>
-			<version>8.5</version>
+			<version>8.6</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 		    <groupId>uk.ac.gate.plugins</groupId>
 		    <artifactId>tools</artifactId>
-		    <version>8.5</version>
+		    <version>8.6</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
