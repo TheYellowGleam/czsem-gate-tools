@@ -18,6 +18,11 @@ public class GateAnnotationsNodeAttributesWithOntoTest {
 	@BeforeClass
 	public void beforeClass() throws Exception {
 		GateUtils.initGateKeepLog();
+		
+		//Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins", "onthology", "8.5"));
+		//Doesn't work 
+		
+		GateUtils.setPluginsHome();
 		GateUtils.registerPluginDirectory("Ontology");
 
 		onto = Factory.createResource("gate.creole.ontology.impl.sesame.OWLIMOntology",

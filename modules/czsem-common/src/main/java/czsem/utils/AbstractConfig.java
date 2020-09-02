@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,12 +73,17 @@ public abstract class AbstractConfig {
 
 	public static Map<String, Object> loadFromFile(String filename, ClassLoader classLoader) throws IOException
 	{
-		FileInputStream os = new FileInputStream(filename);
-		XMLDecoder decoder = new XMLDecoder(os, null, null, classLoader);
+		FileInputStream is = new FileInputStream(filename);
+		return loadFromStream(is, classLoader);
+	}
+
+	public static Map<String, Object> loadFromStream(InputStream inputStream, ClassLoader classLoader) throws IOException
+	{
+		XMLDecoder decoder = new XMLDecoder(inputStream, null, null, classLoader);
 		@SuppressWarnings("unchecked")
 		Map<String, Object> map = (Map<String, Object>) decoder.readObject();
 		decoder.close();
-		os.close();
+		inputStream.close();
 		return map;
 	}
 
@@ -88,6 +94,27 @@ public abstract class AbstractConfig {
 		encoder.writeObject(map);
 		encoder.close();
 		os.close();
+	}
+	
+	public void loadClassPathConfig(String path, ClassLoader classLoader) throws IOException {
+		InputStream stream;
+		String from;
+		
+		if (classLoader != null) {
+			stream = classLoader.getResourceAsStream(path);
+			from = classLoader.getResource(path).toString();
+		} else {
+			stream = getClass().getResourceAsStream(path);
+			from = getClass().getResource(path).toString();
+		}
+		
+		if (stream == null) throw new FileNotFoundException("File not found on classpath: "+path); 
+		
+		setMap(loadFromStream(stream, classLoader));
+		
+		setLoadedFrom(from);
+		
+		logger.info("Config '"+getConfigKey()+"' loaded from: "+from);
 	}
 	
 	public void loadConfig(String filename, ClassLoader classLoader) throws IOException
@@ -112,7 +139,7 @@ public abstract class AbstractConfig {
 			loadConfig(env, classLoader);
 			return;
 		}
-		catch (Exception e)	{fe.add(e);}
+		catch (IOException e)	{fe.add(e);}
 
 		//second: try env_dir
 		try {
@@ -122,7 +149,7 @@ public abstract class AbstractConfig {
 			loadConfig(env + "/" + getConfigKey() + ".xml", classLoader);
 			return;
 		}
-		catch (Exception e)	{fe.add(e);}
+		catch (IOException e)	{fe.add(e);}
 		
 		String [] tryPaths = { 
 			"",
@@ -137,9 +164,14 @@ public abstract class AbstractConfig {
 			try {
 				loadConfig(tryPath + getDefaultLoc(), classLoader);				
 				return;
-			} catch (Exception e) {fe.add(e);}
-			
+			} catch (IOException e) {fe.add(e);}
 		}
+		
+		//from classpath
+		try {
+			loadClassPathConfig(getDefaultLoc().replaceFirst("^..", ""), classLoader);				
+			return;
+		} catch (IOException e) {fe.add(e);}
 
 		throw fe;
 	}

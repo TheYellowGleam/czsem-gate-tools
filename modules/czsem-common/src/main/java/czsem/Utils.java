@@ -255,7 +255,8 @@ public class Utils {
 	 * Checks to see if a specific port is available.
 	 *
 	 * @param port the port to check for availability
-	 * @author http://mina.apache.org/
+	 *
+	 * author: http://mina.apache.org/
 	 */
 	public static boolean portAvailable(int port)
 	{

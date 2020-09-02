@@ -4,6 +4,8 @@ import javax.swing.SwingUtilities;
 
 import gate.Document;
 import gate.Factory;
+import gate.Gate;
+import gate.creole.Plugin;
 import gate.creole.splitter.SentenceSplitter;
 import gate.creole.tokeniser.DefaultTokeniser;
 import gate.gui.MainFrame;
@@ -32,8 +34,8 @@ public class NetgraphTreeViewerTest {
 		MainFrame mf = MainFrame.getInstance();
 		mf.setVisible(true);
 		
-		GateUtils.registerPluginDirectory("ANNIE");
-		GateUtils.registerPluginDirectory("Stanford_CoreNLP");
+		GateUtils.registerANNIE();
+		Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins", "stanford-corenlp", "8.5.1"));
 		GateUtils.registerComponentIfNot(NetgraphTreeViewer.class);
 		
 		

@@ -15,6 +15,7 @@ import gate.ProcessingResource;
 import gate.Resource;
 import gate.Utils;
 import gate.corpora.DocumentImpl;
+//import gate.creole.Plugin;
 import gate.creole.ResourceData;
 import gate.creole.ResourceInstantiationException;
 import gate.creole.metadata.CreoleResource;
@@ -238,8 +239,7 @@ public class GateUtils
 
 	public static void registerPluginDirectory(File pluginDirectory) throws MalformedURLException, GateException
 	{
-	    Gate.getCreoleRegister().registerDirectories( 
-	    		pluginDirectory.toURI().toURL());		
+		GatePluginUtils.registerPluginDirectory(pluginDirectory);
 	}
 	
 	public static String getUserPluginsHome() {
@@ -447,9 +447,7 @@ public class GateUtils
 	}
 
 	public static void registerComponentIfNot(Class<? extends Resource> class1) throws GateException {
-		if (! isPrCalssRegisteredInCreole(class1)) {
-			Gate.getCreoleRegister().registerComponent(class1);
-		}
+		GatePluginUtils.registerComponentIfNot(class1);
 	}
 
 	public static Document createDoc(File file, String encoding, String mimeType) throws ResourceInstantiationException, MalformedURLException {
@@ -553,6 +551,18 @@ public class GateUtils
 	
 	public static synchronized Object persistenceManagerLoadObjectFromFileSynchronized(File file) throws PersistenceException, ResourceInstantiationException, IOException {
 		return PersistenceManager.loadObjectFromFile(file);
+	}
+
+	public static void addKnownPluginDir(File pluginDir) throws MalformedURLException {
+		GatePluginUtils.addKnownPluginDir(pluginDir);
+	}
+
+	public static void registerANNIE() throws GateException {
+		GatePluginUtils.registerANNIE();
+	}
+
+	public static void setPluginsHome() {
+		Gate.setPluginsHome(new File(Gate.getGateHome(), "plugins"));
 	}
 
 }

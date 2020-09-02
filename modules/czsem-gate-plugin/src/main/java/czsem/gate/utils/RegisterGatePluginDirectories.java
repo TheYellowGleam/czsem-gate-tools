@@ -31,7 +31,7 @@ public class RegisterGatePluginDirectories {
 			if (new File(list[i], "creole.xml").exists())
 			{
 				System.err.format("Registering plugin directory: %s\n", list[i]);
-				Gate.addKnownPlugin(list[i].toURI().toURL());
+				GateUtils.addKnownPluginDir(list[i]);
 			}
 		}
 	}

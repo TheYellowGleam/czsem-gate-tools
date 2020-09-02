@@ -10,7 +10,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * @goal setproperties
  * @requiresDependencyResolution compile+runtime
- * @see http://maven.apache.org/developers/mojo-api-specification.html - for complete list of supported mojo java annotations 
+ * @see <a href="http://maven.apache.org/developers/mojo-api-specification.html">specification</a> - for complete list of supported mojo java annotations
  */
 public class MainMojo extends AbstractMojo {
 

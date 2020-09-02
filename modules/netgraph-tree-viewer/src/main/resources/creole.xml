@@ -1,0 +1,4 @@
+<?xml version="1.0"?>  
+<CREOLE-DIRECTORY>
+	<REQUIRES GROUP="${project.groupId}" ARTIFACT="czsem-gate-plugin" VERSION="${project.parent.version}"/>
+</CREOLE-DIRECTORY>
