@@ -102,14 +102,18 @@ public abstract class AbstractConfig {
 		
 		if (classLoader != null) {
 			stream = classLoader.getResourceAsStream(path);
-			from = classLoader.getResource(path).toString();
 		} else {
 			stream = getClass().getResourceAsStream(path);
-			from = getClass().getResource(path).toString();
 		}
 		
-		if (stream == null) throw new FileNotFoundException("File not found on classpath: "+path); 
-		
+		if (stream == null) throw new FileNotFoundException("File not found on classpath: "+path);
+
+		if (classLoader != null) {
+			from = classLoader.getResource(path).toString();
+		} else {
+			from = getClass().getResource(path).toString();
+		}
+
 		setMap(loadFromStream(stream, classLoader));
 		
 		setLoadedFrom(from);
