@@ -330,7 +330,7 @@ public class LevenshteinWholeLineMatchingGazetteer extends DefaultGazetteer {
 	}
 
 	@Override
-	@CreoleParameter
+	@CreoleParameter(defaultValue="")
 	public void setListsURL(ResourceReference newListsURL) {
 		super.setListsURL(newListsURL);
 	}
