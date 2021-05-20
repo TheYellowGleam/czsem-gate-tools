@@ -4,10 +4,7 @@ import gate.AnnotationSet;
 import gate.Corpus;
 import gate.Document;
 import gate.Factory;
-import gate.creole.ExecutionException;
-import gate.creole.ExecutionInterruptedException;
-import gate.creole.ResourceInstantiationException;
-import gate.creole.SerialAnalyserController;
+import gate.creole.*;
 import gate.creole.gazetteer.DefaultGazetteer;
 import gate.creole.gazetteer.FSMState;
 import gate.creole.gazetteer.GazetteerList;
@@ -330,6 +327,12 @@ public class LevenshteinWholeLineMatchingGazetteer extends DefaultGazetteer {
 	@RunTime
 	public void setEvaluateOnPrefix(Boolean evaluateOnPrefix) {
 		this.evaluateOnPrefix = evaluateOnPrefix;
+	}
+
+	@Override
+	@CreoleParameter
+	public void setListsURL(ResourceReference newListsURL) {
+		super.setListsURL(newListsURL);
 	}
 
 	public static void main(String[] args) throws Exception {
