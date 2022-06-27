@@ -20,13 +20,27 @@ public class AddTokenOrthographyTest {
 		
 		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("DedekJ"), "mixedCaps");
 		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("Dedek-J"), "mixedCaps");
-		
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("JaÑ"), "mixedCaps");
+
 		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("123"), null);
 		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("-123.5"), null);
 
-		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan dedek"), "lowercase");
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan dědek"), "lowercase");
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan_dědek"), "lowercase");
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan/dědek"), "lowercase");
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan+dědek"), "lowercase");
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan1dědek"), "lowercase");
 		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("jan!dedek"), "lowercase");
 		
 		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("chlopeˇn"), "lowercase");
+
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("TRITT|CO"), "allCaps");
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("TRITT1CO"), "allCaps");
+
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("R1234R"), "allCaps");
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("R1234"), null);
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("12R34"), null);
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("1RRRRR"), null);
+		Assert.assertEquals(AddTokenOrthography.getOrthographyValue("|RRRRR"), null);
 	}
 }

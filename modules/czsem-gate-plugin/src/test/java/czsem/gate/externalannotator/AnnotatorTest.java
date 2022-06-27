@@ -266,4 +266,23 @@ public class AnnotatorTest {
 		Assert.assertEquals(Annotator.getSpaceTokenKind("1", 0), "other");
 	}
 
+	@Test
+	public static void testCrLFSpaceTokens() throws Exception {
+		GateUtils.initGateKeepLog();
+
+		Annotator a = new Annotator();
+
+		String testStr1 = " \r\n ";
+		a.initBefore(Factory.newDocument(testStr1), "testAS");
+		a.createSpaceTokens(0L, testStr1.length());
+		Assert.assertEquals(a.getAS().size(), 3);
+
+		String testStr2 = " \n ";
+		a.initBefore(Factory.newDocument(testStr2), "testAS");
+		a.createSpaceTokens(0L, testStr2.length());
+		Assert.assertEquals(a.getAS().size(), 3);
+
+	}
+
+
 }

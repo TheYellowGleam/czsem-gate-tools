@@ -175,12 +175,25 @@ public class Annotator implements AnnotatorInterface {
 
 	public static void createSpaceTokens(AnnotationSet as, String spanContent, long start, long end) throws InvalidOffsetException {
 		for (int i = 0; i < spanContent.length(); i++) {
-			as.add(start+i, start+i+1, ANNIEConstants.SPACE_TOKEN_ANNOTATION_TYPE, 
+			int spaceLength;
+			//CRLF detection
+			if (i+1 < spanContent.length() &&
+					spanContent.codePointAt(i) == '\r' &&
+					spanContent.codePointAt(i+1) == '\n')
+			{
+				spaceLength = 2; //is CRLF
+			} else {
+				spaceLength = 1; //not CRLF
+			}
+
+			String curSubStr = spanContent.substring(i, i+spaceLength);
+			as.add(start+i, start+i+spaceLength, ANNIEConstants.SPACE_TOKEN_ANNOTATION_TYPE,
 				Utils.featureMap(
-					ANNIEConstants.TOKEN_STRING_FEATURE_NAME, spanContent.substring(i, i+1),
+					ANNIEConstants.TOKEN_STRING_FEATURE_NAME, curSubStr,
 					ANNIEConstants.TOKEN_KIND_FEATURE_NAME, getSpaceTokenKind(spanContent, i)
 					//ANNIEConstants.TOKEN_LENGTH_FEATURE_NAME, 1
 			));
+			i += spaceLength-1;
 		}
 	}
 	
