@@ -44,6 +44,9 @@
 				<version>2.19</version>
 				<configuration>
 					<excludedGroups>slow,treexRemote,excludeByMaven</excludedGroups>
+
+					<!-- Marking tests as skipped because perl is no more available on my laptop. -->
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 		</plugins>
