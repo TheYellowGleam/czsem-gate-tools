@@ -525,6 +525,8 @@ public class GateUtils
 	public static char removeDiacritics(char ch1) {
 		String str = String.valueOf(ch1);
 		String ret = removeDiacritics(str);
+		// ch1 is diacritics only char i.e.: ¨´
+		if (ret.length() == 0) return ch1;
 		return ret.charAt(0);
 	}
 
